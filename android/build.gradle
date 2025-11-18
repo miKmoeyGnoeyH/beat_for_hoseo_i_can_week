@@ -1,0 +1,39 @@
+// 루트 빌드 스크립트 (android/build.gradle)
+
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        // Firebase Google Services 플러그인 (app/build.gradle의
+        // id "com.google.gms.google-services" 와 세트)
+        classpath "com.google.gms:google-services:4.4.2"
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+// Flutter 최신 템플릿이 사용하는 공통 빌드 폴더 설정
+rootProject.buildDir = "../build"
+
+subprojects {
+    project.buildDir = "${rootProject.buildDir}/${project.name}"
+}
+
+subprojects {
+    project.evaluationDependsOn(":app")
+}
+
+// clean task
+tasks.register("clean", Delete) {
+    delete rootProject.buildDir
+}
+
+// ✅ 예전 스타일 잔재라서 제거해도 되는 부분
+// ext.kotlin_version = '1.5.10'
