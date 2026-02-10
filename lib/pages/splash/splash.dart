@@ -1,10 +1,13 @@
+
 import 'package:beat/app/route/app_pages.dart';
+import 'package:beat/features/authentication/authentication_controller.dart';
+import 'package:beat/features/step_count/index.dart';
 import 'package:beat/shared/index.dart';
-import 'package:beat/shared/widgets/beat_assets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:pedometer/pedometer.dart';
 
 class Splash extends StatefulWidget {
   const Splash({super.key});
@@ -20,7 +23,7 @@ class _SplashState extends State<Splash> {
       color: AppColors.primary,
       child: Center(
         child: SvgPicture.asset(
-          BEATAssets.svg.greenCampusType2,
+          BEATAssets.svg.greenCampusLogoType2,
           width: 500.w,
           height: 500.w,
           colorFilter: ColorFilter.mode(AppColors.designWhite, BlendMode.srcIn),
@@ -32,17 +35,23 @@ class _SplashState extends State<Splash> {
   @override
   void initState() {
     super.initState();
-    init();
+    WidgetsBinding.instance.addPostFrameCallback((_) => bootstrap());
   }
 
-  Future<void> init() async {
+  Future<void> bootstrap() async {
     await Future.delayed(Duration(seconds: 1));
-    checkLoginStatusAndNavigate();
+    await checkLoginStatusAndNavigate();
   }
 
-  void checkLoginStatusAndNavigate() {
-    if (PrefsService.instance.getUser() == null) {
-      Get.toNamed(BEATRoute.signIn);
+  Future<void> checkLoginStatusAndNavigate() async {
+    final Map<String, dynamic>? savedUser = PrefsService.instance.getUser();
+
+    if (savedUser == null) {
+      Get.offAllNamed(BEATRoute.signIn);
+    } else {
+      AuthenticationController.to.signInFromJson(savedUser);
+      await StepCountController.to.startService();
+      Get.offAllNamed(BEATRoute.home);
     }
   }
 }

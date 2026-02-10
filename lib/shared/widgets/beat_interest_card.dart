@@ -38,7 +38,7 @@ class BEATInterestCard extends StatelessWidget {
                         ? SizedBox.shrink()
                         : Text(
                             label,
-                            style: AppTextTheme.subtitle1.commonWhite,
+                            style: AppTextTheme.subtitle1.designWhite,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -47,7 +47,7 @@ class BEATInterestCard extends StatelessWidget {
                         ? SizedBox.shrink()
                         : Text(
                             content,
-                            style: AppTextTheme.headline1.commonWhite,
+                            style: AppTextTheme.headline2.designWhite,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),

@@ -2,11 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>BGTaskSchedulerPermittedIdentifiers</key>
-	<array>
-		<string>com.beat.app.ranking</string>
-		<string>com.beat.app.midnight</string>
-	</array>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
@@ -22,7 +17,7 @@
 	<key>CFBundleLocalizations</key>
 	<array>
 		<string>en</string>
-		<string>kr</string>
+		<string>ko</string>
 	</array>
 	<key>CFBundleName</key>
 	<string>BEAT</string>
@@ -40,6 +35,8 @@
 	<true/>
 	<key>NSCameraUsageDescription</key>
 	<string>QR 인식을 위해 카메라를 사용합니다.</string>
+	<key>NSHealthShareUsageDescription</key>
+	<string>걸음 수 기반 활동 기록을 위해 건강 데이터 접근이 필요합니다.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>이벤트 진행 지역 진입/이탈 여부를 확인하기 위해 사용자의 위치정보를 사용합니다.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
@@ -55,7 +52,6 @@
 		<string>location</string>
 		<string>fetch</string>
 		<string>remote-notification</string>
-		<string>processing</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>

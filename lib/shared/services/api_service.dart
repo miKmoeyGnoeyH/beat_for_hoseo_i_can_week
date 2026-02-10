@@ -11,17 +11,18 @@ import 'package:http/http.dart' as http;
 ///
 /// [APIService]에서는 API요청 후 어떤 가공도 거치지 않은 [https.Response] 객체를 반환합니다.
 class APIService {
-  APIService() {}
+  APIService();
 
   Future<http.Response> get({
     required String endpoint,
     Map<String, String>? header,
+    int? timeoutDuration,
   }) async {
     try {
       final Uri url = Uri.parse(endpoint);
       return await http
           .get(url, headers: header)
-          .timeout(Duration(seconds: _timeoutDuration));
+          .timeout(Duration(seconds: timeoutDuration ?? _timeoutDuration));
     } catch (e) {
       log("APIService : get() : ${e.toString()}");
       rethrow;
@@ -32,12 +33,13 @@ class APIService {
     required String endpoint,
     Map<String, String>? header,
     Object? body,
+    int? timeoutDuration,
   }) async {
     try {
       final Uri url = Uri.parse(endpoint);
       return await http
           .post(url, headers: header, body: body)
-          .timeout(Duration(seconds: _timeoutDuration));
+          .timeout(Duration(seconds: timeoutDuration ?? _timeoutDuration));
     } catch (e) {
       log("APIService : post() : ${e.toString()}");
       rethrow;
@@ -45,5 +47,5 @@ class APIService {
   }
 
   // late final String _baseURL;
-  final int _timeoutDuration = 5;
+  final int _timeoutDuration = 15;
 }

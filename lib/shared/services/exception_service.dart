@@ -9,11 +9,23 @@ import 'package:get/get.dart';
 class BEATException implements Exception {
   BEATException({required this.title, this.message});
 
+  @override
+  String toString() {
+    return "BEATException: title: $title, message: $message";
+  }
+
   final String title;
   final String? message;
 }
 
+class BEATExceptionPlatformNotSupported extends BEATException {
+  BEATExceptionPlatformNotSupported()
+    : super(title: LocalizationService.instance.errorPlatformNotSupported);
+}
+
 class ExceptionService extends GetxController {
+  static ExceptionService get to => Get.find<ExceptionService>();
+
   final RxList<BEATException> _exceptions = <BEATException>[].obs;
 
   ExceptionService() {

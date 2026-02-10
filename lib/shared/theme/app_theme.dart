@@ -51,10 +51,10 @@ ThemeData appLightTheme() => ThemeData(
     hintStyle: AppTextTheme.caption1,
     errorStyle: AppTextTheme.body2,
     enabledBorder: UnderlineInputBorder(
-      borderSide: const BorderSide(color: AppColors.common300, width: 1),
+      borderSide: const BorderSide(color: AppColors.borderLight, width: 1),
     ),
     disabledBorder: UnderlineInputBorder(
-      borderSide: const BorderSide(color: AppColors.common100, width: 1),
+      borderSide: const BorderSide(color: AppColors.disabledBorderColorLight, width: 1),
     ),
     focusedBorder: UnderlineInputBorder(
       borderSide: const BorderSide(color: AppColors.primary, width: 1),

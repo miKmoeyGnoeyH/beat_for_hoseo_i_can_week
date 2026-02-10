@@ -1,48 +1,65 @@
+// {
+//   "memberId": 0,
+//   "name": "string",
+//   "studentId": "string",
+//   "email": "string",
+//   "department": "string",
+//   "nickname": "string",
+//   "campus": "string",
+//   "studentType": "string",
+//   "teamName": "string"
+// }
 class UserModel {
   UserModel({
+    required this.memberId,
     required this.name,
-    required this.nickname,
-    required this.category,
-    required this.department,
+    required this.studentId,
     required this.email,
-    required this.sendToTime,
+    required this.department,
+    required this.nickname,
+    required this.campus,
+    required this.studentType,
+    required this.teamName,
     required this.authorization,
+    required this.refreshToken
   });
 
   UserModel.fromJson(Map<String, dynamic> json)
-    : name = json['name'] as String,
-      nickname = json['nickname'] as String,
-      category = json['category'] as String,
-      department = json['department'] as String,
-      email = json['email'] as String,
-      sendToTime = json['sendToTime'] as int,
-      authorization = json['authorization'] as String;
-
-  UserModel.empty()
-    : name = '',
-      nickname = '',
-      category = '',
-      department = '',
-      email = '',
-      sendToTime = 0,
-      authorization = '';
+    : memberId = json['memberId'],
+      name = json['name'],
+      studentId = json['studentId'],
+      email = json['email'],
+      department = json['department'],
+      nickname = json['nickname'],
+      campus = json['campus'],
+      studentType = json['studentType'],
+      teamName = json['teamName'],
+      authorization = json['authorization'],
+      refreshToken = json['Refresh-Token'];
 
   Map<String, dynamic> toJson() => {
+    'memberId': memberId,
     'name': name,
-    'nickname': nickname,
-    'category': category,
-    'department': department,
+    'studentId': studentId,
     'email': email,
-    'sendToTime': sendToTime,
+    'department': department,
+    'nickname': nickname,
+    'campus': campus,
+    'studentType': studentType,
+    'teamName': teamName,
     'authorization': authorization,
+    'Refresh-Token': refreshToken,
   };
 
-
+  final int memberId;
   final String name;
-  final String nickname;
-  final String category;
-  final String department;
+  final String studentId;
   final String email;
-  final int sendToTime;
+  final String department;
+  final String nickname;
+  final String campus;
+  final String studentType;
+  final String teamName;
   final String authorization;
+  final String refreshToken;
 }

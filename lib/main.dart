@@ -4,16 +4,18 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'app.dart';
+import 'features/step_count/index.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await LocalizationService.instance.init();
-  await PrefsService.instance.init();
   await DotEnvService.instance.init();
 
   Get.put<DialogService>(DialogService(), permanent: true);
   Get.put<ExceptionService>(ExceptionService(), permanent: true);
+
+  Get.put<StepCountController>(StepCountController(), permanent: true);
 
   runApp(
     EasyLocalization(

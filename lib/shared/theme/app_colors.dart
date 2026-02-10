@@ -29,16 +29,12 @@ abstract class AppColors {
   static const Color highContrastBorderLight = Color(0xff000000);
   static const Color highContrastBorderDark = Color(0xff9f9f9f);
 
+  static const Color disabledColorLight = Color(0xffd0d7de);
   static const Color disabledBorderColorLight = Color(0xfff5f8fb);
   static const Color disabledTextColorLight = Color(0xff76899c);
 
-  // Gray
-  static const Color gray500 = Color(0xff191919);
-  static const Color gray400 = Color(0xff3a3a3a);
-  static const Color gray300 = Color(0xff6e6e6e);
-  static const Color gray200 = Color(0xffb4b4b4);
-  static const Color gray100 = Color(0xffe4e4e4);
-  static const Color gray50 = Color(0xffF8F8F8);
+  // Skeleton
+  static const Color skeletonOnPrimary = Color(0x4d3a4ce0);
 
   // Common
   /// [commonWhite]: 완전한 흰색입니다. 사용하지 마세요
@@ -53,12 +49,6 @@ abstract class AppColors {
   static const Color common300 = Color(0xffd0d7de);
   static const Color common200 = Color(0xffe6edf1);
   static const Color common100 = Color(0xfff5f8fb);
-
-  // ETC
-  static const Color dimLight = Color(0xfff4f4fa);
-  static const Color dimDark = Color(0xff66665C);
-
-  // System-dependent
 }
 
 /// [MaterialApp], [GetMaterialApp]의 [theme]을 위해 [ThemeData]를 생성해야 하는데,

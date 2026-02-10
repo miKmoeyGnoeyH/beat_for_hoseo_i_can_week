@@ -3,20 +3,9 @@
           package="com.dclab.beat">
 
     <!-- Permissions -->
-    <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
-    <uses-permission android:name="android.permission.LOCATION_ALWAYS"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-
 
     <uses-feature android:name="android.hardware.camera" android:required="true"/>
 
@@ -26,33 +15,9 @@
             android:icon="@mipmap/ic_launcher">
 
         <service
-                android:name="com.lyokone.location.FlutterLocationService"
+                android:name=".steps.StepCounterService"
                 android:exported="false"
-                android:foregroundServiceType="location" />
-
-        <service
-                android:name="id.flutter.flutter_background_service.BackgroundService"
-                android:exported="true"
-                android:foregroundServiceType="location|dataSync"
-                tools:node="merge"
-                tools:replace="android:foregroundServiceType" />
-
-        <!-- location 서비스 알림 설정(meta-data) -->
-        <meta-data
-                android:name="com.lyokone.location.NotificationChannelName"
-                android:value="Location Service" />
-        <meta-data
-                android:name="com.lyokone.location.NotificationTitle"
-                android:value="BEAT" />
-        <meta-data
-                android:name="com.lyokone.location.NotificationText"
-                android:value="Walking service is running" />
-        <meta-data
-                android:name="com.lyokone.location.NotificationIcon"
-                android:resource="@drawable/ic_bg_service_small" />
-        <meta-data
-                android:name="com.google.firebase.messaging.default_notification_channel_id"
-                android:value="high_importance_channel" />
+                android:foregroundServiceType="health|dataSync" />
 
         <activity
                 android:name=".MainActivity"

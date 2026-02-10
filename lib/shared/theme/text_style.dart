@@ -6,6 +6,14 @@ abstract class AppTextTheme {
 
   static TextStyle headline1 = TextStyle(
     fontFamily: _fontFamily,
+    fontSize: 36.sp,
+    fontWeight: FontWeight.w500,
+    letterSpacing: -0.25,
+    // height: 1.4,
+  );
+
+  static TextStyle headline2 = TextStyle(
+    fontFamily: _fontFamily,
     fontSize: 28.sp,
     fontWeight: FontWeight.w500,
     letterSpacing: -0.25,

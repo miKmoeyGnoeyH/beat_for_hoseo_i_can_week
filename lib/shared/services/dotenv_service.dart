@@ -6,17 +6,28 @@ class DotEnvService {
   DotEnvService._internal();
 
   Future<void> init() async {
-    const currentEnv =
-    String.fromEnvironment('ENV', defaultValue: 'development');
+    const currentEnv = String.fromEnvironment(
+      'ENV',
+      defaultValue: 'development',
+    );
     const envFile = currentEnv == 'production'
         ? 'assets/config/.env.production'
+        : currentEnv == 'test'
+        ? 'assets/config/.env.test'
         : 'assets/config/.env.development';
 
     await dotenv.load(fileName: envFile);
   }
 
   String get baseURL => dotenv.env['BASE_URL'] ?? "";
+
   String get appstoreID => dotenv.env['APPSTORE_ID'] ?? "";
+
   String get googleplayID => dotenv.env['GOOGLEPLAY_ID'] ?? "";
+
   String get signIn => dotenv.env['SIGN_IN'] ?? "";
+
+  String get fetchPointBalance => dotenv.env['POINT'] ?? "";
+
+  String get fetchQuestList => dotenv.env['QUEST_LIST'] ?? "";
 }

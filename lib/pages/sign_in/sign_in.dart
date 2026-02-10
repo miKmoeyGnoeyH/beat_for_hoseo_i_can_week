@@ -1,23 +1,31 @@
 import 'dart:developer';
 
+import 'package:beat/app/route/app_pages.dart';
 import 'package:beat/features/authentication/authentication_controller.dart';
+import 'package:beat/features/step_count/step_count_controller.dart';
 import 'package:beat/shared/index.dart';
-import 'package:beat/shared/widgets/beat_assets.dart';
 import 'package:beat/shared/widgets/beat_cpi.dart';
-import 'package:beat/shared/widgets/beat_text_button.dart';
-import 'package:beat/shared/widgets/beat_text_form_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
-class SignIn extends StatelessWidget {
-  SignIn({super.key});
+class SignIn extends StatefulWidget {
+  const SignIn({super.key});
 
+  @override
+  State<SignIn> createState() => _SignInState();
+}
+
+class _SignInState extends State<SignIn> {
   final AuthenticationController authenticationController =
-      Get.find<AuthenticationController>();
+      AuthenticationController.to;
+
   final TextEditingController idController = TextEditingController();
+
   final TextEditingController passwordController = TextEditingController();
+
+  bool obscurePasswordText = true;
 
   @override
   Widget build(BuildContext context) {
@@ -32,11 +40,11 @@ class SignIn extends StatelessWidget {
             slivers: [
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: EdgeInsets.only(top: 140.w, bottom: 48.w),
+                  padding: EdgeInsets.only(top: 120.w, bottom: 80.w),
                   child: SvgPicture.asset(
-                    BEATAssets.svg.greenCampusType1,
-                    width: 121.w,
-                    height: 37.w,
+                    BEATAssets.svg.greenCampusLogoType1,
+                    // width: 121.w,
+                    height: 50.w,
                   ),
                 ),
               ),
@@ -46,19 +54,33 @@ class SignIn extends StatelessWidget {
                   child: Column(
                     children: [
                       BEATTextFormField(
-                        labelText: LocalizationService.instance.signInHoseoUnivEmailID,
-                        textInputType: TextInputType.number,
+                        labelText:
+                            LocalizationService.instance.signInHoseoUnivEmailID,
                         controller: idController,
                         maxLength: 8,
-                        hintText:
-                            LocalizationService.instance.signInHoseoUnivEmailIDHint,
+                        hintText: LocalizationService
+                            .instance
+                            .signInHoseoUnivEmailIDHint,
                       ),
                       SizedBox(height: 24.w),
                       BEATTextFormField(
                         labelText: LocalizationService.instance.signInPassword,
                         controller: passwordController,
+                        textInputType: TextInputType.emailAddress,
                         hintText:
                             LocalizationService.instance.signInPasswordHint,
+                        obscureText: obscurePasswordText,
+                        suffixIcon: GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              obscurePasswordText = !obscurePasswordText;
+                            });
+                          },
+                          child: Icon(
+                            obscurePasswordText ? Icons.remove_red_eye_rounded : Icons.remove_red_eye_outlined,
+                            color: AppColors.disabledColorLight,
+                          ),
+                        ),
                       ),
                       SizedBox(height: 36.w),
                       Column(
@@ -82,17 +104,18 @@ class SignIn extends StatelessWidget {
                             },
                             onLoading: BEATTextButton(
                               text: LocalizationService.instance.signInSignIn,
-                              textColor: AppColors.gray300,
-                              buttonColor: AppColors.gray100,
+                              buttonColor: AppColors.disabledColorLight,
+                              textColor: AppColors.disabledTextColorLight,
+                              borderColor: AppColors.disabledBorderColorLight,
                             ),
                           ),
                           SizedBox(height: 10.w),
                           BEATTextButton(
                             text: LocalizationService.instance.signInRegister,
                             // textColor: AppColors.designBlack,
-                            textColor: AppColors.common500,
-                            buttonColor: AppColors.common300,
-                            borderColor: AppColors.common100,
+                            buttonColor: AppColors.designWhite,
+                            textColor: AppColors.designBlack,
+                            borderColor: AppColors.borderLight,
                           ),
                         ],
                       ),
@@ -107,20 +130,52 @@ class SignIn extends StatelessWidget {
     );
   }
 
+  /// [onSignInButtonTap]
+  /// 로그인 버튼 클릭 시 호출되는 함수입니다.
+  /// ID 필드 또는 비밀번호 필드가 비어있는 경우 다이얼로그를 출력합니다.
+  /// 그렇지 않은 경우 서버로 로그인 요청을 전송합니다. 응답 코드가 200이 아닌 경우 로그인 실패 다이얼로그를 출력합니다.
+  /// 정상적으로 로그인이 수행된 경우 사용자 객체를 JSON으로 직렬화해 저장하고,
+  /// 다음 로그인 시 저장된 사용자 객체를 역직렬화하여 로그인 화면을 건너뛰고 홈 화면으로 이동합니다.
+  ///
+  /// JWT 토큰 만료 시 처리 로직을 고민해봐야 합니다.
   Future<void> onSignInButtonTap() async {
+    if (idController.text.isEmpty || passwordController.text.isEmpty) {
+      DialogService.to.addDialogEvent(
+        AlertDialogEvent(
+          title: LocalizationService.instance.errorEmptyField,
+          message:
+              LocalizationService.instance.errorPleaseEnterIDAndPassword,
+        ),
+      );
+      return;
+    }
+
     try {
       await Get.showOverlay(
-        asyncFunction: () => authenticationController.signIn(idController.text, passwordController.text),
+        asyncFunction: () async {
+          await authenticationController.signIn(
+            idController.text,
+            passwordController.text,
+          );
+          await PrefsService.instance.saveUser(
+            authenticationController.state!.toJson(),
+          );
+          await StepCountController.to.startService();
+        },
         loadingWidget: BEATCircularProgressIndicator(),
         opacity: 0.3,
       );
+      Get.offAndToNamed(BEATRoute.home);
     } on BEATException catch (e) {
       log("SignIn: onSignInButtonTap: BEATException: ${e.toString()}");
-      Get.find<ExceptionService>().addException(e);
+      ExceptionService.to.addException(e);
     } catch (e) {
       log("SignIn: onSignInButtonTap: catch e: ${e.toString()}");
-      Get.find<ExceptionService>().addException(
-        BEATException(title: LocalizationService.instance.errorsUnknownError),
+      ExceptionService.to.addException(
+        BEATException(
+          title: LocalizationService.instance.errorSignInFailed,
+          message: LocalizationService.instance.errorUnknown,
+        ),
       );
     }
   }

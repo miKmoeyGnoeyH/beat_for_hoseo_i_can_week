@@ -8,13 +8,31 @@ import 'package:beat/shared/services/localization_service.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class Init extends InheritedWidget with WidgetsBindingObserver {
-  const Init({super.key, required super.child});
+class Init extends StatefulWidget {
+  const Init({super.key, required this.child});
+
+  final Widget child;
 
   @override
-  bool updateShouldNotify(Init oldWidget) {
-    // TODO: implement updateShouldNotify
-    throw UnimplementedError();
+  State<Init> createState() => _InitState();
+}
+
+class _InitState extends State<Init> with WidgetsBindingObserver {
+  @override
+  Widget build(BuildContext context) {
+    return widget.child;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 
   Future<void> _checkUpdate() async {
@@ -74,6 +92,7 @@ class Init extends InheritedWidget with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) async {
+    log("init.dart: didChangeAppLifecycleState: $state");
     switch (state) {
       case AppLifecycleState.resumed:
         _checkUpdate();

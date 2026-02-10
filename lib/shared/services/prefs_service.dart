@@ -3,6 +3,10 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// [SharedPreferences] 엔트리 포인트인 싱글톤 클래스입니다.
+/// [SharedPreferences] 객체에 직접 접근하지 않고, 이 클래스의 래퍼 함수를 통해 접근합니다.
+/// [SharedPreferences.instance]로 객체를 가져옵니다.
+///
+/// [init]: [SharedPreferences] 객체를 초기화합니다. 앱 시작 시 `main()`에서 호출합니다.
 ///
 /// [saveUser, getUser]: 최근 로그인한 사용자 정보를 저장하고, 불러옵니다.
 /// 사용자 정보는 id, password, authorization을 Map으로 저장합니다.
@@ -20,14 +24,8 @@ class PrefsService {
 
   /// [Future &lt;bool&gt; saveUser]: 최근 로그인한 사용자 정보를 저장하고, 성공 여부를 boolean으로 반환합니다.
   /// 사용자 정보는 id, password, authorization을 Map으로 저장합니다.
-  Future<bool> saveUser(String id, String password, String authorization) async {
-    final userMap = {
-      'id': id,
-      'password': password,
-      'authorization': authorization,
-    };
-
-    return await _prefs.setString(_userKey, jsonEncode(userMap));
+  Future<bool> saveUser(Map<String, dynamic> user) async {
+    return await _prefs.setString(_userKey, jsonEncode(user));
   }
 
   /// [Map&lt;String, dynamic&gt;? getUser]: 최근 로그인한 사용자 정보를 Map으로 반환합니다.
@@ -42,6 +40,20 @@ class PrefsService {
     return jsonDecode(userString);
   }
 
+  /// Steps Management
+  static const String _stepCountKey = "step_count";
+
+  /// [Future &lt;bool&gt; saveStep]: 걸음 수를 저장합니다.
+  /// 20260130 - 안드로이드 백그라운드 서비스 기능 테스트 중입니다. 한 개의 걸음 수를 저장합니다.
+  Future<bool> saveStep(int step) async {
+    return await _prefs.setInt(_stepCountKey, step);
+  }
+
+  /// [Future &lt;bool&gt; getStep]: 저장한 걸음 수를 불러옵니다.
+  /// 20260130 - 안드로이드 백그라운드 서비스 기능 테스트 중입니다. 한 개의 걸음 수를 불러옵니다.
+  int? getStep() {
+    return _prefs.getInt(_stepCountKey);
+  }
 
   PrefsService._internal();
 }

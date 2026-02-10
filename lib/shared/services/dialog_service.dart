@@ -1,6 +1,4 @@
-import 'dart:ui';
 
-import 'package:beat/shared/index.dart';
 import 'package:beat/shared/widgets/beat_alert_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -54,6 +52,8 @@ class DialogService extends GetxController {
     ever<List<DialogEvent>>(_dialogEvents, (event) {
       while (event.isNotEmpty) {
         final dialogEvent = event.first;
+
+        Get.focusScope?.unfocus();
 
         if (dialogEvent.runtimeType == ConfirmDialogEvent) {
           Get.dialog(SizedBox.shrink());

@@ -10,6 +10,8 @@ class BEATTextFormField extends StatelessWidget {
     this.controller,
     this.maxLength,
     this.hintText,
+    this.obscureText = false,
+    this.suffixIcon,
   });
 
   @override
@@ -25,7 +27,12 @@ class BEATTextFormField extends StatelessWidget {
           keyboardType: textInputType,
           controller: controller,
           maxLength: maxLength,
-          decoration: InputDecoration(hintText: hintText, counterText: ""),
+          decoration: InputDecoration(
+            hintText: hintText,
+            counterText: "",
+            suffixIcon: suffixIcon,
+          ),
+          obscureText: obscureText,
         ),
       ],
     );
@@ -36,4 +43,6 @@ class BEATTextFormField extends StatelessWidget {
   final TextEditingController? controller;
   final int? maxLength;
   final String? hintText;
+  final bool obscureText;
+  final Widget? suffixIcon;
 }

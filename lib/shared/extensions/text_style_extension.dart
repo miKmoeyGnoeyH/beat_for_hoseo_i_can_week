@@ -7,9 +7,9 @@ extension TextStyleExtension on TextStyle {
   // Primary
   get primary => apply(color: AppColors.primary);
 
-  // Gray
-  get gray500 => apply(color: AppColors.gray500);
-  get gray100 => apply(color: AppColors.gray100);
+  // Design
+  get designWhite => apply(color: AppColors.designWhite);
+  get designBlack => apply(color: AppColors.designBlack);
 
   // Status
   get statusComplete => apply(color: AppColors.statusComplete);
@@ -20,12 +20,8 @@ extension TextStyleExtension on TextStyle {
   get statusErrorBackground => apply(color: AppColors.statusErrorBackground);
 
   // Common
-  get commonWhite => apply(color: AppColors.commonWhite);
-  get commonBlack => apply(color: AppColors.commonBlack);
-
-  get designWhite => apply(color: AppColors.designWhite);
-  get designBlack => apply(color: AppColors.designBlack);
-
+  // get commonWhite => apply(color: AppColors.commonWhite);
+  // get commonBlack => apply(color: AppColors.commonBlack);
   get common800 => apply(color: AppColors.common800);
   get common500 => apply(color: AppColors.common500);
   get common400 => apply(color: AppColors.common400);
@@ -33,7 +29,5 @@ extension TextStyleExtension on TextStyle {
   get common200 => apply(color: AppColors.common200);
   get common100 => apply(color: AppColors.common100);
 
-  // ETC
-  get dimLight => apply(color: AppColors.dimLight);
-  get dimDark => apply(color: AppColors.dimDark);
+  get disabled => apply(color: AppColors.disabledTextColorLight);
 }

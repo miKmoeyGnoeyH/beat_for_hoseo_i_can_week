@@ -3,8 +3,8 @@ import 'package:beat/shared/theme/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class BeatListItem extends StatelessWidget {
-  const BeatListItem({
+class BEATListItem extends StatelessWidget {
+  const BEATListItem({
     super.key,
     this.onTap,
     this.highlightColor,
@@ -69,7 +69,7 @@ class BeatListItem extends StatelessWidget {
   }
 
   Color borderColor(BuildContext context) => Theme.of(context).brightness == Brightness.light ? Colors.transparent : AppColors.borderDark;
-  TextStyle descStyle(BuildContext context) => Theme.of(context).brightness == Brightness.light ? AppTextTheme.caption1.dimLight : AppTextTheme.caption1.dimDark;
+  TextStyle descStyle(BuildContext context) => Theme.of(context).brightness == Brightness.light ? AppTextTheme.caption1.designBlack : AppTextTheme.caption1.designWhite;
 
   final VoidCallback? onTap;
   final Color? highlightColor;
