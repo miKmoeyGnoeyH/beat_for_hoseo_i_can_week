@@ -15,11 +15,12 @@ class QuestListRepository {
         header: {"authorization": authorization},
       );
 
+      log(response.body);
+
       switch (response.statusCode) {
         case 200:
           final List<QuestModel> questList = [];
           final String decoded = utf8.decode(response.bodyBytes);
-
           final List<dynamic> responseBody = jsonDecode(decoded);
 
           for (var quest in responseBody) {

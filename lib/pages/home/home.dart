@@ -1,5 +1,8 @@
 import 'dart:async';
+import 'dart:developer';
+import 'dart:math';
 
+import 'package:beat/entities/quest/index.dart';
 import 'package:beat/features/authentication/authentication_controller.dart';
 import 'package:beat/features/point/index.dart';
 import 'package:beat/features/quest/index.dart';
@@ -46,9 +49,7 @@ class _HomeState extends State<Home> {
       child: SizedBox(
         height: 120.w,
         child: Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: 16.w,
-          ),
+          padding: EdgeInsets.symmetric(horizontal: 16.w),
           child: StepCountCard(),
         ),
       ),
@@ -57,9 +58,7 @@ class _HomeState extends State<Home> {
       child: SizedBox(
         height: 120.w,
         child: Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: 16.w,
-          ),
+          padding: EdgeInsets.symmetric(horizontal: 16.w),
           child: PointCard(),
         ),
       ),
@@ -80,8 +79,8 @@ class _HomeState extends State<Home> {
     final String authorization = authenticationController.state!.authorization;
 
     // TODO: API 변경으로 인해 API 호출 파라미터 변경 필요
-    // await pointController.fetchPointBalance(authorization);
-    // await questListController.fetchQuestList(authorization);
+    await pointController.fetchPointBalance(authorization);
+    await questListController.fetchQuestList(authorization);
 
     setState(() {
       loading = false;
@@ -107,6 +106,7 @@ class _HomeState extends State<Home> {
     super.dispose();
   }
 
+  // TODO: 홈 화면 에러 발생 시 어떻게?
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -175,14 +175,70 @@ class _HomeState extends State<Home> {
                     ),
                   ),
                 ),
-                // SliverToBoxAdapter(child: Container(color: AppColors.statusError,height: 10.w, width: 10.w,),),
+                // TODO: pageview를 사용하도록 변경
                 SliverToBoxAdapter(
                   child: Skeletonizer(
                     enabled: loading,
                     containersColor: AppColors.common300,
-                    child: QuestList(),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16.w),
+                      child: Container(
+                        clipBehavior: Clip.hardEdge,
+                        decoration: BoxDecoration(
+                          color: AppColors.designWhite,
+                          borderRadius: BorderRadius.circular(15),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.common400,
+                              blurRadius: 30.w,
+                              spreadRadius: -20.w,
+                              offset: Offset(0, -3.w),
+                            ),
+                          ],
+                        ),
+                        // TODO: 조건문 더 줄일 수 있을 것 같은뎨?
+                        child: BingoBoard(
+                          questSummaryAppView: loading
+                              ? List.generate(
+                                  25,
+                                  (index) => QuestSummaryModel.empty(),
+                                )
+                              : questListController
+                                    .state
+                                    .first
+                                    .questSummaryAppView,
+                          countPerAxis: loading
+                              ? 5
+                              : sqrt(
+                                  questListController
+                                      .state
+                                      .first
+                                      .questSummaryAppView
+                                      .length,
+                                ).toInt(),
+                          rowSpacing: 5.w,
+                          columnSpacing: 5.w,
+                        ),
+                      ),
+                    ),
                   ),
                 ),
+                SliverToBoxAdapter(child: SizedBox(height: 16.w)),
+                SliverToBoxAdapter(
+                  child: Skeletonizer(
+                    enabled: loading,
+                    containersColor: AppColors.common300,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16.w),
+                      child: ArchivementRate(
+                        totalPoints: loading ? 0 : questListController.state.first.questCommonSummaryDto.totalPoint,
+                        totalCount: questListController.state.first.questSummaryAppView.length,
+                        completedCount: loading ? 0 : questListController.state.first.completedCount,
+                      ),
+                    ),
+                  ),
+                ),
+                SliverToBoxAdapter(child: SizedBox(height: 16.w)),
               ],
             ),
           ),

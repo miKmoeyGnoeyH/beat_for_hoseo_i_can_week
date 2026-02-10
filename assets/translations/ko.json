@@ -19,6 +19,12 @@
     "todays_walk_count": "오늘의 걸음 수",
     "monthly_walk_count": "이번 달에 총 {} 걸음",
     "quest_no": "Quest {}",
+    "archivement_rate": "목표 달성률",
+    "number": "{}개",
+    "total_points": "총 포인트",
+    "points": "{} 포인트",
+    "bingo_square_left": "남은 빙고 칸",
+    "square_left": "{}칸 남음",
     "qr": "QR",
     "home": "홈",
     "profile": "프로필"

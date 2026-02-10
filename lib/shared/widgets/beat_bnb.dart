@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+// TODO: 현재 선택된 페이지 상태를 어떻게 관리할 것인지?
+// home page controller를 구현, 홈 화면 pageview와 bnb에서 연동
 class BEATBNB extends StatelessWidget {
   const BEATBNB({super.key});
 
@@ -12,6 +14,7 @@ class BEATBNB extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
+        color: AppColors.commonWhite,
         border: Border(
           top: BorderSide(width: 0.5, color: AppColors.disabledColorLight),
         ),

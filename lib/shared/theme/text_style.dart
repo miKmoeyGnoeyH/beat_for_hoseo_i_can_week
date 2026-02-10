@@ -20,6 +20,14 @@ abstract class AppTextTheme {
     // height: 1.4,
   );
 
+  static TextStyle headline3 = TextStyle(
+    fontFamily: _fontFamily,
+    fontSize: 18.sp,
+    fontWeight: FontWeight.w800,
+    letterSpacing: -1.5,
+    // height: 1.4,
+  );
+
   static TextStyle title1 = TextStyle(
     fontFamily: _fontFamily,
     fontSize: 20.sp,
@@ -31,7 +39,7 @@ abstract class AppTextTheme {
   static TextStyle subtitle1 = TextStyle(
       fontFamily: _fontFamily,
       fontSize: 16.sp,
-      fontWeight: FontWeight.w600,
+      fontWeight: FontWeight.w700,
       letterSpacing: -0.25,
       // height: 1.4,
   );
@@ -39,7 +47,7 @@ abstract class AppTextTheme {
   static TextStyle subtitle2 = TextStyle(
     fontFamily: _fontFamily,
     fontSize: 14.sp,
-    fontWeight: FontWeight.w600,
+    fontWeight: FontWeight.w700,
     letterSpacing: -0.25,
     // height: 1.4,
   );

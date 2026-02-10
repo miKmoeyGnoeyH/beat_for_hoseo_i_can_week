@@ -22,7 +22,7 @@ class StepCountCard extends StatelessWidget {
           BoxShadow(
             blurRadius: 15.w,
             spreadRadius: -10.w,
-            color: AppColors.common800,
+            color: AppColors.common500,
           ),
         ],
       ),

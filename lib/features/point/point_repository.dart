@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:beat/shared/services/index.dart';
@@ -13,7 +14,9 @@ class PointRepository {
 
       switch (response.statusCode) {
         case 200:
-          final int pointBalance = int.parse(response.body);
+          final String decoded = utf8.decode(response.bodyBytes);
+          final Map<String, dynamic> responseBody = jsonDecode(decoded);
+          final int pointBalance = responseBody["point"];
           return pointBalance;
         case 400:
           throw BEATException(title: LocalizationService.instance.errorUnknown);

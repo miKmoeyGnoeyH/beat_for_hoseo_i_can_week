@@ -39,10 +39,10 @@ class QuestItem extends StatelessWidget {
                             SizedBox(height: 5.w),
                           ],
                         ),
-                      Text(questModel.eventName, style: AppTextTheme.subtitle1),
+                      Text("abc", style: AppTextTheme.subtitle1),
                       SizedBox(height: 5.w),
                       Text(
-                        questModel.descriptionShort,
+                        questModel.questCommonSummaryDto.descriptionShort,
                         style: AppTextTheme.body2.disabled,
                       ),
                     ],
@@ -60,7 +60,7 @@ class QuestItem extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        questModel.point.toString(),
+                        "abc".toString(),
                         style: AppTextTheme.subtitle1,
                       ),
                     ],

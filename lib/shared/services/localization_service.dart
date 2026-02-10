@@ -32,6 +32,12 @@ class LocalizationService {
   String get homeTodaysWalkCount => "home".tr(gender: "todays_walk_count");
   String homeMonthlyWalkCount(String count) => "home".tr(gender: "monthly_walk_count", args: [count]);
   String homeQuestNo(int count) => "home".tr(gender: "quest_no", args: [count.toString()]);
+  String get homeArchivementRate => "home".tr(gender: "archivement_rate");
+  String homeNumber(String value) => "home".tr(gender: "number", args: [value]);
+  String get homeTotalPoints => "home".tr(gender: "total_points");
+  String homePoints(String value) => "home".tr(gender: "points", args: [value]);
+  String get homeBingoSquareLeft => "home".tr(gender: "bingo_square_left");
+  String homeSquareLeft(String value) => "home".tr(gender: "square_left", args: [value]);
   String get homeQR => "home".tr(gender: "qr");
   String get homeHome => "home".tr(gender: "home");
   String get homeProfile => "home".tr(gender: "profile");

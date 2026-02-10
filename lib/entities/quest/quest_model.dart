@@ -1,81 +1,203 @@
 import 'dart:convert';
+import 'dart:math';
 
-import 'package:beat/shared/enums/index.dart';
+enum QuestType {
+  bingo("BINGO"),
+  qr("QR"),
+  walk("WALK"),
+  dummy("DUMMY"),
+  unknown("UNKNOWN");
+
+  const QuestType(this.value);
+
+  static QuestType fromString(String? value) {
+    return QuestType.values.firstWhere(
+      (e) => e.value == value,
+      orElse: () => unknown,
+    );
+  }
+
+  final String value;
+}
 
 class QuestModel {
   QuestModel({
-    required this.eventId,
-    required this.eventName,
-    required this.descriptionShort,
-    required this.point,
-    required this.eventType,
-    required this.startDate,
-    required this.endDate,
-    required this.hasSuccess,
-    required this.period,
-    this.requiredWalkCount = -1,
-    this.requiredCount = -1,
-    this.successCount = -1,
-    this.totalCount = -1,
+    required this.questCommonSummaryDto,
+    required this.completedCount,
+    required this.questSummaryAppView,
   });
 
   QuestModel.dummy()
-      : eventId = -1,
-        eventName = 'Dummy Event',
-        descriptionShort = 'This is a dummy event for skeletonizer.',
-        point = 0,
-        eventType = EventType.unknown,
-        startDate = '2024-01-01',
-        endDate = '2024-12-31',
-        hasSuccess = false,
-        period = Period.unknown,
-        requiredWalkCount = 0,
-        requiredCount = 0,
-        successCount = 0,
-        totalCount = 0;
+    : questCommonSummaryDto = QuestCommonSummaryDto.dummy(),
+      completedCount = 0,
+      questSummaryAppView = [];
 
   QuestModel.fromJson(Map<String, dynamic> json)
-    : eventId = json['eventId'],
-      eventName = json['eventName'],
-      descriptionShort = json['descriptionShort'],
-      point = json['neuro'],
-      eventType = EventType.stringToEventType(json['eventType']),
-      startDate = json['startDate'],
-      endDate = json['endDate'],
-      hasSuccess = json['hasSuccess'],
-      period = Period.stringToPeriod(json['period']),
-      requiredWalkCount = json['requiredWalkCount'],
-      requiredCount = json['requiredCount'],
-      successCount = json['successCount'],
-      totalCount = json['totalCount'];
+    : questCommonSummaryDto = QuestCommonSummaryDto.fromJson(
+        json["questCommonSummaryDto"],
+      ),
+      completedCount = json["questSummaryAppView"]["itemSummaryList"]
+          .where((item) => item["completed"] == true)
+          .length,
+      questSummaryAppView = List<QuestSummaryModel?>.filled(
+        json["questSummaryAppView"]["itemSummaryList"].length,
+        null,
+        growable: false,
+      ) {
+    final int length = json["questSummaryAppView"]["itemSummaryList"].length;
+    final int countPerAxis = sqrt(length).toInt();
+    for (var item in json["questSummaryAppView"]["itemSummaryList"]) {
+      questSummaryAppView[item["rowIndex"] * countPerAxis +
+          item["columnIndex"]] = QuestSummaryModel.fromJson(
+        item,
+      );
+    }
+    for (var item in questSummaryAppView) {
+      if (item == null) {
+        throw Exception("questSummaryAppView contains null item");
+      }
+    }
+  }
 
   String toJsonString() => jsonEncode({
-    'eventId': eventId,
-    'eventName': eventName,
-    'descriptionShort': descriptionShort,
-    'neuro': point,
-    'eventType': eventType.name,
-    'startDate': startDate,
-    'endDate': endDate,
-    'hasSuccess': hasSuccess,
-    'period': period.name,
-    'requiredWalkCount': requiredWalkCount,
-    'requiredCount': requiredCount,
-    'successCount': successCount,
-    'totalCount': totalCount,
+    'questCommonSummaryDto': jsonDecode(questCommonSummaryDto.toJsonString()),
+    'completedCount': completedCount,
+    'questSummaryAppView': questSummaryAppView
+        .map((item) => jsonDecode(item!.toJsonString()))
+        .toList(),
   });
 
-  final int eventId;
-  final String eventName;
+  final QuestCommonSummaryDto questCommonSummaryDto;
+  final int completedCount;
+  final List<QuestSummaryModel?> questSummaryAppView;
+}
+
+class QuestCommonSummaryDto {
+  QuestCommonSummaryDto({
+    required this.questId,
+    required this.name,
+    required this.descriptionShort,
+    required this.totalPoint,
+    required this.questType,
+    required this.startDate,
+    required this.endDate,
+  });
+
+  QuestCommonSummaryDto.fromJson(Map<String, dynamic> json)
+    : questId = json['questId'],
+      name = json['name'],
+      descriptionShort = json['descriptionShort'],
+      totalPoint = json['totalPoint'],
+      questType = QuestType.fromString(json['questType']),
+      startDate = DateTime.parse(json['startDate']),
+      endDate = DateTime.parse(json['endDate']);
+
+  String toJsonString() => jsonEncode({
+    'questId': questId,
+    'name': name,
+    'descriptionShort': descriptionShort,
+    'totalPoint': totalPoint,
+    'questType': questType.value,
+    'startDate': startDate.toIso8601String(),
+    'endDate': endDate.toIso8601String(),
+  });
+
+  QuestCommonSummaryDto.dummy()
+    : questId = 0,
+      name = 'Dummy Quest',
+      descriptionShort = 'This is a dummy quest for testing purposes.',
+      totalPoint = 0,
+      questType = QuestType.dummy,
+      startDate = DateTime.now(),
+      endDate = DateTime.now().add(const Duration(days: 7));
+
+  final int questId;
+  final String name;
   final String descriptionShort;
-  final int point;
-  final EventType eventType;
-  final String startDate;
-  final String endDate;
-  final bool hasSuccess;
-  final Period period;
-  final int? requiredWalkCount;
-  final int? requiredCount;
-  final int? successCount;
-  final int? totalCount;
+  final int totalPoint;
+  final QuestType questType;
+  final DateTime startDate;
+  final DateTime endDate;
+}
+
+class QuestSummaryModel {
+  QuestSummaryModel({
+    required this.bingoQuestItemId,
+    required this.rowIndex,
+    required this.columnIndex,
+    required this.completed,
+    required this.questInfoView,
+  });
+
+  QuestSummaryModel.fromJson(Map<String, dynamic> json)
+    : bingoQuestItemId = json['bingoQuestItemId'],
+      rowIndex = json['rowIndex'],
+      columnIndex = json['columnIndex'],
+      completed = json['completed'],
+      questInfoView = json["questInfoView"] == null
+          ? null
+          : QuestInfoView.fromJson(json["questInfoView"]);
+
+  String toJsonString() => jsonEncode({
+    'bingoQuestItemId': bingoQuestItemId,
+    'rowIndex': rowIndex,
+    'columnIndex': columnIndex,
+    'completed': completed,
+  });
+
+  QuestSummaryModel.empty()
+    : bingoQuestItemId = 0,
+      rowIndex = 0,
+      columnIndex = 0,
+      completed = false,
+      questInfoView = null;
+
+  final int? bingoQuestItemId;
+  final int? rowIndex;
+  final int? columnIndex;
+  final bool? completed;
+  final QuestInfoView? questInfoView;
+}
+
+class QuestInfoView {
+  QuestInfoView({
+    required this.questId,
+    required this.questName,
+    required this.questType,
+    required this.rewardPoint,
+    required this.required,
+    required this.completeCount,
+  });
+
+  QuestInfoView.fromJson(Map<String, dynamic> json)
+    : questId = json['questId'],
+      questName = json['questName'],
+      questType = QuestType.fromString(json['questType']),
+      rewardPoint = json['rewardPoint'],
+      required = json['requiredCount'] ?? json['requiredStep'],
+      completeCount = json['completeCount'];
+
+  QuestInfoView.empty()
+    : questId = 0,
+      questName = 'Unknown Quest',
+      questType = QuestType.unknown,
+      rewardPoint = 0,
+      required = 0,
+      completeCount = 0;
+
+  String toJsonString() => jsonEncode({
+    'questId': questId,
+    'questName': questName,
+    'questType': questType?.value,
+    'rewardPoint': rewardPoint,
+    'requiredCount': required,
+    'completeCount': completeCount,
+  });
+
+  final int? questId;
+  final String? questName;
+  final QuestType? questType;
+  final int? rewardPoint;
+  final int required;
+  final int? completeCount;
 }
