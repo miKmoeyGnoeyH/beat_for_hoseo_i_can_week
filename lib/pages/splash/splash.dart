@@ -9,6 +9,12 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:pedometer/pedometer.dart';
 
+/// 스플래시 스크린입니다.
+/// 앱의 일부 초기 동작을 결정합니다.
+/// 로그인 상태 확인 후, 상태에 맞게 초기 라우팅을 결정합니다.
+/// 로그인되어있다면 자동 로그인 실행 -> 걸음 수 측정 시작 -> 홈 화면으로 이동합니다.
+/// init 페이지와는 달리 필요한 동작이 모두 종료되면 pop되어 위젯 트리에서 사라지기 때문에,
+/// 해당 페이지에서 수행되는 동작은 앱의 라이프사이클동안 두번다시 실행되지 않습니다.
 class Splash extends StatefulWidget {
   const Splash({super.key});
 

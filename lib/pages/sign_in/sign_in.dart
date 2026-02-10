@@ -157,7 +157,7 @@ class _SignInState extends State<SignIn> {
             idController.text,
             passwordController.text,
           );
-          await PrefsService.instance.saveUser(
+          await PrefsService.instance.setUser(
             authenticationController.state!.toJson(),
           );
           await StepCountController.to.startService();

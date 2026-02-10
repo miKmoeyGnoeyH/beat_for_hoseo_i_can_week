@@ -17,9 +17,9 @@ class BEATBNB extends StatelessWidget {
         ),
       ),
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 32.w, vertical: 5.w),
+        padding: EdgeInsets.only(top: 12.w, bottom: 16.w, left: 16.w, right: 16.w),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             Column(
               mainAxisSize: MainAxisSize.min,

@@ -17,7 +17,7 @@ class Home extends StatefulWidget {
   State<Home> createState() => _HomeState();
 }
 
-class _HomeState extends State<Home> with WidgetsBindingObserver {
+class _HomeState extends State<Home> {
   // 사용자 정보를 사용하기 위한 GetX Controller
   final AuthenticationController authenticationController =
       AuthenticationController.to;
@@ -49,7 +49,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           padding: EdgeInsets.symmetric(
             horizontal: 16.w,
           ),
-          child: PointCard(),
+          child: StepCountCard(),
         ),
       ),
     ),
@@ -60,7 +60,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           padding: EdgeInsets.symmetric(
             horizontal: 16.w,
           ),
-          child: StepCountCard(),
+          child: PointCard(),
         ),
       ),
     ),
@@ -77,8 +77,6 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       loading = true;
     });
 
-    await checkPermissionsAndRequestIfNotGranted();
-
     final String authorization = authenticationController.state!.authorization;
 
     // TODO: API 변경으로 인해 API 호출 파라미터 변경 필요
@@ -92,11 +90,6 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     showIndicatorThenAutoHide();
   }
 
-  Future<void> checkPermissionsAndRequestIfNotGranted() async {
-    final bool isActivityPermissionGranted = await PermissionService.instance.isActivityPermissionGranted();
-    if (!isActivityPermissionGranted) await PermissionService.instance.requestActivityPermission();
-  }
-
   void showIndicatorThenAutoHide() {
     if (!indicatorVisible) {
       setState(() => indicatorVisible = true);
@@ -105,23 +98,6 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     hideTimer = Timer(const Duration(seconds: 1), () {
       if (mounted) setState(() => indicatorVisible = false);
     });
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) async {
-    switch (state) {
-      case AppLifecycleState.resumed:
-        checkPermissionsAndRequestIfNotGranted();
-        break;
-      case AppLifecycleState.inactive:
-        break;
-      case AppLifecycleState.paused:
-        break;
-      case AppLifecycleState.detached:
-        break;
-      default:
-        break;
-    }
   }
 
   @override
