@@ -52,6 +52,14 @@ abstract class AppTextTheme {
     // height: 1.4,
   );
 
+  static TextStyle subtitle3 = TextStyle(
+    fontFamily: _fontFamily,
+    fontSize: 14.sp,
+    fontWeight: FontWeight.w600,
+    letterSpacing: -0.25,
+    // height: 1.4,
+  );
+
   static TextStyle body1 = TextStyle(
     fontFamily: _fontFamily,
     fontSize: 16.sp,
@@ -73,6 +81,6 @@ abstract class AppTextTheme {
     fontSize: 13.sp,
     fontWeight: FontWeight.w400,
     letterSpacing: -0.25,
-    // height: 1.4,
+    height: 1.2,
   );
 }

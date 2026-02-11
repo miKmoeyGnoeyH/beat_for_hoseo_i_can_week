@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 
-class RegisterBinding implements Bindings {
+class SignUpBinding implements Bindings {
   @override
   void dependencies() {
     // TODO: implement dependencies

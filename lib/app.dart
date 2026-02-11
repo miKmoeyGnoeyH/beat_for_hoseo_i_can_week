@@ -38,7 +38,7 @@ class _AppState extends State<App> {
           locale: context.locale,
           // Navigation
           defaultTransition: Transition.rightToLeft,
-          transitionDuration: const Duration(milliseconds: 500),
+          transitionDuration: const Duration(milliseconds: 100),
           popGesture: true,
           getPages: BEATPages.pages,
           initialRoute: BEATRoute.splash,

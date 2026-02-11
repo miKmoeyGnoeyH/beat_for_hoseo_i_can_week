@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:beat/entities/quest/quest_model.dart';
 import 'package:beat/features/quest/index.dart';
 import 'package:beat/shared/index.dart';
@@ -60,9 +61,10 @@ class BingoBoard extends StatelessWidget {
                     ),
                   )
                 : Center(
-                    child: Text(
+                    child: AutoSizeText(
                       "${questSummaryAppView[i]!.questInfoView?.rewardPoint}P",
                       style: AppTextTheme.headline3.common300,
+                      maxLines: 1,
                     ),
                   ),
           );

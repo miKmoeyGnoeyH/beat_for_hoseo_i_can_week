@@ -1,8 +1,14 @@
+import 'package:beat/shared/extensions/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'dart:math' as math;
 
 import 'index.dart';
+
+OutlineInputBorder _border(Color color) => OutlineInputBorder(
+  borderRadius: BorderRadius.circular(10),
+  borderSide: BorderSide(color: color, width: 0.5),
+);
 
 ThemeData appLightTheme() => ThemeData(
   useMaterial3: false,
@@ -46,25 +52,14 @@ ThemeData appLightTheme() => ThemeData(
 
   inputDecorationTheme: InputDecorationTheme(
     isDense: true,
-    contentPadding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 12.5.h),
-    labelStyle: AppTextTheme.caption1,
-    hintStyle: AppTextTheme.caption1,
+    contentPadding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 15.w),
+    labelStyle: AppTextTheme.body2.common400,
+    hintStyle: AppTextTheme.body2.common400,
     errorStyle: AppTextTheme.body2,
-    enabledBorder: UnderlineInputBorder(
-      borderSide: const BorderSide(color: AppColors.borderLight, width: 1),
-    ),
-    disabledBorder: UnderlineInputBorder(
-      borderSide: const BorderSide(color: AppColors.disabledBorderColorLight, width: 1),
-    ),
-    focusedBorder: UnderlineInputBorder(
-      borderSide: const BorderSide(color: AppColors.primary, width: 1),
-    ),
-    errorBorder: UnderlineInputBorder(
-      borderSide: const BorderSide(color: AppColors.statusError, width: 1),
-    ),
-    focusedErrorBorder: UnderlineInputBorder(
-      borderSide: const BorderSide(color: AppColors.statusError, width: 1),
-    ),
+    enabledBorder: _border(AppColors.common300),
+    focusedBorder: _border(AppColors.primary),
+    errorBorder: _border(AppColors.statusError),
+    focusedErrorBorder: _border(AppColors.statusError),
   ),
 
   dialogTheme: DialogThemeData(
@@ -169,19 +164,19 @@ ThemeData appDarkTheme() => ThemeData(
     labelStyle: AppTextTheme.caption1,
     hintStyle: AppTextTheme.caption1,
     errorStyle: AppTextTheme.body2,
-    enabledBorder: UnderlineInputBorder(
+    enabledBorder: OutlineInputBorder(
       borderSide: const BorderSide(color: AppColors.borderDark, width: 1),
     ),
-    disabledBorder: UnderlineInputBorder(
+    disabledBorder: OutlineInputBorder(
       borderSide: const BorderSide(color: AppColors.common100, width: 1),
     ),
-    focusedBorder: UnderlineInputBorder(
+    focusedBorder: OutlineInputBorder(
       borderSide: const BorderSide(color: AppColors.primary, width: 1),
     ),
-    errorBorder: UnderlineInputBorder(
+    errorBorder: OutlineInputBorder(
       borderSide: const BorderSide(color: AppColors.statusError, width: 1),
     ),
-    focusedErrorBorder: UnderlineInputBorder(
+    focusedErrorBorder: OutlineInputBorder(
       borderSide: const BorderSide(color: AppColors.statusError, width: 1),
     ),
   ),

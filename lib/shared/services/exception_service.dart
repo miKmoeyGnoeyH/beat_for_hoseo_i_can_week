@@ -18,9 +18,15 @@ class BEATException implements Exception {
   final String? message;
 }
 
+class BEATTimeoutException extends BEATException {
+  BEATTimeoutException()
+      : super(title: LocalizationService.instance.errorTimeout,
+      message: LocalizationService.instance.errorConnectivity);
+}
+
 class BEATExceptionPlatformNotSupported extends BEATException {
   BEATExceptionPlatformNotSupported()
-    : super(title: LocalizationService.instance.errorPlatformNotSupported);
+      : super(title: LocalizationService.instance.errorPlatformNotSupported);
 }
 
 class ExceptionService extends GetxController {

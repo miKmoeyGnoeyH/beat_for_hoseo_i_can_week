@@ -232,7 +232,7 @@ class _HomeState extends State<Home> {
                       padding: EdgeInsets.symmetric(horizontal: 16.w),
                       child: ArchivementRate(
                         totalPoints: loading ? 0 : questListController.state.first.questCommonSummaryDto.totalPoint,
-                        totalCount: questListController.state.first.questSummaryAppView.length,
+                        totalCount: loading? 25 : questListController.state.first.questSummaryAppView.length,
                         completedCount: loading ? 0 : questListController.state.first.completedCount,
                       ),
                     ),

@@ -104,18 +104,20 @@ class _SignInState extends State<SignIn> {
                             },
                             onLoading: BEATTextButton(
                               text: LocalizationService.instance.signInSignIn,
-                              buttonColor: AppColors.disabledColorLight,
-                              textColor: AppColors.disabledTextColorLight,
-                              borderColor: AppColors.disabledBorderColorLight,
+                              buttonColor: AppColors.common200,
+                              textColor: AppColors.common300,
                             ),
                           ),
                           SizedBox(height: 10.w),
                           BEATTextButton(
-                            text: LocalizationService.instance.signInRegister,
+                            onTap: onSignUpButtonTap,
+                            text: LocalizationService.instance.signInSignUp,
                             // textColor: AppColors.designBlack,
                             buttonColor: AppColors.designWhite,
                             textColor: AppColors.designBlack,
-                            borderColor: AppColors.borderLight,
+                            borderColor: AppColors.common400,
+                            highlightColor: AppColors.disabledColorLight,
+                            splashColor: AppColors.disabledColorLight,
                           ),
                         ],
                       ),
@@ -153,6 +155,7 @@ class _SignInState extends State<SignIn> {
     try {
       await Get.showOverlay(
         asyncFunction: () async {
+          await Future.delayed(Duration(milliseconds: 100));
           await authenticationController.signIn(
             idController.text,
             passwordController.text,
@@ -167,9 +170,15 @@ class _SignInState extends State<SignIn> {
       );
       Get.offAndToNamed(BEATRoute.home);
     } on BEATException catch (e) {
+      if (Get.isDialogOpen == true) {
+        Get.back();
+      }
       log("SignIn: onSignInButtonTap: BEATException: ${e.toString()}");
       ExceptionService.to.addException(e);
     } catch (e) {
+      if (Get.isDialogOpen == true) {
+        Get.back();
+      }
       log("SignIn: onSignInButtonTap: catch e: ${e.toString()}");
       ExceptionService.to.addException(
         BEATException(
@@ -178,5 +187,9 @@ class _SignInState extends State<SignIn> {
         ),
       );
     }
+  }
+
+  void onSignUpButtonTap() {
+    Get.toNamed(BEATRoute.campus);
   }
 }

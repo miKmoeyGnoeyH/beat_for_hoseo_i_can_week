@@ -25,6 +25,14 @@ class DotEnvService {
 
   String get googleplayID => dotenv.env['GOOGLEPLAY_ID'] ?? "";
 
+  String get validateNickname => dotenv.env['VALIDATE_NICKNAME'] ?? "";
+
+  String get requestEmail => dotenv.env['REQUEST_EMAIL'] ?? "";
+
+  String get verifyEmail => dotenv.env['VERIFY_EMAIL'] ?? "";
+
+  String get signUp => dotenv.env['SIGN_UP'] ?? "";
+
   String get signIn => dotenv.env['SIGN_IN'] ?? "";
 
   String get fetchPointBalance => dotenv.env['POINT'] ?? "";

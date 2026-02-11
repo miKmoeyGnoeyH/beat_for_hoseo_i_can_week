@@ -1,3 +1,4 @@
+import 'package:beat/shared/index.dart';
 import 'package:flutter/material.dart';
 import 'package:beat/shared/theme/index.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -13,7 +14,7 @@ class BEATSliverAppBar extends StatelessWidget {
       leading: Padding(
         padding: EdgeInsets.only(left: 20.w),
         child: SvgPicture.asset(
-          "assets/svg/beat_logo_2.svg",
+          BEATAssets.svg.greenCampusLogoType2,
           width: 24.w,
           height: 24.w,
         ),

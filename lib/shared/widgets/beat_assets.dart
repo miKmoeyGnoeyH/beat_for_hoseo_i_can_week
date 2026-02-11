@@ -22,6 +22,7 @@ class _Svgs {
   final String profile = 'assets/svg/profile.svg';
   final String hori = 'assets/svg/hori.svg';
   final String footprint = 'assets/svg/footprint.svg';
+  final String backArrow = 'assets/svg/back_arrow.svg';
 }
 
 class _Images {
