@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:pedometer/pedometer.dart';
 
 /// 스플래시 스크린입니다.
 /// 앱의 일부 초기 동작을 결정합니다.
@@ -57,7 +56,7 @@ class _SplashState extends State<Splash> {
     } else {
       AuthenticationController.to.signInFromJson(savedUser);
       await StepCountController.to.startService();
-      Get.offAllNamed(BEATRoute.home);
+      Get.offAllNamed(BEATRoute.mainPageView);
     }
   }
 }

@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:beat/entities/quest/quest_model.dart';
 import 'package:beat/features/quest/index.dart';
+import 'package:beat/features/step_count/index.dart';
 import 'package:beat/shared/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -18,6 +19,7 @@ class BingoBoard extends StatelessWidget {
   });
 
   final QuestListController questListController = QuestListController.to;
+  final StepCountController stepCountController = StepCountController.to;
 
   @override
   Widget build(BuildContext context) {
@@ -38,10 +40,24 @@ class BingoBoard extends StatelessWidget {
               color: questSummaryAppView[i]!.completed!
                   ? AppColors.primary
                   : AppColors.commonWhite,
+              border: questSummaryAppView[i]!.completed!
+                  ? null
+                  : (questSummaryAppView[i]!.questInfoView!.questType! ==
+                        QuestType.walk)
+                  ? (stepCountController.stepCount >=
+                            questSummaryAppView[i]!.questInfoView!.required)
+                        ? Border.all(width: 0.5.w, color: AppColors.primary)
+                        : null
+                  : (questSummaryAppView[i]!.questInfoView!.completeCount! >=
+                        questSummaryAppView[i]!.questInfoView!.required)
+                  ? Border.all(width: 0.5.w, color: AppColors.primary)
+                  : null,
               borderRadius: BorderRadius.circular(5),
             ),
             padding: EdgeInsets.all(10.w),
-            child: questSummaryAppView[i]!.questInfoView?.questType == QuestType.walk
+            child:
+                questSummaryAppView[i]!.questInfoView?.questType ==
+                    QuestType.walk
                 ? SvgPicture.asset(
                     BEATAssets.svg.footprint,
                     colorFilter: ColorFilter.mode(

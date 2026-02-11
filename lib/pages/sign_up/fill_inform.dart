@@ -4,9 +4,6 @@ import 'dart:convert';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:beat/app/route/app_pages.dart';
 import 'package:beat/shared/widgets/beat_shadow_container.dart';
-import 'package:beat/widgets/sign_up/pw_section.dart';
-import 'package:beat/widgets/sign_up/sid_section.dart';
-import 'package:beat/widgets/sign_up/sign_section.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -48,7 +45,7 @@ class _FillInformState extends State<FillInform> {
   bool _isNicknameValidated = false;
   bool _isStudentIdValidated = false;
   bool _isPasswordValidated = false;
-  String? _signatureBase64 = null;
+  String? _signatureBase64;
   bool _isAgreementChecked = false;
 
   void setIsNameValidated(bool value) {
@@ -262,7 +259,7 @@ class _FillInformState extends State<FillInform> {
               SliverToBoxAdapter(
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16.w),
-                  child: BeatShadowContainer(
+                  child: BEATShadowContainer(
                     contentPadding: EdgeInsetsGeometry.all(16.w),
                     shadowBlurRadius: 30.w,
                     shadowSpreadRadius: -25.w,

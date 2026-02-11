@@ -38,4 +38,6 @@ class DotEnvService {
   String get fetchPointBalance => dotenv.env['POINT'] ?? "";
 
   String get fetchQuestList => dotenv.env['QUEST_LIST'] ?? "";
+
+  String get profile => dotenv.env['PROFILE'] ?? "";
 }

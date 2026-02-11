@@ -24,6 +24,11 @@ class BEATTimeoutException extends BEATException {
       message: LocalizationService.instance.errorConnectivity);
 }
 
+class BEATExceptionUnknown extends BEATException {
+  BEATExceptionUnknown()
+      : super(title: LocalizationService.instance.errorUnknown);
+}
+
 class BEATExceptionPlatformNotSupported extends BEATException {
   BEATExceptionPlatformNotSupported()
       : super(title: LocalizationService.instance.errorPlatformNotSupported);

@@ -5,7 +5,6 @@ import 'package:app_version_update/app_version_update.dart';
 import 'package:beat/features/step_count/index.dart';
 import 'package:beat/shared/services/index.dart';
 import 'package:flutter/material.dart';
-import 'package:pedometer/pedometer.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// 앱의 초기 설정을 수행하는 페이지입니다.

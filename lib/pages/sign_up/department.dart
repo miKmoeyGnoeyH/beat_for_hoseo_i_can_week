@@ -7,7 +7,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 class Department extends StatefulWidget {
-  Department({super.key});
+  const Department({super.key});
 
   @override
   State<Department> createState() => _DepartmentState();

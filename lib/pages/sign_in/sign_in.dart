@@ -4,7 +4,6 @@ import 'package:beat/app/route/app_pages.dart';
 import 'package:beat/features/authentication/authentication_controller.dart';
 import 'package:beat/features/step_count/step_count_controller.dart';
 import 'package:beat/shared/index.dart';
-import 'package:beat/shared/widgets/beat_cpi.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -168,7 +167,7 @@ class _SignInState extends State<SignIn> {
         loadingWidget: BEATCircularProgressIndicator(),
         opacity: 0.3,
       );
-      Get.offAndToNamed(BEATRoute.home);
+      Get.offAndToNamed(BEATRoute.mainPageView);
     } on BEATException catch (e) {
       if (Get.isDialogOpen == true) {
         Get.back();

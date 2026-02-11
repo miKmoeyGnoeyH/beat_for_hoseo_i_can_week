@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 import 'dart:math';
 
 import 'package:beat/entities/quest/index.dart';
@@ -78,7 +77,6 @@ class _HomeState extends State<Home> {
 
     final String authorization = authenticationController.state!.authorization;
 
-    // TODO: API 변경으로 인해 API 호출 파라미터 변경 필요
     await pointController.fetchPointBalance(authorization);
     await questListController.fetchQuestList(authorization);
 
@@ -109,142 +107,134 @@ class _HomeState extends State<Home> {
   // TODO: 홈 화면 에러 발생 시 어떻게?
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.designWhite,
-      body: SafeArea(
-        child: NestedScrollView(
-          headerSliverBuilder: (context, innerBoxIsScrolled) {
-            return [HomeAppbar()];
-          },
-          body: RefreshIndicator(
-            color: AppColors.primary,
-            onRefresh: () {
-              return initHome();
-            },
-            child: CustomScrollView(
-              slivers: [
-                // SliverToBoxAdapter(child: SizedBox(height: 16.w)),
-                SliverToBoxAdapter(
-                  child: Skeletonizer(
-                    enabled: loading,
-                    // enabled: true,
-                    containersColor: AppColors.common300,
-                    child: SizedBox(
-                      height: 150.w,
-                      child: Stack(
-                        children: [
-                          NotificationListener<ScrollNotification>(
-                            onNotification: (notification) {
-                              if (notification is ScrollStartNotification ||
-                                  notification is UserScrollNotification ||
-                                  notification is ScrollUpdateNotification) {
-                                showIndicatorThenAutoHide();
-                              }
-                              return false;
-                            },
-                            child: PageView(
-                              controller: cardController,
-                              children: cards,
-                            ),
-                          ),
-                          Positioned(
-                            left: 175.w,
-                            bottom: 22.w,
-                            child: IgnorePointer(
-                              ignoring: !indicatorVisible,
-                              child: AnimatedOpacity(
-                                opacity: indicatorVisible ? 1.0 : 0.0,
-                                duration: const Duration(milliseconds: 300),
-                                curve: Curves.easeOut,
-                                child: SmoothPageIndicator(
-                                  controller: cardController,
-                                  count: cards.length,
-                                  effect: ColorTransitionEffect(
-                                    dotWidth: 7.w,
-                                    dotHeight: 7.w,
-                                    spacing: 5.w,
-                                    dotColor: AppColors.disabledColorLight,
-                                    activeDotColor: AppColors.designWhite,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
+    return RefreshIndicator(
+      color: AppColors.primary,
+      onRefresh: () {
+        return initHome();
+      },
+      child: CustomScrollView(
+        slivers: [
+          // SliverToBoxAdapter(child: SizedBox(height: 16.w)),
+          SliverToBoxAdapter(
+            child: Skeletonizer(
+              enabled: loading,
+              // enabled: true,
+              containersColor: AppColors.common200,
+              effect: SolidColorEffect(
+                  color: AppColors.common200
+              ),
+              child: SizedBox(
+                height: 150.w,
+                child: Stack(
+                  children: [
+                    NotificationListener<ScrollNotification>(
+                      onNotification: (notification) {
+                        if (notification is ScrollStartNotification ||
+                            notification is UserScrollNotification ||
+                            notification is ScrollUpdateNotification) {
+                          showIndicatorThenAutoHide();
+                        }
+                        return false;
+                      },
+                      child: PageView(
+                        controller: cardController,
+                        children: cards,
                       ),
                     ),
-                  ),
-                ),
-                // TODO: pageview를 사용하도록 변경
-                SliverToBoxAdapter(
-                  child: Skeletonizer(
-                    enabled: loading,
-                    containersColor: AppColors.common300,
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16.w),
-                      child: Container(
-                        clipBehavior: Clip.hardEdge,
-                        decoration: BoxDecoration(
-                          color: AppColors.designWhite,
-                          borderRadius: BorderRadius.circular(15),
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.common400,
-                              blurRadius: 30.w,
-                              spreadRadius: -20.w,
-                              offset: Offset(0, -3.w),
+                    Positioned(
+                      left: 175.w,
+                      bottom: 22.w,
+                      child: IgnorePointer(
+                        ignoring: !indicatorVisible,
+                        child: AnimatedOpacity(
+                          opacity: indicatorVisible ? 1.0 : 0.0,
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeOut,
+                          child: SmoothPageIndicator(
+                            controller: cardController,
+                            count: cards.length,
+                            effect: ColorTransitionEffect(
+                              dotWidth: 7.w,
+                              dotHeight: 7.w,
+                              spacing: 5.w,
+                              dotColor: AppColors.disabledColorLight,
+                              activeDotColor: AppColors.designWhite,
                             ),
-                          ],
-                        ),
-                        // TODO: 조건문 더 줄일 수 있을 것 같은뎨?
-                        child: BingoBoard(
-                          questSummaryAppView: loading
-                              ? List.generate(
-                                  25,
-                                  (index) => QuestSummaryModel.empty(),
-                                )
-                              : questListController
-                                    .state
-                                    .first
-                                    .questSummaryAppView,
-                          countPerAxis: loading
-                              ? 5
-                              : sqrt(
-                                  questListController
-                                      .state
-                                      .first
-                                      .questSummaryAppView
-                                      .length,
-                                ).toInt(),
-                          rowSpacing: 5.w,
-                          columnSpacing: 5.w,
+                          ),
                         ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
-                SliverToBoxAdapter(child: SizedBox(height: 16.w)),
-                SliverToBoxAdapter(
-                  child: Skeletonizer(
-                    enabled: loading,
-                    containersColor: AppColors.common300,
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16.w),
-                      child: ArchivementRate(
-                        totalPoints: loading ? 0 : questListController.state.first.questCommonSummaryDto.totalPoint,
-                        totalCount: loading? 25 : questListController.state.first.questSummaryAppView.length,
-                        completedCount: loading ? 0 : questListController.state.first.completedCount,
-                      ),
-                    ),
-                  ),
-                ),
-                SliverToBoxAdapter(child: SizedBox(height: 16.w)),
-              ],
+              ),
             ),
           ),
-        ),
+          // TODO: pageview를 사용하도록 변경
+          SliverToBoxAdapter(
+            child: Skeletonizer(
+              enabled: loading,
+              containersColor: AppColors.common300,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.w),
+                child: Container(
+                  clipBehavior: Clip.hardEdge,
+                  decoration: BoxDecoration(
+                    color: AppColors.designWhite,
+                    borderRadius: BorderRadius.circular(15),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.common400,
+                        blurRadius: 30.w,
+                        spreadRadius: -20.w,
+                        offset: Offset(0, -3.w),
+                      ),
+                    ],
+                  ),
+                  // TODO: 조건문 더 줄일 수 있을 것 같은뎨?
+                  child: BingoBoard(
+                    questSummaryAppView: loading
+                        ? List.generate(
+                      25,
+                          (index) => QuestSummaryModel.empty(),
+                    )
+                        : questListController
+                        .state
+                        .first
+                        .questSummaryAppView,
+                    countPerAxis: loading
+                        ? 5
+                        : sqrt(
+                      questListController
+                          .state
+                          .first
+                          .questSummaryAppView
+                          .length,
+                    ).toInt(),
+                    rowSpacing: 5.w,
+                    columnSpacing: 5.w,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          SliverToBoxAdapter(child: SizedBox(height: 16.w)),
+          SliverToBoxAdapter(
+            child: Skeletonizer(
+              enabled: loading,
+              containersColor: AppColors.common300,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.w),
+                child: ArchivementRate(
+                  totalPoints: loading ? 0 : questListController.state.first.questCommonSummaryDto.totalPoint,
+                  totalCount: loading? 25 : questListController.state.first.questSummaryAppView.length,
+                  completedCount: loading ? 0 : questListController.state.first.completedCount,
+                ),
+              ),
+            ),
+          ),
+          SliverToBoxAdapter(child: SizedBox(height: 16.w)),
+        ],
       ),
-      bottomNavigationBar: BEATBNB(),
     );
   }
 }

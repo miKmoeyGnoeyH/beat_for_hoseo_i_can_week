@@ -9,15 +9,15 @@ import 'package:flutter_svg/svg.dart';
 
 import 'index.dart';
 
-class HomeAppbar extends StatelessWidget {
-  const HomeAppbar({super.key});
+class MainPageViewAppbar extends StatelessWidget {
+  const MainPageViewAppbar({super.key});
 
   @override
   Widget build(BuildContext context) {
     return SliverAppBar(
       pinned: true,
       elevation: 0,
-      backgroundColor: AppColors.designWhite,
+      backgroundColor: AppColors.commonWhite,
       toolbarHeight: 56.w,
       leadingWidth: 200.w,
       actionsPadding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -41,7 +41,7 @@ class HomeAppbar extends StatelessWidget {
         ],
       ),
       actions: [
-        HomeAppbarIconButton(
+        MainPageViewAppbarIconButton(
           onTap: onLeaderboardTap,
           icon: SvgPicture.asset(
             BEATAssets.svg.leaderboard,
@@ -49,7 +49,7 @@ class HomeAppbar extends StatelessWidget {
             height: 28.w,
           ),
         ),
-        HomeAppbarIconButton(
+        MainPageViewAppbarIconButton(
           onTap: onNotificationTap,
           icon: SvgPicture.asset(
             BEATAssets.svg.notification,
@@ -57,7 +57,7 @@ class HomeAppbar extends StatelessWidget {
             height: 28.w,
           ),
         ),
-        HomeAppbarIconButton(
+        MainPageViewAppbarIconButton(
           onTap: onSettingsTap,
           icon: SvgPicture.asset(
             BEATAssets.svg.settings,

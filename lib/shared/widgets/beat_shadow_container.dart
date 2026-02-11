@@ -1,9 +1,8 @@
 import 'package:beat/shared/theme/app_colors.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class BeatShadowContainer extends StatelessWidget {
-  const BeatShadowContainer({
+class BEATShadowContainer extends StatelessWidget {
+  const BEATShadowContainer({
     super.key,
     this.borderRadius = 15,
     this.shadowBlurRadius = 0,

@@ -5,6 +5,7 @@ export 'beat_cpi.dart';
 export 'beat_cupertino_picker.dart';
 export 'beat_interest_card.dart';
 export 'beat_list_item.dart';
+export 'beat_shadow_container.dart';
 export 'beat_sliver_appbar.dart';
 export 'beat_sliver_back_appbar.dart';
 export 'beat_text_button.dart';

@@ -1,4 +1,3 @@
-import 'package:beat/main.dart';
 import 'package:beat/shared/index.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';

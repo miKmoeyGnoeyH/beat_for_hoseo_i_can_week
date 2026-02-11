@@ -214,6 +214,19 @@ class LocalizationService {
 
   String get homeProfile => "home_page".tr(gender: "profile");
 
+
+  /// Profile
+  String get profileName => "profile_page".tr(gender: "name");
+  String get profileStudentId => "profile_page".tr(gender: "studentId");
+  String get profileEmail => "profile_page".tr(gender: "email");
+  String get profileDepartment => "profile_page".tr(gender: "department");
+  String get profileNickname => "profile_page".tr(gender: "nickname");
+  String get profileCampus => "profile_page".tr(gender: "campus");
+  String get profileStudentType => "profile_page".tr(gender: "studentType");
+  String get profileTeamName => "profile_page".tr(gender: "teamName");
+  String get profileTeamManagement => "profile_page".tr(gender: "team_management");
+
+
   /// errors
   String get errorSignInFailed => "errors".tr(gender: "error_sign_in_failed");
 

@@ -98,6 +98,17 @@
     "home": "홈",
     "profile": "프로필"
   },
+  "profile_page": {
+    "name": "이름",
+    "studentId": "학번",
+    "email": "이메일",
+    "department": "학과(학부)",
+    "nickname": "닉네임",
+    "campus": "캠퍼스",
+    "studentType": "역할",
+    "teamName": "팀 이름",
+    "team_management": "팀 관리"
+  },
   "errors": {
     "error_sign_in_failed": "로그인 실패",
     "error_timeout": "요청 시간이 초과되었습니다.",

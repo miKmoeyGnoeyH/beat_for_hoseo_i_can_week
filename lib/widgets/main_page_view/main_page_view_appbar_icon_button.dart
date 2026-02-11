@@ -2,8 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class HomeAppbarIconButton extends StatelessWidget {
-  const HomeAppbarIconButton({super.key, required this.onTap, required this.icon});
+class MainPageViewAppbarIconButton extends StatelessWidget {
+  const MainPageViewAppbarIconButton({super.key, required this.onTap, required this.icon});
 
   @override
   Widget build(BuildContext context) {

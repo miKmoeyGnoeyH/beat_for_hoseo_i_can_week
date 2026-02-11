@@ -15,8 +15,6 @@ class QuestListRepository {
         header: {"authorization": authorization},
       );
 
-      log(response.body);
-
       switch (response.statusCode) {
         case 200:
           final List<QuestModel> questList = [];
