@@ -8,4 +8,5 @@ abstract class BEATRoute {
   static const String department = "/department";
   static const String fillInform = "/fill_inform";
   static const String mainPageView = "/main_page_view";
+  static const String questDetail = "/quest_detail";
 }

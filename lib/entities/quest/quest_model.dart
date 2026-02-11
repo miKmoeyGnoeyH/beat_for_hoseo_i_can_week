@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:math';
 
+part 'quest_detail_model.dart';
+
 enum QuestType {
   bingo("BINGO"),
   qr("QR"),
@@ -150,7 +152,7 @@ class QuestSummaryModel {
       rowIndex = 0,
       columnIndex = 0,
       completed = false,
-      questInfoView = null;
+      questInfoView = QuestInfoView.empty();
 
   final int? bingoQuestItemId;
   final int? rowIndex;

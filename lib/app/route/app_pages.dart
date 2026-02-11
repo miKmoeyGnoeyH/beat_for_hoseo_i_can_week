@@ -12,5 +12,6 @@ abstract class BEATPages {
     GetPage(name: BEATRoute.department, page: () => Department()),
     GetPage(name: BEATRoute.fillInform, page: () => FillInform()),
     GetPage(name: BEATRoute.mainPageView, page: () => MainPageView(), binding: MainPageViewBinding()),
+    GetPage(name: BEATRoute.questDetail, page: () => QuestDetail()),
   ];
 }

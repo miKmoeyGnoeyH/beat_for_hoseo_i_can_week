@@ -8,5 +8,6 @@ export 'beat_list_item.dart';
 export 'beat_shadow_container.dart';
 export 'beat_sliver_appbar.dart';
 export 'beat_sliver_back_appbar.dart';
+export 'beat_status_good.dart';
 export 'beat_text_button.dart';
 export 'beat_text_form_field.dart';

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 class BEATShadowContainer extends StatelessWidget {
   const BEATShadowContainer({
     super.key,
+    this.width,
     this.borderRadius = 15,
     this.shadowBlurRadius = 0,
     this.shadowSpreadRadius = 0,
@@ -15,6 +16,7 @@ class BEATShadowContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      width: width,
       decoration: BoxDecoration(
         color: AppColors.commonWhite,
         borderRadius: BorderRadius.circular(borderRadius),
@@ -31,6 +33,7 @@ class BEATShadowContainer extends StatelessWidget {
     );
   }
 
+  final double? width;
   final double borderRadius;
   final double shadowBlurRadius;
   final double shadowSpreadRadius;

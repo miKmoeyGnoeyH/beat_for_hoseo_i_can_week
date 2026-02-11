@@ -23,6 +23,10 @@ class BEATSliverBackAppBar extends StatelessWidget {
         ),
       ),
       title: Text(title, style: AppTextTheme.subtitle2),
+      bottom: PreferredSize(
+        preferredSize: Size.fromHeight(0.5.w),
+        child: Container(height: 0.5.w, color: AppColors.common300),
+      ),
     );
   }
 

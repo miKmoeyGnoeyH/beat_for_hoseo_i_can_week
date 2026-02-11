@@ -39,5 +39,7 @@ class DotEnvService {
 
   String get fetchQuestList => dotenv.env['QUEST_LIST'] ?? "";
 
+  String get fetchQuestDetail => dotenv.env['QUEST_DETAIL'] ?? "";
+
   String get profile => dotenv.env['PROFILE'] ?? "";
 }

@@ -98,6 +98,14 @@
     "home": "홈",
     "profile": "프로필"
   },
+  "quest_detail_page": {
+    "quest_name": "퀘스트 이름",
+    "quest_description": "퀘스트 설명",
+    "total_reward": "총 보상",
+    "quest_type": "퀘스트 타입",
+    "start_date": "시작 날짜",
+    "end_date": "종료 날짜"
+  },
   "profile_page": {
     "name": "이름",
     "studentId": "학번",

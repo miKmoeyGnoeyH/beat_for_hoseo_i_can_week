@@ -215,6 +215,26 @@ class LocalizationService {
   String get homeProfile => "home_page".tr(gender: "profile");
 
 
+  /// Quest Detail
+  String get questDetailQuestName =>
+      "quest_detail_page".tr(gender: "quest_name");
+
+  String get questDetailQuestDescription =>
+      "quest_detail_page".tr(gender: "quest_description");
+
+  String get questDetailTotalReward =>
+      "quest_detail_page".tr(gender: "total_reward");
+
+  String get questDetailQuestType =>
+      "quest_detail_page".tr(gender: "quest_type");
+
+  String get questDetailStartDate =>
+      "quest_detail_page".tr(gender: "start_date");
+
+  String get questDetailEndDate =>
+      "quest_detail_page".tr(gender: "end_date");
+
+
   /// Profile
   String get profileName => "profile_page".tr(gender: "name");
   String get profileStudentId => "profile_page".tr(gender: "studentId");

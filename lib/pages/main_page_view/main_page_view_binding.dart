@@ -10,6 +10,7 @@ class MainPageViewBinding extends Bindings {
     Get.put(PageViewController());
     Get.put(PointController());
     Get.put(QuestListController());
+    Get.lazyPut(() => QuestDetailController());
     Get.put(ProfileController());
   }
 }
