@@ -1,6 +1,7 @@
 export 'beat_alert_dialog.dart';
 export 'beat_assets.dart';
 export 'beat_bnb.dart';
+export 'beat_confirm_dialog.dart';
 export 'beat_cpi.dart';
 export 'beat_cupertino_picker.dart';
 export 'beat_interest_card.dart';

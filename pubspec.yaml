@@ -54,6 +54,8 @@ dependencies:
   permission_handler: ^11.3.1
   auto_size_text: ^3.0.0
   hand_signature: ^3.1.0+2
+  mobile_scanner: ^7.1.4
+  geolocator: ^14.0.2
 
 dev_dependencies:
   flutter_test:

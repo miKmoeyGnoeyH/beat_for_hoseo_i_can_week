@@ -15,6 +15,8 @@ class LocalizationService {
   /// general
   String get generalConfirm => "general".tr(gender: "confirm");
 
+  String get generalCancel => "general".tr(gender: "cancel");
+
   String get generalUpdateAvailable => "general".tr(gender: "update_available");
 
   String get generalUpdateAvailableContent =>
@@ -179,6 +181,30 @@ class LocalizationService {
 
   String get signUpCompleteContent =>
       "sign_up_page".tr(gender: "sign_up_complete_content");
+
+
+  /// QR
+  String get qrPreparingCamera =>
+      "qr_page".tr(gender: "preparing_camera");
+
+  String get qrScanSuccessTitle =>
+      "qr_page".tr(gender: "scan_success_title");
+
+  String get qrScanSuccessQuestCompleteContent =>
+      "qr_page".tr(gender: "scan_success_quest_complete_content");
+
+  String qrScanSuccessPointEarnContent(String value) =>
+      "qr_page".tr(
+        gender: "scan_success_point_earn_content",
+        args: [value],
+      );
+
+  String qrScanSuccessPointSpentContent(String value) =>
+      "qr_page".tr(
+        gender: "scan_success_point_spent_content",
+        args: [value],
+      );
+
 
   /// home
   String get homePointsBalance => "home_page".tr(gender: "points_balance");
@@ -396,4 +422,13 @@ class LocalizationService {
 
   String get errorSignUpFailedContent =>
       "errors".tr(gender: "error_sign_up_failed_content");
+
+  String get errorQRScanFailed =>
+      "errors".tr(gender: "error_scan_failed");
+
+  String get errorQRScanFailedDefaultContent =>
+      "errors".tr(gender: "error_scan_failed_default_content");
+
+  String get errorInvalidQR =>
+      "errors".tr(gender: "error_invalid_qr_code");
 }

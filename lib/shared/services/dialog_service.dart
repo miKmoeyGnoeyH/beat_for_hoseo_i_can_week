@@ -3,6 +3,8 @@ import 'package:beat/shared/widgets/beat_alert_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../index.dart';
+
 
 sealed class DialogEvent {
   DialogEvent({required this.title, this.message, this.onConfirm});
@@ -56,7 +58,14 @@ class DialogService extends GetxController {
         Get.focusScope?.unfocus();
 
         if (dialogEvent.runtimeType == ConfirmDialogEvent) {
-          Get.dialog(SizedBox.shrink());
+          Get.dialog(
+            barrierDismissible: false,
+            BEATConfirmDialog(
+              title: dialogEvent.title,
+              message: dialogEvent.message,
+              onTap: dialogEvent.onConfirm,
+            ),
+          );
         } else {
           Get.dialog(
             barrierDismissible: false,

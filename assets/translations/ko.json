@@ -1,6 +1,7 @@
 {
   "general": {
     "confirm": "확인",
+    "cancel": "취소",
     "update_available": "업데이트 가능",
     "update_available_content": "새로운 버전이 출시되었습니다. 스토어에서 앱을 업데이트해 주세요."
   },
@@ -81,6 +82,13 @@
     "아트앤컬처대학": "기독교학과, 사회체육학과, 골프산업학과, 디자인스쿨, 애니메이션학과, 문화영상학부, 공연예술학부",
     "글로벌융합대학": "한국언어문화학과, 영어영문학과, 중국학과, 법경찰행정학과, 사회복지학부, 청소년문화·상담학과, 유아교육과, 항공서비스학과, 미디어커뮤니케이션학과, 산업심리학과, 글로벌통상학과, 경영학부, 디지털금융경영학과, 산업안전공학과, 사회복지상담학과, 스마트경영학과, 기계반도체공학과, 국제학부, 국제산학융합학부",
     "교양대학": "자유전공학부, 혁신융합학부, 창의융합학부"
+  },
+  "qr_page": {
+    "preparing_camera": "카메라를 준비중입니다.",
+    "scan_success_title": "QR 코드 스캔 성공",
+    "scan_success_quest_complete_content": "퀘스트가 완료되었습니다.",
+    "scan_success_point_earn_content": "{}포인트를 획득하셨습니다.",
+    "scan_success_point_spent_content": "{}포인트가 차감되었습니다."
   },
   "home_page": {
     "points_balance": "보유 포인트",
@@ -173,6 +181,10 @@
 
     "error_sign_up_failed_title": "회원가입 실패",
     "error_sign_up_empty_field": "하나 이상의 항목이 비어있습니다. 모든 항목을 입력해 주세요.",
-    "error_sign_up_failed_content": "회원가입 중 문제가 발생했습니다. 잠시 후 다시 시도해 주세요."
+    "error_sign_up_failed_content": "회원가입 중 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.",
+
+    "error_scan_failed": "QR 코드 스캔 실패",
+    "error_scan_failed_default_content": "QR 코드 스캔 중 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.",
+    "error_invalid_qr_code": "유효하지 않은 QR 코드입니다."
   }
 }
