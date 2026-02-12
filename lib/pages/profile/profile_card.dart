@@ -18,6 +18,8 @@ class ProfileCard extends StatelessWidget {
 
     return BEATShadowContainer(
       contentPadding: EdgeInsetsGeometry.all(16.w),
+      shadowBlurRadius: 30.w,
+      shadowSpreadRadius: -20.w,
       child: profileController.obx(
         (state) {
           return Column(

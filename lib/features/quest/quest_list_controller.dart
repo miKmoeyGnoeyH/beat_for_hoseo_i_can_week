@@ -15,7 +15,8 @@ class QuestListController extends GetxController with StateMixin {
     change(null, status: RxStatus.loading());
 
     try {
-      final List<QuestModel> questList = await questListRepository.fetchQuestList(authorization);
+      final List<QuestModel> questList = await questListRepository
+          .fetchQuestList(authorization);
       change(questList, status: RxStatus.success());
     } catch (e) {
       log("quest_list_controller.dart: fetchQuestList() : ${e.toString()}");
@@ -24,5 +25,12 @@ class QuestListController extends GetxController with StateMixin {
     }
   }
 
+  Future<void> fetchQuestListOnce(String authorization) async {
+    if (_didInitialFetch) return;
+    _didInitialFetch = true;
+    await fetchQuestList(authorization);
+  }
+
   final QuestListRepository questListRepository = QuestListRepository();
+  bool _didInitialFetch = false;
 }

@@ -13,10 +13,13 @@ import 'package:skeletonizer/skeletonizer.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class Home extends StatefulWidget {
-  const Home({super.key});
+  Home({super.key, ScrollController? scrollController})
+    : _scrollController = scrollController;
 
   @override
   State<Home> createState() => _HomeState();
+
+  final ScrollController? _scrollController;
 }
 
 class _HomeState extends State<Home> {
@@ -77,14 +80,20 @@ class _HomeState extends State<Home> {
 
     final String authorization = authenticationController.state!.authorization;
 
-    await pointController.fetchPointBalance(authorization);
-    await questListController.fetchQuestList(authorization);
+    await pointController.fetchPointBalanceOnce(authorization);
+    await questListController.fetchQuestListOnce(authorization);
 
     setState(() {
       loading = false;
     });
 
     showIndicatorThenAutoHide();
+  }
+
+  Future<void> onRefresh() async {
+    final String authorization = authenticationController.state!.authorization;
+    await pointController.fetchPointBalance(authorization);
+    await questListController.fetchQuestList(authorization);
   }
 
   void showIndicatorThenAutoHide() {
@@ -110,9 +119,10 @@ class _HomeState extends State<Home> {
     return RefreshIndicator(
       color: AppColors.primary,
       onRefresh: () {
-        return initHome();
+        return onRefresh();
       },
       child: CustomScrollView(
+        controller: widget._scrollController,
         slivers: [
           // SliverToBoxAdapter(child: SizedBox(height: 16.w)),
           SliverToBoxAdapter(
@@ -120,9 +130,7 @@ class _HomeState extends State<Home> {
               enabled: loading,
               // enabled: true,
               containersColor: AppColors.common200,
-              effect: SolidColorEffect(
-                  color: AppColors.common200
-              ),
+              effect: SolidColorEffect(color: AppColors.common200),
               child: SizedBox(
                 height: 150.w,
                 child: Stack(
@@ -194,22 +202,19 @@ class _HomeState extends State<Home> {
                   child: BingoBoard(
                     questSummaryAppView: loading
                         ? List.generate(
-                      25,
-                          (index) => QuestSummaryModel.empty(),
-                    )
-                        : questListController
-                        .state
-                        .first
-                        .questSummaryAppView,
+                            25,
+                            (index) => QuestSummaryModel.empty(),
+                          )
+                        : questListController.state.first.questSummaryAppView,
                     countPerAxis: loading
                         ? 5
                         : sqrt(
-                      questListController
-                          .state
-                          .first
-                          .questSummaryAppView
-                          .length,
-                    ).toInt(),
+                            questListController
+                                .state
+                                .first
+                                .questSummaryAppView
+                                .length,
+                          ).toInt(),
                     rowSpacing: 5.w,
                     columnSpacing: 5.w,
                   ),
@@ -225,9 +230,23 @@ class _HomeState extends State<Home> {
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16.w),
                 child: ArchivementRate(
-                  totalPoints: loading ? 0 : questListController.state.first.questCommonSummaryDto.totalPoint,
-                  totalCount: loading? 25 : questListController.state.first.questSummaryAppView.length,
-                  completedCount: loading ? 0 : questListController.state.first.completedCount,
+                  totalPoints: loading
+                      ? 0
+                      : questListController
+                            .state
+                            .first
+                            .questCommonSummaryDto
+                            .totalPoint,
+                  totalCount: loading
+                      ? 25
+                      : questListController
+                            .state
+                            .first
+                            .questSummaryAppView
+                            .length,
+                  completedCount: loading
+                      ? 0
+                      : questListController.state.first.completedCount,
                 ),
               ),
             ),

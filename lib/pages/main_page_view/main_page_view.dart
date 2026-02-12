@@ -1,4 +1,3 @@
-
 import 'package:beat/pages/index.dart';
 import 'package:beat/shared/index.dart';
 import 'package:beat/widgets/index.dart';
@@ -27,12 +26,20 @@ class _MainPageViewState extends State<MainPageView> {
       backgroundColor: AppColors.designWhite,
       body: SafeArea(
         child: NestedScrollView(
+          physics: NeverScrollableScrollPhysics(),
           headerSliverBuilder: (context, innerBoxIsScrolled) {
             return [MainPageViewAppbar()];
           },
           body: PageView(
             controller: pageViewController.pageController,
-            children: [QR(), Home(), Profile()],
+            onPageChanged: pageViewController.onPageChanged,
+            children: [
+              QR(scrollController: pageViewController.scrollControllers[0]),
+              Home(scrollController: pageViewController.scrollControllers[1]),
+              Profile(
+                scrollController: pageViewController.scrollControllers[2],
+              ),
+            ],
           ),
         ),
       ),

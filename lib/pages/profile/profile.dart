@@ -10,10 +10,13 @@ import 'package:skeletonizer/skeletonizer.dart';
 import '../../shared/index.dart';
 
 class Profile extends StatefulWidget {
-  const Profile({super.key});
+  Profile({super.key, ScrollController? scrollController})
+    : _scrollController = scrollController;
 
   @override
   State<Profile> createState() => _ProfileState();
+
+  final ScrollController? _scrollController;
 }
 
 class _ProfileState extends State<Profile> {
@@ -39,12 +42,16 @@ class _ProfileState extends State<Profile> {
     });
 
     final String authorization = authenticationController.state!.authorization;
-
-    await profileController.fetchData(authorization);
+    await profileController.fetchDataOnce(authorization);
 
     setState(() {
       loading = false;
     });
+  }
+
+  Future<void> onRefresh() async {
+    final String authorization = authenticationController.state!.authorization;
+    await profileController.fetchData(authorization);
   }
 
   @override
@@ -52,9 +59,11 @@ class _ProfileState extends State<Profile> {
     return RefreshIndicator(
       color: AppColors.primary,
       onRefresh: () {
-        return initProfile();
+        return onRefresh();
       },
       child: CustomScrollView(
+        controller: widget._scrollController,
+        physics: AlwaysScrollableScrollPhysics(),
         slivers: [
           // SliverToBoxAdapter(child: SizedBox(height: 16.w)),
           SliverToBoxAdapter(
