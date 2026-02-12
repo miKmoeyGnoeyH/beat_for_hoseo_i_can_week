@@ -77,7 +77,7 @@ class ArchivementRate extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: 5.w),
+            SizedBox(height: 10.w),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [

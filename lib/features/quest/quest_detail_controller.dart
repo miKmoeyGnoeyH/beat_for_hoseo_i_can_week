@@ -14,7 +14,7 @@ class QuestDetailController extends GetxController with StateMixin {
   QuestInfoView? questInfoView;
 
   Future<void> fetchQuestDetail(String authorization) async {
-    change(null, status: RxStatus.loading());
+    change(state, status: RxStatus.loading());
 
     try {
       final QuestDetailModel questDetailModel = await questDetailRepository

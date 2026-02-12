@@ -88,6 +88,12 @@
     "todays_walk_count": "오늘의 걸음 수",
     "monthly_walk_count": "이번 달에 총 {} 걸음",
     "quest_no": "Quest {}",
+
+    "bingo_complete_nth_step": "빙고 완성 {}단계",
+    "line_number": "{}줄",
+    "reward": "보상",
+    "claim_reward": "보상 받기",
+
     "archivement_rate": "목표 달성률",
     "number": "{}개",
     "total_points": "총 포인트",

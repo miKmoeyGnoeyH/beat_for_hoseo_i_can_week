@@ -41,22 +41,23 @@ class MainPageViewAppbar extends StatelessWidget {
         ],
       ),
       actions: [
-        MainPageViewAppbarIconButton(
-          onTap: onLeaderboardTap,
-          icon: SvgPicture.asset(
-            BEATAssets.svg.leaderboard,
-            width: 28.w,
-            height: 28.w,
-          ),
-        ),
-        MainPageViewAppbarIconButton(
-          onTap: onNotificationTap,
-          icon: SvgPicture.asset(
-            BEATAssets.svg.notification,
-            width: 28.w,
-            height: 28.w,
-          ),
-        ),
+        // TODO: 개발 완료 후 주석 해제
+        // MainPageViewAppbarIconButton(
+        //   onTap: onLeaderboardTap,
+        //   icon: SvgPicture.asset(
+        //     BEATAssets.svg.leaderboard,
+        //     width: 28.w,
+        //     height: 28.w,
+        //   ),
+        // ),
+        // MainPageViewAppbarIconButton(
+        //   onTap: onNotificationTap,
+        //   icon: SvgPicture.asset(
+        //     BEATAssets.svg.notification,
+        //     width: 28.w,
+        //     height: 28.w,
+        //   ),
+        // ),
         MainPageViewAppbarIconButton(
           onTap: onSettingsTap,
           icon: SvgPicture.asset(

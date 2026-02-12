@@ -65,7 +65,7 @@ class PointCard extends StatelessWidget {
                         style: AppTextTheme.headline1.designWhite,
                       ),
                       onLoading: Text(
-                        NumberFormat("###,###,###,###").format(000),
+                        NumberFormat("###,###,###,###").format(pointController.state ?? 000),
                         style: AppTextTheme.headline1.designWhite,
                       ),
                       // TODO: onError 추가

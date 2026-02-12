@@ -12,7 +12,7 @@ class QuestListController extends GetxController with StateMixin {
   }
 
   Future<void> fetchQuestList(String authorization) async {
-    change(null, status: RxStatus.loading());
+    change(state, status: RxStatus.loading());
 
     try {
       final List<QuestModel> questList = await questListRepository

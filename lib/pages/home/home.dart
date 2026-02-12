@@ -9,6 +9,7 @@ import 'package:beat/shared/index.dart';
 import 'package:beat/widgets/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
@@ -198,25 +199,43 @@ class _HomeState extends State<Home> {
                       ),
                     ],
                   ),
-                  // TODO: 조건문 더 줄일 수 있을 것 같은뎨?
-                  child: BingoBoard(
-                    questSummaryAppView: loading
-                        ? List.generate(
-                            25,
-                            (index) => QuestSummaryModel.empty(),
+                  child: questListController.obx(
+                    (state) {
+                      return BingoBoard(
+                        questSummaryAppView:
+                            questListController.state.first.localData.board,
+                        countPerAxis:
+                            questListController.state.first.localData.countPerAxis,
+                        rowSpacing: 5.w,
+                        columnSpacing: 5.w,
+                      );
+                    },
+                    onEmpty: BingoBoard(
+                      questSummaryAppView: List.generate(
+                        25,
+                        (index) => ItemSummaryModel.empty(),
+                      ),
+                      countPerAxis: 5,
+                      rowSpacing: 5.w,
+                      columnSpacing: 5.w,
+                    ),
+                    onLoading: questListController.state == null
+                        ? BingoBoard(
+                            questSummaryAppView: List.generate(
+                              25,
+                              (index) => ItemSummaryModel.empty(),
+                            ),
+                            countPerAxis: 5,
+                            rowSpacing: 5.w,
+                            columnSpacing: 5.w,
                           )
-                        : questListController.state.first.questSummaryAppView,
-                    countPerAxis: loading
-                        ? 5
-                        : sqrt(
-                            questListController
-                                .state
-                                .first
-                                .questSummaryAppView
-                                .length,
-                          ).toInt(),
-                    rowSpacing: 5.w,
-                    columnSpacing: 5.w,
+                        : BingoBoard(
+                            questSummaryAppView:
+                                questListController.state.first.localData.board,
+                            countPerAxis: 5,
+                            rowSpacing: 5.w,
+                            columnSpacing: 5.w,
+                          ),
                   ),
                 ),
               ),
@@ -229,24 +248,87 @@ class _HomeState extends State<Home> {
               containersColor: AppColors.common300,
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16.w),
-                child: ArchivementRate(
-                  totalPoints: loading
-                      ? 0
-                      : questListController
-                            .state
-                            .first
-                            .questCommonSummaryDto
-                            .totalPoint,
-                  totalCount: loading
-                      ? 25
-                      : questListController
-                            .state
-                            .first
-                            .questSummaryAppView
-                            .length,
-                  completedCount: loading
-                      ? 0
-                      : questListController.state.first.completedCount,
+                child: questListController.obx(
+                  (state) {
+                    return BingoStep(
+                      lineSummaryModel: state
+                          .first
+                          .questSummaryAppView
+                          .lineSummaryList
+                          .firstWhere((e) => e.completed == false),
+                      completedCount: state.first.localData.completedLineCount,
+                    );
+                  },
+                  onEmpty: BingoStep(
+                    lineSummaryModel: LineSummaryModel.empty(),
+                    completedCount: 0,
+                  ),
+                  onLoading: questListController.state == null
+                      ? BingoStep(
+                          lineSummaryModel: LineSummaryModel.empty(),
+                          completedCount: 0,
+                        )
+                      : BingoStep(
+                          lineSummaryModel: questListController
+                              .state
+                              .first
+                              .questSummaryAppView
+                              .lineSummaryList
+                              .firstWhere((e) => e.completed == false),
+                          completedCount: questListController
+                              .state
+                              .first
+                              .localData
+                              .completedLineCount,
+                        ),
+                ),
+              ),
+            ),
+          ),
+          SliverToBoxAdapter(child: SizedBox(height: 16.w)),
+          SliverToBoxAdapter(
+            child: Skeletonizer(
+              enabled: loading,
+              containersColor: AppColors.common300,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.w),
+                child: questListController.obx(
+                  (state) {
+                    return ArchivementRate(
+                      totalPoints: state.first.questCommonSummaryDto.totalPoint,
+                      totalCount: state.first.localData.board.length,
+                      completedCount: state.first.localData.completedItemCount,
+                    );
+                  },
+                  onEmpty: ArchivementRate(
+                    totalPoints: 0,
+                    totalCount: 25,
+                    completedCount: 0,
+                  ),
+                  onLoading: questListController.state == null
+                      ? ArchivementRate(
+                          totalPoints: 0,
+                          totalCount: 25,
+                          completedCount: 0,
+                        )
+                      : ArchivementRate(
+                          totalPoints: questListController
+                              .state
+                              .first
+                              .questCommonSummaryDto
+                              .totalPoint,
+                          totalCount: questListController
+                              .state
+                              .first
+                              .localData
+                              .board
+                              .length,
+                          completedCount: questListController
+                              .state
+                              .first
+                              .localData
+                              .completedItemCount,
+                        ),
                 ),
               ),
             ),

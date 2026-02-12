@@ -194,6 +194,16 @@ class LocalizationService {
   String homeQuestNo(int count) =>
       "home_page".tr(gender: "quest_no", args: [count.toString()]);
 
+  String homeBingoCompleteNthStep(String step) =>
+      "home_page".tr(gender: "bingo_complete_nth_step", args: [step]);
+
+  String homeLineNumber(String number) =>
+      "home_page".tr(gender: "line_number", args: [number]);
+
+  String get homeReward => "home_page".tr(gender: "reward");
+
+  String get homeClaimReward => "home_page".tr(gender: "claim_reward");
+
   String get homeArchivementRate => "home_page".tr(gender: "archivement_rate");
 
   String homeNumber(String value) =>

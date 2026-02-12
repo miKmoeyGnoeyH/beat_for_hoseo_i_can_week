@@ -4,6 +4,8 @@ class QR extends StatelessWidget {
   QR({super.key, ScrollController? scrollController})
     : _scrollController = scrollController;
 
+
+
   @override
   Widget build(BuildContext context) {
     return const Placeholder();

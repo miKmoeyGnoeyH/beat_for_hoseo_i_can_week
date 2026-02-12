@@ -116,7 +116,7 @@ class BingoBoard extends StatelessWidget {
     );
   }
 
-  final List<QuestSummaryModel?> questSummaryAppView;
+  final List<ItemSummaryModel?> questSummaryAppView;
   final int countPerAxis;
   final double rowSpacing;
   final double columnSpacing;
