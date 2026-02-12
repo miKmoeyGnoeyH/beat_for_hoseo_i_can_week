@@ -101,10 +101,20 @@
   "quest_detail_page": {
     "quest_name": "퀘스트 이름",
     "quest_description": "퀘스트 설명",
+    "quest_info": "퀘스트 정보",
     "total_reward": "총 보상",
     "quest_type": "퀘스트 타입",
     "start_date": "시작 날짜",
-    "end_date": "종료 날짜"
+    "end_date": "종료 날짜",
+    "quest_completed": "완료",
+    "location": "위치",
+    "reward_points": "보상",
+    "walk_requirement": "필요 걸음 수",
+    "completed_at": "완료 날짜"
+  },
+  "quest_type": {
+    "WALK": "걷기",
+    "QR": "QR"
   },
   "profile_page": {
     "name": "이름",

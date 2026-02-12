@@ -110,11 +110,9 @@ class LocalizationService {
   String signUpEmailSentMessage(String email) =>
       "sign_up_page".tr(gender: "email_sent_message", args: [email]);
 
-  String get signUpAuthcodeHint =>
-      "sign_up_page".tr(gender: "authcode_hint");
+  String get signUpAuthcodeHint => "sign_up_page".tr(gender: "authcode_hint");
 
-  String get signUpEmailSent =>
-      "sign_up_page".tr(gender: "email_sent");
+  String get signUpEmailSent => "sign_up_page".tr(gender: "email_sent");
 
   /// 이메일 인증 완료
   String get signUpVerifyEmailSuccessTitle =>
@@ -123,17 +121,18 @@ class LocalizationService {
   String get signUpVerifyEmailSuccessContent =>
       "sign_up_page".tr(gender: "verify_email_success_content");
 
-  String get signUpEmailVerified =>
-      "sign_up_page".tr(gender: "email_verified");
+  String get signUpEmailVerified => "sign_up_page".tr(gender: "email_verified");
 
   /// 비밀번호
   String get signUpPassword => "sign_up_page".tr(gender: "password");
 
   String get signUpPasswordHint => "sign_up_page".tr(gender: "password_hint");
 
-  String get signUpValidatePassword => "sign_up_page".tr(gender: "validate_password");
+  String get signUpValidatePassword =>
+      "sign_up_page".tr(gender: "validate_password");
 
-  String get signUpValidatePasswordHint => "sign_up_page".tr(gender: "validate_password_hint");
+  String get signUpValidatePasswordHint =>
+      "sign_up_page".tr(gender: "validate_password_hint");
 
   String get signUpSignInfo => "sign_up_page".tr(gender: "sign_info");
 
@@ -177,7 +176,9 @@ class LocalizationService {
       "sign_up_page".tr(gender: "continue_with", args: [value]);
 
   String get signUpComplete => "sign_up_page".tr(gender: "sign_up_complete");
-  String get signUpCompleteContent => "sign_up_page".tr(gender: "sign_up_complete_content");
+
+  String get signUpCompleteContent =>
+      "sign_up_page".tr(gender: "sign_up_complete_content");
 
   /// home
   String get homePointsBalance => "home_page".tr(gender: "points_balance");
@@ -214,13 +215,15 @@ class LocalizationService {
 
   String get homeProfile => "home_page".tr(gender: "profile");
 
-
   /// Quest Detail
   String get questDetailQuestName =>
       "quest_detail_page".tr(gender: "quest_name");
 
   String get questDetailQuestDescription =>
       "quest_detail_page".tr(gender: "quest_description");
+
+  String get questDetailQuestInfo =>
+      "quest_detail_page".tr(gender: "quest_info");
 
   String get questDetailTotalReward =>
       "quest_detail_page".tr(gender: "total_reward");
@@ -231,21 +234,45 @@ class LocalizationService {
   String get questDetailStartDate =>
       "quest_detail_page".tr(gender: "start_date");
 
-  String get questDetailEndDate =>
-      "quest_detail_page".tr(gender: "end_date");
+  String get questDetailEndDate => "quest_detail_page".tr(gender: "end_date");
 
+  String get questDetailQRInfo => "quest_detail_page".tr(gender: "qr_info");
+
+  String get questDetailQuestCompleted => "quest_detail_page".tr(gender: "quest_completed");
+
+  String get questDetailLocation => "quest_detail_page".tr(gender: "location");
+
+  String get questDetailRewardPoints =>
+      "quest_detail_page".tr(gender: "reward_points");
+
+  String get questDetailWalkRequirement =>
+      "quest_detail_page".tr(gender: "walk_requirement");
+
+  String get questDetailCompletedAt =>
+      "quest_detail_page".tr(gender: "completed_at");
+
+  /// Quest Type
+  String questType(String questType) => "quest_type".tr(gender: questType);
 
   /// Profile
   String get profileName => "profile_page".tr(gender: "name");
-  String get profileStudentId => "profile_page".tr(gender: "studentId");
-  String get profileEmail => "profile_page".tr(gender: "email");
-  String get profileDepartment => "profile_page".tr(gender: "department");
-  String get profileNickname => "profile_page".tr(gender: "nickname");
-  String get profileCampus => "profile_page".tr(gender: "campus");
-  String get profileStudentType => "profile_page".tr(gender: "studentType");
-  String get profileTeamName => "profile_page".tr(gender: "teamName");
-  String get profileTeamManagement => "profile_page".tr(gender: "team_management");
 
+  String get profileStudentId => "profile_page".tr(gender: "studentId");
+
+  String get profileEmail => "profile_page".tr(gender: "email");
+
+  String get profileDepartment => "profile_page".tr(gender: "department");
+
+  String get profileNickname => "profile_page".tr(gender: "nickname");
+
+  String get profileCampus => "profile_page".tr(gender: "campus");
+
+  String get profileStudentType => "profile_page".tr(gender: "studentType");
+
+  String get profileTeamName => "profile_page".tr(gender: "teamName");
+
+  String get profileTeamManagement =>
+      "profile_page".tr(gender: "team_management");
 
   /// errors
   String get errorSignInFailed => "errors".tr(gender: "error_sign_in_failed");
@@ -280,15 +307,15 @@ class LocalizationService {
       "errors".tr(gender: "error_name_has_initial_consonant");
 
   /// 이름 미입력
-  String get errorNameIsEmpty =>
-      "errors".tr(gender: "error_name_is_empty");
+  String get errorNameIsEmpty => "errors".tr(gender: "error_name_is_empty");
 
-    String get errorNameHasWhitespace =>
+  String get errorNameHasWhitespace =>
       "errors".tr(gender: "error_name_has_whitespace");
 
   /// 닉네임 중복확인 실패
   String get errorValidateNicknameFailedTitle =>
       "errors".tr(gender: "error_validate_nickname_failed_title");
+
   /// 닉네임 미입력(사실상 쓸 일 없음)
   String get errorNicknameIsEmpty =>
       "errors".tr(gender: "error_nickname_is_empty");
@@ -313,16 +340,13 @@ class LocalizationService {
       "errors".tr(gender: "error_nickname_duplicated");
 
   /// 학번 짧음
-  String get errorSidTooShort =>
-      "errors".tr(gender: "error_sid_too_short");
+  String get errorSidTooShort => "errors".tr(gender: "error_sid_too_short");
 
   /// 학번 미입력
-  String get errorSidIsEmpty =>
-      "errors".tr(gender: "error_sid_is_empty");
+  String get errorSidIsEmpty => "errors".tr(gender: "error_sid_is_empty");
 
   /// 학번 형식 오류
-  String get errorInvalidSid =>
-      "errors".tr(gender: "error_invalid_sid");
+  String get errorInvalidSid => "errors".tr(gender: "error_invalid_sid");
 
   /// 이메일 전송 실패
   String get errorEmailSendingFailedTitle =>
@@ -342,12 +366,24 @@ class LocalizationService {
   String get errorVerifyEmailFailedContent =>
       "errors".tr(gender: "error_verify_email_failed_content");
 
-  String get errorPasswordIsEmpty => "errors".tr(gender: "error_password_is_empty");
-  String get errorPasswordFormatUnmatch => "errors".tr(gender: "error_password_format_unmatch");
-  String get errorValidatePasswordIsEmpty => "errors".tr(gender: "error_validate_password_is_empty");
-  String get errorPasswordNotMatched => "errors".tr(gender: "error_password_not_matched");
+  String get errorPasswordIsEmpty =>
+      "errors".tr(gender: "error_password_is_empty");
 
-  String get errorSignUpFailedTitle => "errors".tr(gender: "error_sign_up_failed_title");
-  String get errorSignUpEmptyField => "errors".tr(gender: "error_sign_up_empty_field");
-  String get errorSignUpFailedContent => "errors".tr(gender: "error_sign_up_failed_content");
+  String get errorPasswordFormatUnmatch =>
+      "errors".tr(gender: "error_password_format_unmatch");
+
+  String get errorValidatePasswordIsEmpty =>
+      "errors".tr(gender: "error_validate_password_is_empty");
+
+  String get errorPasswordNotMatched =>
+      "errors".tr(gender: "error_password_not_matched");
+
+  String get errorSignUpFailedTitle =>
+      "errors".tr(gender: "error_sign_up_failed_title");
+
+  String get errorSignUpEmptyField =>
+      "errors".tr(gender: "error_sign_up_empty_field");
+
+  String get errorSignUpFailedContent =>
+      "errors".tr(gender: "error_sign_up_failed_content");
 }
