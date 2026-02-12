@@ -1,0 +1,1 @@
+export 'notice_card.dart';

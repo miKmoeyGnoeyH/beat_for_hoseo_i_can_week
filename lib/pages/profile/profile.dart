@@ -5,12 +5,14 @@ import 'package:beat/pages/index.dart';
 import 'package:beat/shared/widgets/beat_shadow_container.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
+import '../../app/route/index.dart';
 import '../../shared/index.dart';
 
 class Profile extends StatefulWidget {
-  Profile({super.key, ScrollController? scrollController})
+  const Profile({super.key, ScrollController? scrollController})
     : _scrollController = scrollController;
 
   @override
@@ -19,7 +21,10 @@ class Profile extends StatefulWidget {
   final ScrollController? _scrollController;
 }
 
-class _ProfileState extends State<Profile> {
+class _ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
   // 사용자 정보를 사용하기 위한 GetX Controller
   final AuthenticationController authenticationController =
       AuthenticationController.to;
@@ -78,6 +83,7 @@ class _ProfileState extends State<Profile> {
               ),
             ),
           ),
+          // TODO: 빌드 시 변경
           // if (profileController.state?.studentType == StudentType.mentor)
           if (profileController.state?.studentType == StudentType.mentee)
             SliverToBoxAdapter(
@@ -85,6 +91,7 @@ class _ProfileState extends State<Profile> {
                 padding: EdgeInsets.symmetric(horizontal: 16.w),
                 child: BEATTextButton(
                   text: LocalizationService.instance.profileTeamManagement,
+                  onTap: () => Get.toNamed(BEATRoute.teamManagement),
                 ),
               ),
             ),

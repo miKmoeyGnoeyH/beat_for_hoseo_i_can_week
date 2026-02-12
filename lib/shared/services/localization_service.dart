@@ -251,6 +251,19 @@ class LocalizationService {
 
   String get homeProfile => "home_page".tr(gender: "profile");
 
+
+  /// Point History
+  String get phPointHistory => "point_history_page".tr(gender: "point_history");
+
+  String get phPointHistoryInfo => "point_history_page".tr(gender: "point_history_info");
+
+
+  /// Notice
+  String get noticeNotice => "notice_page".tr(gender: "notice");
+
+  String get noticeNoticeEmpty => "notice_page".tr(gender: "notice_empty");
+
+
   /// Quest Detail
   String get questDetailQuestName =>
       "quest_detail_page".tr(gender: "quest_name");
@@ -309,6 +322,15 @@ class LocalizationService {
 
   String get profileTeamManagement =>
       "profile_page".tr(gender: "team_management");
+
+
+  /// Team Management
+  String get teamTeamManagement =>
+      "team_management_page".tr(gender: "team_management");
+
+  String teamNumber(String value) =>
+      "team_management_page".tr(gender: "number", args: [value]);
+
 
   /// errors
   String get errorSignInFailed => "errors".tr(gender: "error_sign_in_failed");

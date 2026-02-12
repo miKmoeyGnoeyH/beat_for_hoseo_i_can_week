@@ -1,9 +1,12 @@
 export 'home/index.dart';
 export 'init/index.dart';
 export 'main_page_view/index.dart';
+export 'point_history/index.dart';
+export 'notice_list/index.dart';
 export 'profile/index.dart';
 export 'qr/index.dart';
 export 'quest_detail/index.dart';
 export 'sign_up/index.dart';
 export 'sign_in/index.dart';
 export 'splash/index.dart';
+export 'team_management/index.dart';

@@ -1,4 +1,5 @@
 export 'main_page_view/index.dart';
+export 'notice/notice_card.dart';
 export 'point/index.dart';
 export 'qr/qr_overlay.dart';
 export 'quest/index.dart';

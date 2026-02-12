@@ -1,11 +1,13 @@
 import 'dart:developer';
 
+import 'package:beat/app/route/app_pages.dart';
 import 'package:beat/features/authentication/authentication_controller.dart';
 import 'package:beat/shared/theme/index.dart';
 import 'package:beat/shared/widgets/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 
 import 'index.dart';
 
@@ -50,14 +52,14 @@ class MainPageViewAppbar extends StatelessWidget {
         //     height: 28.w,
         //   ),
         // ),
-        // MainPageViewAppbarIconButton(
-        //   onTap: onNotificationTap,
-        //   icon: SvgPicture.asset(
-        //     BEATAssets.svg.notification,
-        //     width: 28.w,
-        //     height: 28.w,
-        //   ),
-        // ),
+        MainPageViewAppbarIconButton(
+          onTap: onNotificationTap,
+          icon: SvgPicture.asset(
+            BEATAssets.svg.notification,
+            width: 28.w,
+            height: 28.w,
+          ),
+        ),
         MainPageViewAppbarIconButton(
           onTap: onSettingsTap,
           icon: SvgPicture.asset(
@@ -75,7 +77,7 @@ class MainPageViewAppbar extends StatelessWidget {
   }
 
   void onNotificationTap() {
-    log("home.dart: appbar: notification tapped");
+    Get.toNamed(BEATRoute.noticeList);
   }
 
   void onSettingsTap() {

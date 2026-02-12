@@ -20,20 +20,30 @@ class PageViewController extends GetxController {
   void jumpToPage(int page) {
     pageController.animateToPage(
       page,
-      duration: Duration(milliseconds: 100),
+      duration: const Duration(milliseconds: 100),
       curve: Curves.easeInOut,
     );
 
     _currentPage = page;
 
-    scrollControllers[page].animateTo(
-      0,
-      duration: Duration(milliseconds: 200),
-      curve: Curves.easeOut,
-    );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final scrollController = scrollControllers[page];
+      if (!scrollController.hasClients) return;
+      scrollController.animateTo(
+        0,
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeOut,
+      );
+    });
   }
 
   void onPageChanged(int page) {
     _currentPage = page;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final scrollController = scrollControllers[page];
+      if (!scrollController.hasClients) return;
+      scrollController.jumpTo(0);
+    });
   }
 }

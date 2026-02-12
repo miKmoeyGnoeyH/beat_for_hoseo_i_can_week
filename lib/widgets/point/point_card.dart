@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:beat/app/route/app_pages.dart';
 import 'package:beat/features/point/index.dart';
 import 'package:beat/shared/index.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -31,7 +32,7 @@ class PointCard extends StatelessWidget {
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: () {
-            log("onTap");
+            Get.toNamed(BEATRoute.pointHistory);
           },
           highlightColor: AppColors.disabledColorLight,
           splashColor: AppColors.disabledColorLight,

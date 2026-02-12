@@ -112,6 +112,14 @@
     "home": "홈",
     "profile": "프로필"
   },
+  "point_history_page":{
+    "point_history": "포인트 기록",
+    "point_history_info": "포인트 획득/사용 내역을 확인할 수 있습니다."
+  },
+  "notice_page": {
+    "notice": "공지사항",
+    "notice_empty": "공지사항이 없습니다."
+  },
   "quest_detail_page": {
     "quest_name": "퀘스트 이름",
     "quest_description": "퀘스트 설명",
@@ -140,6 +148,10 @@
     "studentType": "역할",
     "teamName": "팀 이름",
     "team_management": "팀 관리"
+  },
+  "team_management_page": {
+    "team_management": "팀 관리",
+    "number": "{}개"
   },
   "errors": {
     "error_sign_in_failed": "로그인 실패",

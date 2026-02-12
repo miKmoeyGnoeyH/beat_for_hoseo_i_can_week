@@ -14,7 +14,7 @@ import 'package:skeletonizer/skeletonizer.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class Home extends StatefulWidget {
-  Home({super.key, ScrollController? scrollController})
+  const Home({super.key, ScrollController? scrollController})
     : _scrollController = scrollController;
 
   @override
@@ -23,7 +23,10 @@ class Home extends StatefulWidget {
   final ScrollController? _scrollController;
 }
 
-class _HomeState extends State<Home> {
+class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
   // 사용자 정보를 사용하기 위한 GetX Controller
   final AuthenticationController authenticationController =
       AuthenticationController.to;

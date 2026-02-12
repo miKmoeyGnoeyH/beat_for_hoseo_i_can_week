@@ -14,7 +14,7 @@ import 'package:geolocator/geolocator.dart';
 import '../../widgets/index.dart';
 
 class QR extends StatefulWidget {
-  QR({super.key, ScrollController? scrollController})
+  const QR({super.key, ScrollController? scrollController})
     : _scrollController = scrollController;
 
   @override
@@ -23,7 +23,10 @@ class QR extends StatefulWidget {
   final ScrollController? _scrollController;
 }
 
-class _QRState extends State<QR> {
+class _QRState extends State<QR> with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
   final AuthenticationController authenticationController =
       AuthenticationController.to;
 
