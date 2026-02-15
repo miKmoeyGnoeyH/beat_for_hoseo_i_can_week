@@ -57,76 +57,78 @@ class _ImagesState extends State<Images> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        AspectRatio(
-          aspectRatio: 1,
-          child: NotificationListener<ScrollNotification>(
-            onNotification: (notification) {
-              if (notification is ScrollStartNotification ||
-                  notification is UserScrollNotification ||
-                  notification is ScrollUpdateNotification) {
-                showIndicatorThenAutoHide();
-              }
-              return false;
-            },
-            child: PageView(
-              controller: imageController,
-              physics: PageScrollPhysics(),
-              children: List.generate(
-                widget.questDetailCommonAppDto.fileList.length,
-                (i) => Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16.w),
-                  child: Container(
-                    width: double.infinity,
-                    clipBehavior: Clip.hardEdge,
-                    decoration: BoxDecoration(
-                      color: AppColors.common300,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Image.network(
-                      "${DotEnvService.instance.fetchQuestDetailImage}${widget.questDetailCommonAppDto.fileList[i].fileId}",
-                      headers: {
-                        "authorization":
-                            authenticationController.state!.authorization,
-                      },
+        if (widget.questDetailCommonAppDto.fileList.isNotEmpty)
+          AspectRatio(
+            aspectRatio: 1,
+            child: NotificationListener<ScrollNotification>(
+              onNotification: (notification) {
+                if (notification is ScrollStartNotification ||
+                    notification is UserScrollNotification ||
+                    notification is ScrollUpdateNotification) {
+                  showIndicatorThenAutoHide();
+                }
+                return false;
+              },
+              child: PageView(
+                controller: imageController,
+                physics: PageScrollPhysics(),
+                children: List.generate(
+                  widget.questDetailCommonAppDto.fileList.length,
+                  (i) => Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16.w),
+                    child: Container(
                       width: double.infinity,
-                      fit: BoxFit.contain,
+                      clipBehavior: Clip.hardEdge,
+                      decoration: BoxDecoration(
+                        color: AppColors.common300,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Image.network(
+                        "${DotEnvService.instance.fetchQuestDetailImage}${widget.questDetailCommonAppDto.fileList[i].fileId}",
+                        headers: {
+                          "authorization":
+                              authenticationController.state!.authorization,
+                        },
+                        width: double.infinity,
+                        fit: BoxFit.contain,
+                      ),
                     ),
                   ),
                 ),
               ),
             ),
           ),
-        ),
-        Positioned(
-          left: 175.w,
-          bottom: 16.w,
-          child: IgnorePointer(
-            ignoring: !indicatorVisible,
-            child: AnimatedOpacity(
-              opacity: indicatorVisible ? 1.0 : 0.0,
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeOut,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: AppColors.commonBlack.withAlpha(100),
-                  borderRadius: BorderRadius.circular(50)
-                ),
-                padding: EdgeInsetsGeometry.all(3.w),
-                child: SmoothPageIndicator(
-                  controller: imageController,
-                  count: widget.questDetailCommonAppDto.fileList.length,
-                  effect: ColorTransitionEffect(
-                    dotWidth: 7.w,
-                    dotHeight: 7.w,
-                    spacing: 5.w,
-                    dotColor: AppColors.disabledColorLight,
-                    activeDotColor: AppColors.designWhite,
+        if (widget.questDetailCommonAppDto.fileList.isNotEmpty)
+          Positioned(
+            left: 175.w,
+            bottom: 16.w,
+            child: IgnorePointer(
+              ignoring: !indicatorVisible,
+              child: AnimatedOpacity(
+                opacity: indicatorVisible ? 1.0 : 0.0,
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeOut,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.commonBlack.withAlpha(100),
+                    borderRadius: BorderRadius.circular(50),
+                  ),
+                  padding: EdgeInsetsGeometry.all(3.w),
+                  child: SmoothPageIndicator(
+                    controller: imageController,
+                    count: widget.questDetailCommonAppDto.fileList.length,
+                    effect: ColorTransitionEffect(
+                      dotWidth: 7.w,
+                      dotHeight: 7.w,
+                      spacing: 5.w,
+                      dotColor: AppColors.disabledColorLight,
+                      activeDotColor: AppColors.designWhite,
+                    ),
                   ),
                 ),
               ),
             ),
           ),
-        ),
       ],
     );
   }

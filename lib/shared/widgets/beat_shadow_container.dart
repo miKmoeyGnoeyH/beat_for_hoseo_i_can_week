@@ -15,21 +15,23 @@ class BEATShadowContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: width,
-      decoration: BoxDecoration(
-        color: AppColors.commonWhite,
-        borderRadius: BorderRadius.circular(borderRadius),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.common400,
-            blurRadius: shadowBlurRadius,
-            spreadRadius: shadowSpreadRadius,
-            offset: shadowOffset,
-          ),
-        ],
+    return Material(
+      child: Container(
+        width: width,
+        decoration: BoxDecoration(
+          color: AppColors.commonWhite,
+          borderRadius: BorderRadius.circular(borderRadius),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.common400,
+              blurRadius: shadowBlurRadius,
+              spreadRadius: shadowSpreadRadius,
+              offset: shadowOffset,
+            ),
+          ],
+        ),
+        child: Padding(padding: contentPadding, child: child),
       ),
-      child: Padding(padding: contentPadding, child: child),
     );
   }
 

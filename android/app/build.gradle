@@ -1,8 +1,5 @@
 plugins {
     id "com.android.application"
-    // START: FlutterFire Configuration
-    id "com.google.gms.google-services"
-    // END: FlutterFire Configuration
     id "kotlin-android"
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id "dev.flutter.flutter-gradle-plugin"
@@ -10,7 +7,7 @@ plugins {
 
 android {
     // 🔥 패키지/매니페스트/코드와 맞추기 위해 여기 꼭 변경
-    namespace = "com.dclab.beat"
+    namespace = "com.dclab.bfhicw"
 
     compileSdk = flutter.compileSdkVersion
 
@@ -45,7 +42,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.dclab.beat"  // ✅ Play 스토어 ID와 일치
+        applicationId = "com.dclab.bfhicw"
         minSdkVersion flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode

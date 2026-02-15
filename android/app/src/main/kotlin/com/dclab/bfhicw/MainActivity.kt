@@ -1,10 +1,10 @@
-package com.dclab.beat
+package com.dclab.bfhicw
 
 import android.content.Context
 import android.content.Intent
 import androidx.annotation.NonNull
-import com.dclab.beat.steps.StepCounterService
-import com.dclab.beat.steps.StepEventSink
+import com.dclab.bfhicw.steps.StepCounterService
+import com.dclab.bfhicw.steps.StepEventSink
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.EventChannel

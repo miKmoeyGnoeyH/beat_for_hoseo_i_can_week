@@ -12,6 +12,9 @@ class PointRepository {
         header: {"authorization": authorization},
       );
 
+      log(DotEnvService.instance.fetchPointBalance);
+      log(response.body);
+
       switch (response.statusCode) {
         case 200:
           final String decoded = utf8.decode(response.bodyBytes);

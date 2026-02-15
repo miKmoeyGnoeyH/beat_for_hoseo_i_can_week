@@ -331,6 +331,9 @@ class LocalizationService {
   String teamNumber(String value) =>
       "team_management_page".tr(gender: "number", args: [value]);
 
+  String get teamTeamInfoEmpty =>
+      "team_management_page".tr(gender: "team_info_emmpty");
+
 
   /// errors
   String get errorSignInFailed => "errors".tr(gender: "error_sign_in_failed");

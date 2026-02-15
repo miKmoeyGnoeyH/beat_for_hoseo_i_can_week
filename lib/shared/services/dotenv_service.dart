@@ -48,4 +48,6 @@ class DotEnvService {
   String get fetchQuestDetailImage => dotenv.env['QUEST_DETAIL_IMAGE'] ?? "";
 
   String get profile => dotenv.env['PROFILE'] ?? "";
+
+  String get teamBingoStatus => dotenv.env['TEAM_BINGO_STATUS'] ?? "";
 }

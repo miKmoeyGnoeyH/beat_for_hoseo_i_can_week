@@ -23,10 +23,7 @@ class QR extends StatefulWidget {
   final ScrollController? _scrollController;
 }
 
-class _QRState extends State<QR> with AutomaticKeepAliveClientMixin {
-  @override
-  bool get wantKeepAlive => true;
-
+class _QRState extends State<QR> {
   final AuthenticationController authenticationController =
       AuthenticationController.to;
 
@@ -79,6 +76,8 @@ class _QRState extends State<QR> with AutomaticKeepAliveClientMixin {
         opacity: 0.3,
       );
 
+      log(response.body);
+
       switch (response.statusCode) {
         case 200:
           DialogService.to.addDialogEvent(
@@ -87,8 +86,7 @@ class _QRState extends State<QR> with AutomaticKeepAliveClientMixin {
               message: LocalizationService
                   .instance
                   .qrScanSuccessQuestCompleteContent,
-              onConfirm: () =>
-                  pointController.fetchPointBalance(authorization),
+              onConfirm: () => pointController.fetchPointBalance(authorization),
             ),
           );
           break;
@@ -140,6 +138,8 @@ class _QRState extends State<QR> with AutomaticKeepAliveClientMixin {
         loadingWidget: BEATCircularProgressIndicator(),
         opacity: 0.3,
       );
+
+      log(response.body);
 
       switch (response.statusCode) {
         case 200:
@@ -213,6 +213,7 @@ class _QRState extends State<QR> with AutomaticKeepAliveClientMixin {
             if (barcode.rawValue == null) return;
 
             final String requestUrl = barcode.rawValue!;
+
             log("requestUrl : $requestUrl");
 
             if (missionCheckQR.hasMatch(requestUrl)) {

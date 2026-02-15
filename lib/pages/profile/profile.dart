@@ -1,6 +1,7 @@
 import 'package:beat/entities/profile/index.dart';
 import 'package:beat/features/authentication/index.dart';
 import 'package:beat/features/profile/index.dart';
+import 'package:beat/features/team/index.dart';
 import 'package:beat/pages/index.dart';
 import 'package:beat/shared/widgets/beat_shadow_container.dart';
 import 'package:flutter/material.dart';
@@ -91,7 +92,11 @@ class _ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
                 padding: EdgeInsets.symmetric(horizontal: 16.w),
                 child: BEATTextButton(
                   text: LocalizationService.instance.profileTeamManagement,
-                  onTap: () => Get.toNamed(BEATRoute.teamManagement),
+                  onTap: () {
+                    TeamBingoStatusController.to.teamId =
+                        profileController.state!.teamId;
+                    Get.toNamed(BEATRoute.teamManagement);
+                  },
                 ),
               ),
             ),

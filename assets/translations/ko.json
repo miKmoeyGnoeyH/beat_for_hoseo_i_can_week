@@ -151,7 +151,8 @@
   },
   "team_management_page": {
     "team_management": "팀 관리",
-    "number": "{}개"
+    "number": "{}개",
+    "team_info_emmpty": "표시할 정보가 없습니다."
   },
   "errors": {
     "error_sign_in_failed": "로그인 실패",

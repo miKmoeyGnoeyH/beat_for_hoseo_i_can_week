@@ -1,4 +1,4 @@
-package com.dclab.beat.steps
+package com.dclab.bfhicw.steps
 
 import android.app.*
 import android.content.Context
@@ -12,7 +12,7 @@ import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import java.text.SimpleDateFormat
 import java.util.*
-import com.dclab.beat.R
+import com.dclab.bfhicw.R
 
 class StepCounterService : Service(), SensorEventListener {
 

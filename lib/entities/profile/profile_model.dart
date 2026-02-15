@@ -1,5 +1,7 @@
 enum StudentType {
-  mentor("멘토"), mentee("멘티"), unknown("알수없음");
+  mentor("멘토"),
+  mentee("멘티"),
+  unknown("알수없음");
 
   const StudentType(this.value);
 
@@ -24,6 +26,7 @@ class ProfileModel {
     required this.campus,
     required this.studentType,
     required this.teamName,
+    required this.teamId,
   });
 
   ProfileModel.fromJson(Map<String, dynamic> json)
@@ -35,7 +38,8 @@ class ProfileModel {
       nickname = json['nickname'] as String,
       campus = json['campus'] as String,
       studentType = StudentType.fromString(json['studentType'] as String),
-      teamName = json['teamName'] as String;
+      teamName = json['teamName'] as String,
+      teamId = json['teamId'] as int;
 
   Map<String, dynamic> toJson() => {
     'memberId': memberId,
@@ -47,6 +51,7 @@ class ProfileModel {
     'campus': campus,
     'studentType': studentType,
     'teamName': teamName,
+    'teamId': teamId,
   };
 
   final int memberId;
@@ -58,4 +63,5 @@ class ProfileModel {
   final String campus;
   final StudentType studentType;
   final String teamName;
+  final int teamId;
 }

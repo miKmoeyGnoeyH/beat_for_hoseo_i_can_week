@@ -1,4 +1,4 @@
-package com.dclab.beat.steps
+package com.dclab.bfhicw.steps
 
 object StepEventSink {
     @Volatile var sink: io.flutter.plugin.common.EventChannel.EventSink? = null

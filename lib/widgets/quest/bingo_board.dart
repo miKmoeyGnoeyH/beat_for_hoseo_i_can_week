@@ -42,20 +42,22 @@ class BingoBoard extends StatelessWidget {
           // TODO: 조건문들 더 줄일 수 있을 것 같은데?
           return GestureDetector(
             onTap: () {
-              if ((questSummaryAppView[i]!.questInfoView!.questType! ==
-                      QuestType.walk) &&
-                  (stepCountController.stepCount >=
-                      questSummaryAppView[i]!.questInfoView!.required)) {
-                requestReward();
-                return;
-              }
+              if (questSummaryAppView[i]?.completed == false) {
+                if ((questSummaryAppView[i]!.questInfoView!.questType ==
+                        QuestType.walk) &&
+                    (stepCountController.stepCount >=
+                        questSummaryAppView[i]!.questInfoView!.required)) {
+                  requestReward();
+                  return;
+                }
 
-              if ((questSummaryAppView[i]!.questInfoView!.questType! ==
-                      QuestType.qr) &&
-                  (questSummaryAppView[i]!.questInfoView!.completeCount! >=
-                      questSummaryAppView[i]!.questInfoView!.required)) {
-                requestReward();
-                return;
+                if ((questSummaryAppView[i]!.questInfoView!.questType ==
+                        QuestType.qr) &&
+                    (questSummaryAppView[i]!.questInfoView!.completeCount! >=
+                        questSummaryAppView[i]!.questInfoView!.required)) {
+                  requestReward();
+                  return;
+                }
               }
 
               questDetailController.questInfoView = questSummaryAppView[i]!.questInfoView!;

@@ -1,0 +1,1 @@
+export 'team_bingo_status_model.dart';

@@ -89,7 +89,8 @@ class _QuestDetailState extends State<QuestDetail> {
                           questDetailCommonAppDto:
                               state.questDetailCommonAppDto,
                         ),
-                        SizedBox(height: 16.w),
+                        if (state.questDetailCommonAppDto.fileList.isNotEmpty)
+                          SizedBox(height: 16.w),
                         QuestDescription(
                           questDetailCommonAppDto:
                               state.questDetailCommonAppDto,
@@ -108,10 +109,7 @@ class _QuestDetailState extends State<QuestDetail> {
                           ),
                         if (state.questDetailCommonAppDto.questType ==
                             QuestType.walk)
-                          WalkInfo(
-                            walkMissionAppDto:
-                            state.walkMissionAppDto,
-                          ),
+                          WalkInfo(walkMissionAppDto: state.walkMissionAppDto),
                         SizedBox(height: 16.w),
                       ],
                     );
