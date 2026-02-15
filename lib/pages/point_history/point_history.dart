@@ -1,12 +1,9 @@
 import 'package:beat/entities/point/index.dart';
 import 'package:beat/features/authentication/index.dart';
 import 'package:beat/features/point/index.dart';
-import 'package:beat/features/profile/index.dart';
 import 'package:beat/widgets/index.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 

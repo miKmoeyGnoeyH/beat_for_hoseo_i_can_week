@@ -3,7 +3,6 @@ import 'package:beat/features/authentication/index.dart';
 import 'package:beat/features/profile/index.dart';
 import 'package:beat/features/team/index.dart';
 import 'package:beat/pages/index.dart';
-import 'package:beat/shared/widgets/beat_shadow_container.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';

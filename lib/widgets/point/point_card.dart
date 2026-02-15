@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:beat/app/route/app_pages.dart';
 import 'package:beat/features/point/index.dart';

@@ -70,7 +70,7 @@ class BingoBoard extends StatelessWidget {
                     : AppColors.commonWhite,
                 border: questSummaryAppView[i]!.completed!
                     ? null
-                    : (questSummaryAppView[i]!.questInfoView!.questType! ==
+                    : (questSummaryAppView[i]!.questInfoView!.questType ==
                           QuestType.walk)
                     ? (stepCountController.stepCount >=
                               questSummaryAppView[i]!.questInfoView!.required)

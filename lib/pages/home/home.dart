@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:beat/entities/quest/index.dart';
 import 'package:beat/features/authentication/authentication_controller.dart';

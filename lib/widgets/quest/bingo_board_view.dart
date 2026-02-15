@@ -1,13 +1,8 @@
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:beat/app/route/app_pages.dart';
-import 'package:beat/entities/quest/quest_model.dart' hide QuestType;
-import 'package:beat/features/quest/index.dart';
-import 'package:beat/features/step_count/index.dart';
 import 'package:beat/shared/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:get/get.dart';
 
 import '../../entities/team/index.dart';
 

@@ -20,7 +20,7 @@ class QuestDetailController extends GetxController with StateMixin {
       final QuestDetailModel questDetailModel = await questDetailRepository
           .fetchQuestDetail(
             authorization,
-            questInfoView!.questType!,
+            questInfoView!.questType,
             questInfoView!.questId!,
           );
       change(questDetailModel, status: RxStatus.success());

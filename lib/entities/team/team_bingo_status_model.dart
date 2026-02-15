@@ -67,9 +67,9 @@ class TeamBingoStatusModel {
   }
 
   TeamBingoStatusModel.empty()
-    : name = '',
-      studentId = '',
-      bingoQuestItemSummaryDtoList = [],
+    : name = 'Dummy',
+      studentId = '00000000',
+      bingoQuestItemSummaryDtoList = List.generate(25, (_) => BingoQuestItemSummaryDto.empty()),
       localData = LocalData.empty();
 
   Map<String, dynamic> toJson() => {
@@ -95,7 +95,7 @@ class LocalData {
   });
 
   LocalData.empty()
-    : board = [],
+    : board = List.generate(25, (_) => BingoQuestItemSummaryDto.empty()),
       totalItemCount = 25,
       completedItemCount = 0,
       countPerAxis = 5;

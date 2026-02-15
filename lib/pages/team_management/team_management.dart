@@ -88,9 +88,16 @@ class _TeamManagementState extends State<TeamManagement> {
                     style: AppTextTheme.subtitle1.common300,
                   ),
                 ),
-                onLoading: TeamBingoStatusListView(
-                  state: List.generate(3, (_) => TeamBingoStatusModel.empty()),
-                ),
+                onLoading: teamBingoStatusController.state == null
+                    ? TeamBingoStatusListView(
+                        state: List.generate(
+                          3,
+                          (_) => TeamBingoStatusModel.empty(),
+                        ),
+                      )
+                    : TeamBingoStatusListView(
+                        state: teamBingoStatusController.state,
+                      ),
               ),
             ),
           ),
@@ -109,7 +116,7 @@ class TeamBingoStatusListView extends StatelessWidget {
       shrinkWrap: true,
       padding: EdgeInsetsGeometry.all(16.w),
       itemBuilder: (context, index) {
-        final TeamBingoStatusModel item = state![index];
+        final TeamBingoStatusModel item = state[index];
         return BEATShadowContainer(
           contentPadding: EdgeInsetsGeometry.all(16.w),
           child: Column(

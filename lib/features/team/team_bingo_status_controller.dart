@@ -2,7 +2,6 @@ import 'dart:developer';
 
 import 'package:beat/entities/team/index.dart';
 import 'package:beat/features/team/team_bingo_status_repository.dart';
-import 'package:beat/features/team/team_bingo_status_repository.dart';
 import 'package:get/get.dart';
 
 class TeamBingoStatusController extends GetxController with StateMixin {
