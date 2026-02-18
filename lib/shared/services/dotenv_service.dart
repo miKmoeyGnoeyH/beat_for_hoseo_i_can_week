@@ -31,9 +31,13 @@ class DotEnvService {
 
   String get verifyEmail => dotenv.env['VERIFY_EMAIL'] ?? "";
 
+  String get checkAuthcode => dotenv.env['CHECK_AUTHCODE'] ?? "";
+
   String get signUp => dotenv.env['SIGN_UP'] ?? "";
 
   String get signIn => dotenv.env['SIGN_IN'] ?? "";
+
+  String get reissueToken => dotenv.env['REISSUE_TOKEN'] ?? "";
 
   String get fetchPointBalance => dotenv.env['POINT'] ?? "";
 
@@ -49,5 +53,9 @@ class DotEnvService {
 
   String get profile => dotenv.env['PROFILE'] ?? "";
 
+  String get resetPassword => dotenv.env['RESET_PASSWORD'] ?? "";
+
   String get teamBingoStatus => dotenv.env['TEAM_BINGO_STATUS'] ?? "";
+
+  String get withdrawal => dotenv.env['WITHDRAWAL'] ?? "";
 }

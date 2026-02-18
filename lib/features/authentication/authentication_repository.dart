@@ -67,5 +67,34 @@ class AuthenticationRepository {
     }
   }
 
+  Future<String> reissueToken(String refreshToken) async {
+    try {
+      final response = await _apiService.get(
+        endpoint: DotEnvService.instance.reissueToken,
+        header: {"refresh-token": refreshToken},
+      );
+
+      log("${response.statusCode} ${response.body}");
+
+      switch (response.statusCode) {
+        case 200:
+          final String authorization = response.headers['authorization']!;
+          return authorization;
+        case 400:
+          throw BEATException(title: LocalizationService.instance.errorUnknown);
+        default:
+          throw BEATException(title: LocalizationService.instance.errorUnknown);
+      }
+    } on TimeoutException {
+      throw BEATException(
+        title: LocalizationService.instance.errorTimeout,
+        message: LocalizationService.instance.errorConnectivity,
+      );
+    } catch (e) {
+      log("AuthenticationRepository : reissueToken() : ${e.toString()}");
+      rethrow;
+    }
+  }
+
   final APIService _apiService = APIService();
 }

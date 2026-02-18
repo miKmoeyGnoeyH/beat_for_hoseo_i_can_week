@@ -252,6 +252,90 @@ class LocalizationService {
   String get homeProfile => "home_page".tr(gender: "profile");
 
 
+  /// Settings
+  String get settingsSettings =>
+      "settings_page".tr(gender: "settings");
+
+  String get settingsSignOut =>
+      "settings_page".tr(gender: "sign_out");
+
+  String get settingsWithdrawal =>
+      "settings_page".tr(gender: "withdrawal");
+
+  String get settingsOssLicenses =>
+      "settings_page".tr(gender: "oss_licenses");
+
+  String get settingsViewDetail =>
+      "settings_page".tr(gender: "view_detail");
+
+  String get settingsAppInquiry =>
+      "settings_page".tr(gender: "app_inquiry");
+
+  String get settingsEmail =>
+      "settings_page".tr(gender: "email");
+
+  String get settingsEmailAddress =>
+      "settings_page".tr(gender: "email_address");
+
+  String get settingsPhone =>
+      "settings_page".tr(gender: "phone");
+
+  String get settingsPhoneNumber =>
+      "settings_page".tr(gender: "phone_number");
+
+  String get settingsVersion =>
+      "settings_page".tr(gender: "version");
+
+
+
+  /// Withdrawal
+  String get withdrawalAppbarTitle =>
+      "withdrawal".tr(gender: "appbar_title");
+
+  String get withdrawalNotes =>
+      "withdrawal".tr(gender: "notes");
+
+  String get withdrawalNote1 =>
+      "withdrawal".tr(gender: "note_1");
+
+  String get withdrawalNote2 =>
+      "withdrawal".tr(gender: "note_2");
+
+  String get withdrawalNote3 =>
+      "withdrawal".tr(gender: "note_3");
+
+  String get withdrawalNote4 =>
+      "withdrawal".tr(gender: "note_4");
+
+  String get withdrawalDoYouAgree =>
+      "withdrawal".tr(gender: "do_you_agree");
+
+  String get withdrawalIAgree =>
+      "withdrawal".tr(gender: "i_agree");
+
+  String get withdrawalWithdrawal =>
+      "withdrawal".tr(gender: "withdrawal");
+
+  String get withdrawalSuccess =>
+      "withdrawal".tr(gender: "withdrawal_success");
+
+  String get withdrawalSuccessMessage =>
+      "withdrawal".tr(gender: "withdrawal_success_message");
+
+  String get withdrawalFailed =>
+      "withdrawal".tr(gender: "withdrawal_failed");
+
+  String get withdrawalFailedMessage =>
+      "withdrawal".tr(gender: "withdrawal_failed_message");
+
+  String get withdrawalConfirm =>
+      "withdrawal".tr(gender: "confirm");
+
+  String get withdrawalCancel =>
+      "withdrawal".tr(gender: "cancel");
+
+
+
   /// Point History
   String get phPointHistory => "point_history_page".tr(gender: "point_history");
 
@@ -304,6 +388,18 @@ class LocalizationService {
   String questType(String questType) => "quest_type".tr(gender: questType);
 
   /// Profile
+  String get profileProfile => "profile_page".tr(gender: "profile");
+
+  String get profileMyInfo => "profile_page".tr(gender: "my_info");
+
+  String get profileAccountManagement => "profile_page".tr(gender: "account_management");
+
+  String get profileChangePassword => "profile_page".tr(gender: "change_password");
+
+  String get profileSignOut => "profile_page".tr(gender: "sign_out");
+
+  String get profileWithdrawal => "profile_page".tr(gender: "withdrawal");
+
   String get profileName => "profile_page".tr(gender: "name");
 
   String get profileStudentId => "profile_page".tr(gender: "studentId");
@@ -322,6 +418,61 @@ class LocalizationService {
 
   String get profileTeamManagement =>
       "profile_page".tr(gender: "team_management");
+
+
+  /// Change Password
+  String get changePasswordTitle =>
+      "change_password_page".tr(gender: "change_password");
+
+  String get changePasswordStudentId =>
+      "change_password_page".tr(gender: "student_id");
+
+  String get changePasswordStudentIdHint =>
+      "change_password_page".tr(gender: "student_id_hint");
+
+  String get changePasswordVerifyMail =>
+      "change_password_page".tr(gender: "verify_mail");
+
+  String get changePasswordEmailSentTitle =>
+      "change_password_page".tr(gender: "email_sent_title");
+
+  String changePasswordEmailSentMessage(String emailPrefix) =>
+      "change_password_page"
+          .tr(gender: "email_sent_message", args: [emailPrefix]);
+
+  String get changePasswordAuthcodeHint =>
+      "change_password_page".tr(gender: "authcode_hint");
+
+  String get changePasswordEmailSent =>
+      "change_password_page".tr(gender: "email_sent");
+
+  String get changePasswordVerifyEmailSuccessTitle =>
+      "change_password_page".tr(gender: "verify_email_success_title");
+
+  String get changePasswordVerifyEmailSuccessContent =>
+      "change_password_page".tr(gender: "verify_email_success_content");
+
+  String get changePasswordEmailVerified =>
+      "change_password_page".tr(gender: "email_verified");
+
+  String get changePasswordPassword =>
+      "change_password_page".tr(gender: "password");
+
+  String get changePasswordPasswordHint =>
+      "change_password_page".tr(gender: "password_hint");
+
+  String get changePasswordValidatePassword =>
+      "change_password_page".tr(gender: "validate_password");
+
+  String get changePasswordValidatePasswordHint =>
+      "change_password_page".tr(gender: "validate_password_hint");
+
+  String get changePasswordComplete =>
+      "change_password_page".tr(gender: "reset_password_complete");
+
+  String get changePasswordCompleteContent =>
+      "change_password_page".tr(gender: "reset_password_complete_content");
+
 
 
   /// Team Management
@@ -447,6 +598,16 @@ class LocalizationService {
 
   String get errorSignUpFailedContent =>
       "errors".tr(gender: "error_sign_up_failed_content");
+
+  String get errorResetPasswordFailedTitle =>
+      "errors".tr(gender: "error_reset_password_failed_title");
+
+  String get errorResetPasswordEmptyField =>
+      "errors".tr(gender: "error_reset_password_empty_field");
+
+  String get errorResetPasswordFailedContent =>
+      "errors".tr(gender: "error_reset_password_failed_content");
+
 
   String get errorQRScanFailed =>
       "errors".tr(gender: "error_scan_failed");

@@ -38,8 +38,15 @@ class _TeamManagementState extends State<TeamManagement> {
       loading = true;
     });
 
-    final String authorization = authenticationController.state!.authorization;
-    await teamBingoStatusController.fetchTeamBingoStatus(authorization);
+    String authorization = authenticationController.state!.authorization;
+
+    try {
+      await teamBingoStatusController.fetchTeamBingoStatus(authorization);
+    } on BEATTokenExpired catch (e) {
+      await authenticationController.reissueToken();
+      authorization = authenticationController.state!.authorization;
+      await teamBingoStatusController.fetchTeamBingoStatus(authorization);
+    }
 
     setState(() {
       loading = false;
@@ -47,8 +54,15 @@ class _TeamManagementState extends State<TeamManagement> {
   }
 
   Future<void> onRefresh() async {
-    final String authorization = authenticationController.state!.authorization;
-    await teamBingoStatusController.fetchTeamBingoStatus(authorization);
+    String authorization = authenticationController.state!.authorization;
+
+    try {
+      await teamBingoStatusController.fetchTeamBingoStatus(authorization);
+    } on BEATTokenExpired catch (e) {
+      await authenticationController.reissueToken();
+      authorization = authenticationController.state!.authorization;
+      await teamBingoStatusController.fetchTeamBingoStatus(authorization);
+    }
   }
 
   @override

@@ -34,8 +34,15 @@ class _NoticeListState extends State<NoticeList> {
       loading = true;
     });
 
-    final String authorization = authenticationController.state!.authorization;
-    await noticeController.fetchNoticeList(authorization);
+    String authorization = authenticationController.state!.authorization;
+
+    try {
+      await noticeController.fetchNoticeList(authorization);
+    } on BEATTokenExpired catch (e) {
+      await authenticationController.reissueToken();
+      authorization = authenticationController.state!.authorization;
+      await noticeController.fetchNoticeList(authorization);
+    }
 
     setState(() {
       loading = false;
@@ -43,8 +50,15 @@ class _NoticeListState extends State<NoticeList> {
   }
 
   Future<void> onRefresh() async {
-    final String authorization = authenticationController.state!.authorization;
-    await noticeController.fetchNoticeList(authorization);
+    String authorization = authenticationController.state!.authorization;
+
+    try {
+      await noticeController.fetchNoticeList(authorization);
+    } on BEATTokenExpired catch (e) {
+      await authenticationController.reissueToken();
+      authorization = authenticationController.state!.authorization;
+      await noticeController.fetchNoticeList(authorization);
+    }
   }
 
   @override

@@ -3,6 +3,7 @@ import 'package:beat/features/authentication/index.dart';
 import 'package:beat/features/profile/index.dart';
 import 'package:beat/features/team/index.dart';
 import 'package:beat/pages/index.dart';
+import 'package:beat/widgets/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -46,8 +47,15 @@ class _ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
       loading = true;
     });
 
-    final String authorization = authenticationController.state!.authorization;
-    await profileController.fetchDataOnce(authorization);
+    String authorization = authenticationController.state!.authorization;
+
+    try {
+      await profileController.fetchDataOnce(authorization);
+    } on BEATTokenExpired catch (e) {
+      await authenticationController.reissueToken();
+      authorization = authenticationController.state!.authorization;
+      await profileController.fetchDataOnce(authorization);
+    }
 
     setState(() {
       loading = false;
@@ -55,8 +63,15 @@ class _ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
   }
 
   Future<void> onRefresh() async {
-    final String authorization = authenticationController.state!.authorization;
-    await profileController.fetchData(authorization);
+    String authorization = authenticationController.state!.authorization;
+
+    try {
+      await profileController.fetchData(authorization);
+    } on BEATTokenExpired catch (e) {
+      await authenticationController.reissueToken();
+      authorization = authenticationController.state!.authorization;
+      await profileController.fetchData(authorization);
+    }
   }
 
   @override
@@ -70,7 +85,7 @@ class _ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
         controller: widget._scrollController,
         physics: AlwaysScrollableScrollPhysics(),
         slivers: [
-          // SliverToBoxAdapter(child: SizedBox(height: 16.w)),
+          SliverToBoxAdapter(child: SizedBox(height: 16.w)),
           SliverToBoxAdapter(
             child: Skeletonizer(
               enabled: loading,
@@ -78,27 +93,25 @@ class _ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
               containersColor: AppColors.common200,
               effect: SolidColorEffect(color: AppColors.common200),
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.w),
+                padding: EdgeInsets.symmetric(horizontal: 16.w),
                 child: ProfileCard(),
               ),
             ),
           ),
-          // TODO: 빌드 시 변경
-          // if (profileController.state?.studentType == StudentType.mentor)
-          if (profileController.state?.studentType == StudentType.mentee)
-            SliverToBoxAdapter(
+          SliverToBoxAdapter(child: SizedBox(height: 16.w)),
+          SliverToBoxAdapter(
+            child: Skeletonizer(
+              enabled: loading,
+              // enabled: true,
+              containersColor: AppColors.common200,
+              effect: SolidColorEffect(color: AppColors.common200),
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16.w),
-                child: BEATTextButton(
-                  text: LocalizationService.instance.profileTeamManagement,
-                  onTap: () {
-                    TeamBingoStatusController.to.teamId =
-                        profileController.state!.teamId;
-                    Get.toNamed(BEATRoute.teamManagement);
-                  },
-                ),
+                child: AccountManagement(),
               ),
             ),
+          ),
+          SliverToBoxAdapter(child: SizedBox(height: 16.w)),
         ],
       ),
     );

@@ -90,6 +90,8 @@ class _QRState extends State<QR> {
             ),
           );
           break;
+        case 401:
+          throw BEATTokenExpired();
         default:
           throw BEATException(
             title: LocalizationService.instance.errorQRScanFailed,
@@ -102,6 +104,9 @@ class _QRState extends State<QR> {
         Get.back();
       }
       ExceptionService.to.addException(BEATTimeoutException());
+    } on BEATTokenExpired catch (e) {
+      await authenticationController.reissueToken();
+      await requestMissionCheck(requestUrl, latitude, longitude);
     } on BEATException catch (e) {
       if (Get.isDialogOpen == true) {
         Get.back();
@@ -154,6 +159,8 @@ class _QRState extends State<QR> {
             ),
           );
           break;
+        case 401:
+          throw BEATTokenExpired();
         default:
           throw BEATException(
             title: LocalizationService.instance.errorQRScanFailed,
@@ -166,6 +173,9 @@ class _QRState extends State<QR> {
         Get.back();
       }
       ExceptionService.to.addException(BEATTimeoutException());
+    } on BEATTokenExpired catch (e) {
+      await authenticationController.reissueToken();
+      await requestCreditCheck(requestUrl);
     } on BEATException catch (e) {
       if (Get.isDialogOpen == true) {
         Get.back();

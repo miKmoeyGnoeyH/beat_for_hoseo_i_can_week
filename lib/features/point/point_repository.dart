@@ -14,6 +14,7 @@ class PointRepository {
 
       log(DotEnvService.instance.fetchPointBalance);
       log(response.body);
+      log(response.statusCode.toString());
 
       switch (response.statusCode) {
         case 200:
@@ -23,6 +24,8 @@ class PointRepository {
           return pointBalance;
         case 400:
           throw BEATException(title: LocalizationService.instance.errorUnknown);
+        case 401:
+          throw BEATTokenExpired();
         default:
           throw BEATException(title: LocalizationService.instance.errorUnknown);
       }

@@ -37,6 +37,19 @@ class UserModel {
       authorization = json['authorization'],
       refreshToken = json['Refresh-Token'];
 
+  UserModel.reissueToken(UserModel oldUser, String newAuthorization)
+    : memberId = oldUser.memberId,
+      name = oldUser.name,
+      studentId = oldUser.studentId,
+      email = oldUser.email,
+      department = oldUser.department,
+      nickname = oldUser.nickname,
+      campus = oldUser.campus,
+      studentType = oldUser.studentType,
+      teamName = oldUser.teamName,
+      authorization = newAuthorization,
+      refreshToken = oldUser.refreshToken;
+
   Map<String, dynamic> toJson() => {
     'memberId': memberId,
     'name': name,

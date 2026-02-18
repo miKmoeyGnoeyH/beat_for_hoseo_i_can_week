@@ -81,10 +81,23 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
       loading = true;
     });
 
-    final String authorization = authenticationController.state!.authorization;
+    String authorization = authenticationController.state!.authorization;
 
-    await pointController.fetchPointBalanceOnce(authorization);
-    await questListController.fetchQuestListOnce(authorization);
+    try {
+      await pointController.fetchPointBalanceOnce(authorization);
+    } on BEATTokenExpired catch (e) {
+      await authenticationController.reissueToken();
+      authorization = authenticationController.state!.authorization;
+      await pointController.fetchPointBalanceOnce(authorization);
+    }
+
+    try {
+      await questListController.fetchQuestListOnce(authorization);
+    } on BEATTokenExpired catch (e) {
+      await authenticationController.reissueToken();
+      authorization = authenticationController.state!.authorization;
+      await questListController.fetchQuestListOnce(authorization);
+    }
 
     setState(() {
       loading = false;
@@ -94,9 +107,23 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
   }
 
   Future<void> onRefresh() async {
-    final String authorization = authenticationController.state!.authorization;
-    await pointController.fetchPointBalance(authorization);
-    await questListController.fetchQuestList(authorization);
+    String authorization = authenticationController.state!.authorization;
+
+    try {
+      await pointController.fetchPointBalance(authorization);
+    } on BEATTokenExpired catch (e) {
+      await authenticationController.reissueToken();
+      authorization = authenticationController.state!.authorization;
+      await pointController.fetchPointBalance(authorization);
+    }
+
+    try {
+      await questListController.fetchQuestList(authorization);
+    } on BEATTokenExpired catch (e) {
+      await authenticationController.reissueToken();
+      authorization = authenticationController.state!.authorization;
+      await questListController.fetchQuestList(authorization);
+    }
   }
 
   void showIndicatorThenAutoHide() {
@@ -206,8 +233,11 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                       return BingoBoard(
                         questSummaryAppView:
                             questListController.state.first.localData.board,
-                        countPerAxis:
-                            questListController.state.first.localData.countPerAxis,
+                        countPerAxis: questListController
+                            .state
+                            .first
+                            .localData
+                            .countPerAxis,
                         rowSpacing: 5.w,
                         columnSpacing: 5.w,
                       );

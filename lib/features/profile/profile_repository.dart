@@ -26,6 +26,8 @@ class ProfileRepository {
             title: LocalizationService.instance.errorSignInFailed,
             message: LocalizationService.instance.errorWrongIDOrPassword,
           );
+        case 401:
+          throw BEATTokenExpired();
         default:
           throw BEATExceptionUnknown();
       }

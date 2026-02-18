@@ -28,6 +28,8 @@ class QuestDetailRepository {
           return QuestDetailModel.fromJson(responseBody);
         case 400:
           throw BEATException(title: LocalizationService.instance.errorUnknown);
+        case 401:
+          throw BEATTokenExpired();
         default:
           throw BEATException(title: LocalizationService.instance.errorUnknown);
       }

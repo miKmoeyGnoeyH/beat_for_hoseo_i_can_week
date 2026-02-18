@@ -81,6 +81,6 @@ class MainPageViewAppbar extends StatelessWidget {
   }
 
   void onSettingsTap() {
-    log("home.dart: appbar: settings tapped");
+    Get.toNamed(BEATRoute.settings);
   }
 }

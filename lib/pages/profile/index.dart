@@ -1,2 +1,2 @@
 export 'profile.dart';
-export 'profile_card.dart';
+export '../../widgets/profile/profile_card.dart';

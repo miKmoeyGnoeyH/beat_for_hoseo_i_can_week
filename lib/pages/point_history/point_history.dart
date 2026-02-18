@@ -35,9 +35,16 @@ class _PointHistoryState extends State<PointHistory> {
       loading = true;
     });
 
-    final String authorization = authenticationController.state!.authorization;
+    String authorization = authenticationController.state!.authorization;
     final int memberId = authenticationController.state!.memberId;
-    await pointHistoryController.fetchPointHistory(authorization, memberId);
+
+    try {
+      await pointHistoryController.fetchPointHistory(authorization, memberId);
+    } on BEATTokenExpired catch (e) {
+      await authenticationController.reissueToken();
+      authorization = authenticationController.state!.authorization;
+      await pointHistoryController.fetchPointHistory(authorization, memberId);
+    }
 
     setState(() {
       loading = false;
@@ -45,9 +52,16 @@ class _PointHistoryState extends State<PointHistory> {
   }
 
   Future<void> onRefresh() async {
-    final String authorization = authenticationController.state!.authorization;
+    String authorization = authenticationController.state!.authorization;
     final int memberId = authenticationController.state!.memberId;
-    await pointHistoryController.fetchPointHistory(authorization, memberId);
+
+    try {
+      await pointHistoryController.fetchPointHistory(authorization, memberId);
+    } on BEATTokenExpired catch (e) {
+      await authenticationController.reissueToken();
+      authorization = authenticationController.state!.authorization;
+      await pointHistoryController.fetchPointHistory(authorization, memberId);
+    }
   }
 
   @override

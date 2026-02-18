@@ -1,11 +1,15 @@
 import 'package:beat/features/profile/index.dart';
-import 'package:beat/pages/profile/profile_card_content_on_empty.dart';
-import 'package:beat/pages/profile/profile_card_content_on_error.dart';
-import 'package:beat/pages/profile/profile_card_content_on_loading.dart';
+import 'package:beat/widgets/profile/profile_card_content_on_empty.dart';
+import 'package:beat/widgets/profile/profile_card_content_on_loading.dart';
 import 'package:beat/shared/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+
+import '../../app/route/index.dart';
+import '../../entities/profile/index.dart';
+import '../../features/team/index.dart';
+import 'profile_card_content_on_error.dart';
 
 class ProfileCard extends StatelessWidget {
   ProfileCard({super.key});
@@ -23,7 +27,13 @@ class ProfileCard extends StatelessWidget {
       child: profileController.obx(
         (state) {
           return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Text(
+                LocalizationService.instance.profileMyInfo,
+                style: AppTextTheme.subtitle1,
+              ),
+              SizedBox(height: rowSpacing),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.baseline,
@@ -127,6 +137,20 @@ class ProfileCard extends StatelessWidget {
                   Text(state.teamName, style: AppTextTheme.body2),
                 ],
               ),
+              if (profileController.state?.studentType == StudentType.mentee)
+                Column(
+                  children: [
+                    SizedBox(height: rowSpacing),
+                    BEATTextButton(
+                      text: LocalizationService.instance.profileTeamManagement,
+                      onTap: () {
+                        TeamBingoStatusController.to.teamId =
+                            profileController.state!.teamId;
+                        Get.toNamed(BEATRoute.teamManagement);
+                      },
+                    ),
+                  ],
+                ),
             ],
           );
         },

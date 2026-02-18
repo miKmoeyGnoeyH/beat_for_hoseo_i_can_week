@@ -32,17 +32,24 @@ class _QuestDetailState extends State<QuestDetail> {
   @override
   void initState() {
     super.initState();
-    initProfile();
+    initQuestDetail();
   }
 
-  Future<void> initProfile() async {
+  Future<void> initQuestDetail() async {
     setState(() {
       loading = true;
     });
 
-    final String authorization = authenticationController.state!.authorization;
+    String authorization = authenticationController.state!.authorization;
+
+    try {
 
     await questDetailController.fetchQuestDetail(authorization);
+    } on BEATTokenExpired catch (e) {
+      await authenticationController.reissueToken();
+      authorization = authenticationController.state!.authorization;
+      await questDetailController.fetchQuestDetail(authorization);
+    }
 
     setState(() {
       loading = false;
@@ -63,7 +70,7 @@ class _QuestDetailState extends State<QuestDetail> {
           body: RefreshIndicator(
             color: AppColors.primary,
             onRefresh: () {
-              return initProfile();
+              return initQuestDetail();
             },
             child: ListView(
               children: [

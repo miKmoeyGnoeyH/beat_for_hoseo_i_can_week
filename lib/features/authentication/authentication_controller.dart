@@ -31,8 +31,27 @@ class AuthenticationController extends GetxController
     }
   }
 
+  Future<void> reissueToken() async {
+    try {
+      final String newAuthorization =
+          await authenticationRepository.reissueToken(state!.refreshToken);
+
+      final UserModel newUser = UserModel.reissueToken(state!, newAuthorization);
+
+      change(newUser, status: RxStatus.success());
+    } catch (e) {
+      log("AuthenticationController : reissueToken() : ${e.toString()}");
+      change(state, status: RxStatus.error(e.toString()));
+      rethrow;
+    }
+  }
+
   void signInFromJson(Map<String, dynamic> json) {
     change(UserModel.fromJson(json), status: RxStatus.success());
+  }
+
+  void SignOut() {
+    change(null, status: RxStatus.empty());
   }
 
   final AuthenticationRepository authenticationRepository =

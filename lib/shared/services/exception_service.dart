@@ -18,6 +18,11 @@ class BEATException implements Exception {
   final String? message;
 }
 
+class BEATTokenExpired extends BEATException {
+  BEATTokenExpired()
+      : super(title: "Token Expired");
+}
+
 class BEATTimeoutException extends BEATException {
   BEATTimeoutException()
       : super(title: LocalizationService.instance.errorTimeout,

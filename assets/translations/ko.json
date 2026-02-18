@@ -112,6 +112,36 @@
     "home": "홈",
     "profile": "프로필"
   },
+  "settings_page": {
+    "settings": "설정",
+    "sign_out": "로그아웃",
+    "withdrawal": "회원 탈퇴",
+    "oss_licenses": "오픈소스 라이선스",
+    "view_detail": "상세 보기",
+    "app_inquiry": "앱 관련 문의",
+    "email": "이메일",
+    "email_address": "hsu.greencampus@gmail.com",
+    "phone": "전화번호",
+    "phone_number": "041-540-5695",
+    "version": "버전"
+  },
+  "withdrawal": {
+    "appbar_title": "회원 탈퇴",
+    "notes": "유의 사항",
+    "note_1": "탈퇴 시 모든 활동 내역과 보유 중인 포인트는 소멸하며, 개인정보는 삭제됩니다. 삭제된 활동 내역과 보유 중인 포인트, 개인정보는 복구할 수 없습니다.",
+    "note_2": "삭제된 활동 내역과 보유 중인 포인트, 개인정보는 복구할 수 없습니다.",
+    "note_3": "데이터 처리 방침에 따라 일부 정보는 일정 기간 보관될 수 있습니다.",
+    "note_4": "탈퇴 후에는 동일한 이메일 주소로 다시 회원가입하실 수 있습니다.",
+    "do_you_agree": "동의하시겠습니까?",
+    "i_agree": "확인했습니다.",
+    "withdrawal": "회원 탈퇴",
+    "withdrawal_success": "회원 탈퇴 완료",
+    "withdrawal_success_message": "회원 탈퇴가 완료되었습니다. 로그인 화면으로 이동합니다.",
+    "withdrawal_failed": "회원 탈퇴 실패",
+    "withdrawal_failed_message": "회원 탈퇴에 실패했습니다. 다시 시도해 주세요.",
+    "confirm": "확인",
+    "cancel": "취소"
+  },
   "point_history_page":{
     "point_history": "포인트 기록",
     "point_history_info": "포인트 획득/사용 내역을 확인할 수 있습니다."
@@ -139,6 +169,13 @@
     "QR": "QR"
   },
   "profile_page": {
+    "profile": "프로필",
+    "my_info": "내 정보",
+    "account_management": "계정 관리",
+    "change_password": "비밀번호 변경",
+    "sign_out": "로그아웃",
+    "sign_out_content": "정말 로그아웃하시겠습니까?",
+    "withdrawal": "회원 탈퇴",
     "name": "이름",
     "studentId": "학번",
     "email": "이메일",
@@ -148,6 +185,25 @@
     "studentType": "역할",
     "teamName": "팀 이름",
     "team_management": "팀 관리"
+  },
+  "change_password_page": {
+    "change_password": "비밀번호 변경",
+    "student_id": "학번",
+    "student_id_hint": "학번을 입력해 주세요.",
+    "verify_mail": "메일 인증",
+    "email_sent_title": "메일 전송 완료",
+    "email_sent_message": "{}@vision.hoseo.edu 메일로 인증 메일을 전송했습니다. 메일 안내에 따라 메일 인증을 진행하신 후 하단의 인증 완료하기 버튼을 눌러 주세요.",
+    "authcode_hint": "인증코드를 입력해주세요.",
+    "email_sent": "인증 완료하기",
+    "verify_email_success_title": "메일 인증 완료",
+    "verify_email_success_content": "메일 인증이 완료되었습니다.",
+    "email_verified": "인증 완료",
+    "password": "비밀번호",
+    "password_hint": "영문 대·소문자, 숫자, 특수문자를 포함하여 8자리 이상",
+    "validate_password": "비밀번호 확인",
+    "validate_password_hint": "입력하신 비밀번호를 한 번 더 입력해주세요.",
+    "reset_password_complete": "비밀번호 변경 완료",
+    "reset_password_complete_content": "비밀번호 변경이 완료되었습니다. 로그인 화면으로 이동합니다."
   },
   "team_management_page": {
     "team_management": "팀 관리",
@@ -195,6 +251,10 @@
     "error_sign_up_failed_title": "회원가입 실패",
     "error_sign_up_empty_field": "하나 이상의 항목이 비어있습니다. 모든 항목을 입력해 주세요.",
     "error_sign_up_failed_content": "회원가입 중 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.",
+
+    "error_reset_password_failed_title": "회원가입 실패",
+    "error_reset_password_empty_field": "하나 이상의 항목이 비어있습니다. 모든 항목을 입력해 주세요.",
+    "error_reset_password_failed_content": "회원가입 중 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.",
 
     "error_scan_failed": "QR 코드 스캔 실패",
     "error_scan_failed_default_content": "QR 코드 스캔 중 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.",
