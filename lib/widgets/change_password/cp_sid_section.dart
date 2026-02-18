@@ -65,7 +65,7 @@ class _CPSIDSectionState extends State<CPSIDSection> {
           await Future.delayed(Duration(milliseconds: 100));
           return await APIService().post(
             endpoint:
-            "${DotEnvService.instance.requestEmail}?studentId=$value&emailType=SIGN_UP",
+            "${DotEnvService.instance.requestEmail}?studentId=$value&emailType=RESET_PASSWORD",
           );
         },
         loadingWidget: BEATCircularProgressIndicator(),

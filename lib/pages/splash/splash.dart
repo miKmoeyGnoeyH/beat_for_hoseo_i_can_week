@@ -24,14 +24,16 @@ class Splash extends StatefulWidget {
 class _SplashState extends State<Splash> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: AppColors.primary,
-      child: Center(
-        child: SvgPicture.asset(
-          BEATAssets.svg.greenCampusLogoType2,
-          width: 500.w,
-          height: 500.w,
-          colorFilter: ColorFilter.mode(AppColors.designWhite, BlendMode.srcIn),
+    return Material(
+      child: Container(
+        color: AppColors.primary,
+        child: Center(
+          child: SvgPicture.asset(
+            BEATAssets.svg.greenCampusLogoType2,
+            width: 500.w,
+            height: 500.w,
+            colorFilter: ColorFilter.mode(AppColors.designWhite, BlendMode.srcIn),
+          ),
         ),
       ),
     );

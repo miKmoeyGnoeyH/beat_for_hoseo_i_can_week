@@ -31,11 +31,9 @@
     "nickname": "닉네임",
     "nickname_hint": "사용하실 닉네임을 입력해 주세요.",
     "validate_nickname": "중복 확인",
-
     "validate_nickname_success_title": "닉네임 중복 확인 완료",
     "validate_nickname_success_content": "사용 가능한 닉네임입니다.",
     "nickname_validated": "중복 확인 완료",
-
     "student_id": "학번",
     "student_id_hint": "학번을 입력해 주세요.",
     "verify_mail": "메일 인증",
@@ -96,12 +94,10 @@
     "todays_walk_count": "오늘의 걸음 수",
     "monthly_walk_count": "이번 달에 총 {} 걸음",
     "quest_no": "Quest {}",
-
     "bingo_complete_nth_step": "빙고 완성 {}단계",
     "line_number": "{}줄",
     "reward": "보상",
     "claim_reward": "보상 받기",
-
     "archivement_rate": "목표 달성률",
     "number": "{}개",
     "total_points": "총 포인트",
@@ -114,16 +110,18 @@
   },
   "settings_page": {
     "settings": "설정",
-    "sign_out": "로그아웃",
-    "withdrawal": "회원 탈퇴",
+    "app_info": "앱 정보",
+    "version": "버전",
     "oss_licenses": "오픈소스 라이선스",
-    "view_detail": "상세 보기",
+    "privacy_policy": "개인정보 처리방침",
     "app_inquiry": "앱 관련 문의",
     "email": "이메일",
     "email_address": "hsu.greencampus@gmail.com",
     "phone": "전화번호",
-    "phone_number": "041-540-5695",
-    "version": "버전"
+    "phone_number": "041-540-5695"
+  },
+  "oss_licenses_page": {
+    "oss_licenses": "오픈소스 라이선스"
   },
   "withdrawal": {
     "appbar_title": "회원 탈퇴",
@@ -142,7 +140,7 @@
     "confirm": "확인",
     "cancel": "취소"
   },
-  "point_history_page":{
+  "point_history_page": {
     "point_history": "포인트 기록",
     "point_history_info": "포인트 획득/사용 내역을 확인할 수 있습니다."
   },
@@ -219,12 +217,10 @@
     "error_please_enter_id_and_password": "이메일 ID와 비밀번호를 입력해 주세요.",
     "error_unknown": "알 수 없는 오류가 발생했습니다.",
     "error_platform_not_supported": "지원되지 않는 플랫폼입니다.",
-
     "error_inavailable_name_message": "이름에 사용할 수 없는 단어가 포함되어 있습니다. 다시 입력해 주세요.",
     "error_inavailable_name_message2": "이름에 사용할 수 없는 문자가 포함되어 있습니다. 다시 입력해 주세요.",
     "error_name_has_initial_consonant": "이름에 초성이 포함되어 있습니다.",
     "error_name_has_whitespace": "이름에 공백이 포함되어 있습니다.",
-
     "error_validate_nickname_failed_title": "닉네임 중복 확인 실패",
     "error_nickname_is_empty": "닉네임을 입력해 주세요.",
     "error_nickname_has_initial_consonant": "닉네임에 초성이 포함되어 있습니다.",
@@ -232,7 +228,6 @@
     "error_nickname_inavailable_message2": "닉네임에 사용할 수 없는 문자가 포함되어 있습니다. 다시 입력해 주세요.",
     "error_nickname_has_whitespace": "닉네임에 공백이 포함되어 있습니다.",
     "error_nickname_duplicated": "이미 사용 중인 닉네임입니다. 다른 닉네임을 입력해 주세요.",
-
     "error_name_is_empty": "이름을 입력해 주세요.",
     "error_sid_too_short": "학번이 너무 짧습니다.",
     "error_sid_is_empty": "학번을 입력해 주세요.",
@@ -242,20 +237,16 @@
     "error_email_not_verified_content": "메일 인증이 완료되지 않았습니다. 메일함을 확인해 메일 인증을 진행하신 후 버튼을 눌러 주세요.",
     "error_verify_email_failed_title": "메일 인증 실패",
     "error_verify_email_failed_content": "메일 인증 확인 중 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.",
-
     "error_password_is_empty": "비밀번호를 입력해 주세요.",
     "error_password_format_unmatch": "비밀번호는 영문 대·소문자, 숫자, 특수문자를 포함하여 8자리 이상이어야 합니다.",
     "error_validate_password_is_empty": "비밀번호 확인란을 입력해 주세요.",
     "error_password_not_matched": "비밀번호가 일치하지 않습니다.",
-
     "error_sign_up_failed_title": "회원가입 실패",
     "error_sign_up_empty_field": "하나 이상의 항목이 비어있습니다. 모든 항목을 입력해 주세요.",
     "error_sign_up_failed_content": "회원가입 중 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.",
-
     "error_reset_password_failed_title": "회원가입 실패",
     "error_reset_password_empty_field": "하나 이상의 항목이 비어있습니다. 모든 항목을 입력해 주세요.",
     "error_reset_password_failed_content": "회원가입 중 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.",
-
     "error_scan_failed": "QR 코드 스캔 실패",
     "error_scan_failed_default_content": "QR 코드 스캔 중 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.",
     "error_invalid_qr_code": "유효하지 않은 QR 코드입니다."

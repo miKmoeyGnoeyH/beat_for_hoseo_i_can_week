@@ -15,7 +15,7 @@ class QuestListRepository {
         header: {"authorization": authorization},
       );
 
-      // log(response.body);
+      log(response.body);
 
       switch (response.statusCode) {
         case 200:

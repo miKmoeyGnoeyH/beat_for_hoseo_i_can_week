@@ -55,6 +55,8 @@ dependencies:
   hand_signature: ^3.1.0+2
   mobile_scanner: ^7.1.4
   geolocator: ^14.0.2
+  package_info_plus: ^9.0.0
+  flutter_oss_licenses: ^3.0.12
 
 dev_dependencies:
   flutter_test:

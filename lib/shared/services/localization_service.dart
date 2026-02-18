@@ -256,14 +256,17 @@ class LocalizationService {
   String get settingsSettings =>
       "settings_page".tr(gender: "settings");
 
-  String get settingsSignOut =>
-      "settings_page".tr(gender: "sign_out");
+  String get settingsAppInfo =>
+      "settings_page".tr(gender: "app_info");
 
-  String get settingsWithdrawal =>
-      "settings_page".tr(gender: "withdrawal");
+  String get settingsVersion =>
+      "settings_page".tr(gender: "version");
 
   String get settingsOssLicenses =>
       "settings_page".tr(gender: "oss_licenses");
+
+  String get settingsPrivacyPolicy =>
+      "settings_page".tr(gender: "privacy_policy");
 
   String get settingsViewDetail =>
       "settings_page".tr(gender: "view_detail");
@@ -283,8 +286,9 @@ class LocalizationService {
   String get settingsPhoneNumber =>
       "settings_page".tr(gender: "phone_number");
 
-  String get settingsVersion =>
-      "settings_page".tr(gender: "version");
+
+  /// OSS Licenses
+  String get ossOSSLicenses => "oss_licenses_page".tr(gender: "oss_licenses");
 
 
 

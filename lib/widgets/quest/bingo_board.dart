@@ -31,6 +31,9 @@ class BingoBoard extends StatelessWidget {
     return AspectRatio(
       aspectRatio: 1,
       child: GridView.builder(
+        padding: EdgeInsets.zero,
+        shrinkWrap: true,
+        primary: false,
         physics: const NeverScrollableScrollPhysics(),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: countPerAxis,

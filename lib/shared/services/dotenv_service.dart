@@ -58,4 +58,6 @@ class DotEnvService {
   String get teamBingoStatus => dotenv.env['TEAM_BINGO_STATUS'] ?? "";
 
   String get withdrawal => dotenv.env['WITHDRAWAL'] ?? "";
+
+  String get privacyPolicy => dotenv.env['PRIVACY_POLICY'] ?? "";
 }

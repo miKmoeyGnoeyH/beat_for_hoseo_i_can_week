@@ -11,6 +11,7 @@ Future<void> main() async {
 
   await LocalizationService.instance.init();
   await DotEnvService.instance.init();
+  await PackageInfoService.instance.init();
 
   Get.put<DialogService>(DialogService(), permanent: true);
   Get.put<ExceptionService>(ExceptionService(), permanent: true);

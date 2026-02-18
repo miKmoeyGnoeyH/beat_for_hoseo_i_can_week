@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:beat/app/route/app_pages.dart';
@@ -121,6 +122,8 @@ class _FillInformState extends State<FillInform> {
         loadingWidget: BEATCircularProgressIndicator(),
         opacity: 0.3,
       );
+
+      log("${response.statusCode} ${response.body}");
 
       switch (response.statusCode) {
         case 200:
