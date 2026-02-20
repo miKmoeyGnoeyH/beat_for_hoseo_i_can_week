@@ -32,6 +32,10 @@ class _InitState extends State<Init> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await _checkUpdate();
+    });
   }
 
   @override
@@ -95,19 +99,13 @@ class _InitState extends State<Init> with WidgetsBindingObserver {
     }
   }
 
-  Future<void> _checkPermissionsAndRequestIfNotGranted() async {
-    final bool isActivityPermissionGranted = await PermissionService.instance.isActivityPermissionGranted();
-    if (!isActivityPermissionGranted) await PermissionService.instance.requestActivityPermission();
-  }
-
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) async {
     log("init.dart: didChangeAppLifecycleState: $state");
     switch (state) {
       case AppLifecycleState.resumed:
         await _checkUpdate();
-        await _checkPermissionsAndRequestIfNotGranted();
-        StepCountController.to.onStateChangedBG2FGiOS();
+        await StepCountController.to.onStateChangedBG2FGiOS();
         break;
       case AppLifecycleState.inactive:
         StepCountController.to.onStateChangedFG2BGiOS();

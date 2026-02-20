@@ -18,6 +18,17 @@ class PrefsService {
     _prefs = await SharedPreferences.getInstance();
   }
 
+  /// isfirstLaunch
+  static const String _isFirstLaunchKey = 'is_first_launch';
+
+  Future<void> setIsFirstLaunch(bool isFirstLaunch) async {
+    await _prefs.setBool(_isFirstLaunchKey, isFirstLaunch);
+  }
+
+  bool getIsFirstLaunch() {
+    return _prefs.getBool(_isFirstLaunchKey) ?? true;
+  }
+
   /// User Management
   /// 최근 로그인한 사용자 정보를 저장하고, 불러옵니다.
   static const String _userKey = 'user';
@@ -58,6 +69,59 @@ class PrefsService {
     } else {
       return (DateTime.parse(ymdString), baseline);
     }
+  }
+
+  /// HealthKit snapshot
+  static const String _outSnapshotKey = "out_snapshot";
+
+  /// {
+  ///   "outStepsSnapshot": int,
+  ///   "outSnapshotYmd": String (ISO8601)
+  /// }
+  Future<bool> setOutSnapshot({
+    int? outStepsSnapshot,
+    DateTime? outSnapshotYmd,
+  }) async {
+    return await _prefs.setString(
+      _outSnapshotKey,
+      jsonEncode({
+        "outStepsSnapshot": outStepsSnapshot,
+        "outSnapshotYmd": outSnapshotYmd?.toIso8601String(),
+      }),
+    );
+  }
+
+  Future<(int?, DateTime?)> getOutSnapshot() async {
+    final String? snapshotString = _prefs.getString(_outSnapshotKey);
+    if (snapshotString == null) return (null, null);
+
+    final Map<String, dynamic> m = jsonDecode(snapshotString);
+    final steps = m["outStepsSnapshot"];
+    final ymd = m["outSnapshotYmd"];
+
+    if (steps == null || ymd == null) return (null, null);
+
+    return (steps as int, DateTime.parse(ymd as String));
+  }
+
+  static const String _excludedStepsKey = "excluded_steps";
+
+  Future<bool> setExcludedSteps(int baseline) async {
+    return await _prefs.setInt(_excludedStepsKey, baseline);
+  }
+
+  Future<int?> getExcludedSteps() async {
+    return _prefs.getInt(_excludedStepsKey);
+  }
+
+  static const String _isInCampusKey = "is_in_campus";
+
+  Future<bool> setIsInCampus(bool isInCampus) async {
+    return await _prefs.setBool(_isInCampusKey, isInCampus);
+  }
+
+  Future<bool> getIsInCampus() async {
+    return _prefs.getBool(_isInCampusKey) ?? false;
   }
 
   PrefsService._internal();

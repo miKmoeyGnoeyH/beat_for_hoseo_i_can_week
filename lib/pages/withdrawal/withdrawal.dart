@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:beat/app/route/app_pages.dart';
 import 'package:beat/features/authentication/authentication_controller.dart';
+import 'package:beat/features/step_count/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -56,6 +57,7 @@ class _WithdrawalState extends State<Withdrawal> {
               title: LocalizationService.instance.withdrawalSuccess,
               message: LocalizationService.instance.withdrawalSuccessMessage,
               onConfirm: () {
+                StepCountController.to.stopService();
                 AuthenticationController.to.SignOut();
                 Get.offAllNamed(BEATRoute.signIn);
               },

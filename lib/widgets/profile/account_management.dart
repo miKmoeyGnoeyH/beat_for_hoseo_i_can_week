@@ -49,6 +49,7 @@ class AccountManagement extends StatelessWidget {
           SizedBox(height: rowSpacing),
           GestureDetector(
             onTap: onChangePasswordTap,
+            behavior: HitTestBehavior.opaque,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.baseline,
@@ -56,7 +57,7 @@ class AccountManagement extends StatelessWidget {
               children: [
                 Text(
                   LocalizationService.instance.profileChangePassword,
-                  style: AppTextTheme.body2,
+                  style: AppTextTheme.body1,
                 ),
                 SvgPicture.asset(
                   BEATAssets.svg.rightArrow,
@@ -72,6 +73,7 @@ class AccountManagement extends StatelessWidget {
           SizedBox(height: rowSpacing),
           GestureDetector(
             onTap: onSignOutTap,
+            behavior: HitTestBehavior.opaque,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.baseline,
@@ -79,7 +81,7 @@ class AccountManagement extends StatelessWidget {
               children: [
                 Text(
                   LocalizationService.instance.profileSignOut,
-                  style: AppTextTheme.body2,
+                  style: AppTextTheme.body1,
                 ),
                 SvgPicture.asset(
                   BEATAssets.svg.rightArrow,
@@ -95,6 +97,7 @@ class AccountManagement extends StatelessWidget {
           SizedBox(height: rowSpacing),
           GestureDetector(
             onTap: onWithdrawalTap,
+            behavior: HitTestBehavior.opaque,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.baseline,
@@ -102,7 +105,7 @@ class AccountManagement extends StatelessWidget {
               children: [
                 Text(
                   LocalizationService.instance.profileWithdrawal,
-                  style: AppTextTheme.body2,
+                  style: AppTextTheme.body1,
                 ),
                 SvgPicture.asset(
                   BEATAssets.svg.rightArrow,

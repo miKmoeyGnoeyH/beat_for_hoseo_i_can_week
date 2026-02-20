@@ -57,6 +57,7 @@ dependencies:
   geolocator: ^14.0.2
   package_info_plus: ^9.0.0
   flutter_oss_licenses: ^3.0.12
+  app_settings: ^7.0.0
 
 dev_dependencies:
   flutter_test:

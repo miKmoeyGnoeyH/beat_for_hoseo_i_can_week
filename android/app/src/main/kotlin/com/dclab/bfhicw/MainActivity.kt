@@ -35,6 +35,9 @@ class MainActivity: FlutterActivity() {
                         val today = prefs.getLong(StepCounterService.KEY_TODAY_STEPS, 0L)
                         result.success(today)
                     }
+                    "isServiceRunning" -> {
+                        result.success(StepCounterService.isRunning)
+                    }
                     else -> result.notImplemented()
                 }
             }

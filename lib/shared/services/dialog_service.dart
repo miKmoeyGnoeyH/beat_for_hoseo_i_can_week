@@ -30,7 +30,9 @@ final class AlertDialogEvent extends DialogEvent {
 /// ```
 /// 로 실제 구현되어있지 않습니다.
 final class ConfirmDialogEvent extends DialogEvent {
-  ConfirmDialogEvent({required super.title, super.message, super.onConfirm});
+  ConfirmDialogEvent({required super.title, super.message, this.cancelText, this.confirmText, super.onConfirm});
+  final String? cancelText;
+  final String? confirmText;
 }
 
 final class ExceptionDialogEvent extends DialogEvent {
@@ -52,6 +54,10 @@ class DialogService extends GetxController {
   DialogService() {
     ever<List<DialogEvent>>(_dialogEvents, (event) {
       while (event.isNotEmpty) {
+        if (Get.isDialogOpen == true) {
+          return;
+        }
+
         final dialogEvent = event.first;
 
         Get.focusScope?.unfocus();
@@ -62,6 +68,8 @@ class DialogService extends GetxController {
             BEATConfirmDialog(
               title: dialogEvent.title,
               message: dialogEvent.message,
+              cancelText: (dialogEvent as ConfirmDialogEvent).cancelText,
+              confirmText: dialogEvent.confirmText,
               onTap: dialogEvent.onConfirm,
             ),
           );

@@ -9,13 +9,13 @@ import Foundation
 import HealthKit
 
 final class HealthKitStepManager {
-
+    
     static let shared = HealthKitStepManager()
-
+    
     // MARK: - Core objects
     private let store = HKHealthStore()
     private let defaults = UserDefaults.standard
-
+    
     // ✅ stepType 정의 (이게 빠져 있었음)
     private let stepType: HKQuantityType = {
         guard let type = HKQuantityType.quantityType(forIdentifier: .stepCount) else {
@@ -23,37 +23,23 @@ final class HealthKitStepManager {
         }
         return type
     }()
-
+    
     // MARK: - Storage keys
     private let keyTodaySteps = "hk_today_steps"
     private let keyLastUpdate = "hk_last_update_ts"
-
+    
     // MARK: - ObserverQuery
     private var observerQuery: HKObserverQuery?
-
+    
     private init() {}
-
+    
     // MARK: - Permission
-    func isStepAuthGranted() -> Bool {
-        return store.authorizationStatus(for: stepType) == .sharingAuthorized
-    }
-
-    func requestAuthorization(completion: @escaping (Bool, Error?) -> Void) {
+    func canReadSteps(completion: @escaping (Bool) -> Void) {
         guard HKHealthStore.isHealthDataAvailable() else {
-            completion(false, nil)
+            completion(false)
             return
         }
 
-        store.requestAuthorization(
-            toShare: [],
-            read: [stepType]
-        ) { success, error in
-            completion(success, error)
-        }
-    }
-
-    // MARK: - Today steps (00:00 ~ now)
-    func fetchTodaySteps(completion: @escaping (Int) -> Void) {
         let calendar = Calendar.current
         let startOfDay = calendar.startOfDay(for: Date())
 
@@ -67,19 +53,60 @@ final class HealthKitStepManager {
             quantityType: stepType,
             quantitySamplePredicate: predicate,
             options: .cumulativeSum
+        ) { _, _, error in
+            if let error = error as? HKError {
+                // 권한 거부면 여기로 들어오는 경우가 많음
+                completion(error.code != .errorAuthorizationDenied)
+                return
+            }
+            completion(true)
+        }
+
+        store.execute(query)
+    }
+    
+    func requestAuthorization(completion: @escaping (Bool, Error?) -> Void) {
+        guard HKHealthStore.isHealthDataAvailable() else {
+            completion(false, nil)
+            return
+        }
+        
+        store.requestAuthorization(
+            toShare: [],
+            read: [stepType]
+        ) { success, error in
+            completion(success, error)
+        }
+    }
+    
+    // MARK: - Today steps (00:00 ~ now)
+    func fetchTodaySteps(completion: @escaping (Int) -> Void) {
+        let calendar = Calendar.current
+        let startOfDay = calendar.startOfDay(for: Date())
+        
+        let predicate = HKQuery.predicateForSamples(
+            withStart: startOfDay,
+            end: Date(),
+            options: .strictStartDate
+        )
+        
+        let query = HKStatisticsQuery(
+            quantityType: stepType,
+            quantitySamplePredicate: predicate,
+            options: .cumulativeSum
         ) { _, result, _ in
             let sum = result?
                 .sumQuantity()?
                 .doubleValue(for: HKUnit.count()) ?? 0
             completion(Int(sum))
         }
-
+        
         store.execute(query)
     }
-
+    
     // MARK: - Background delivery
     func startBackgroundDelivery() {
-
+        
         let query = HKObserverQuery(
             sampleType: stepType,
             predicate: nil
@@ -88,7 +115,7 @@ final class HealthKitStepManager {
                 completionHandler()
                 return
             }
-
+            
             self.fetchTodaySteps { steps in
                 self.defaults.set(steps, forKey: self.keyTodaySteps)
                 self.defaults.set(
@@ -98,10 +125,10 @@ final class HealthKitStepManager {
                 completionHandler() // ⚠️ 필수
             }
         }
-
+        
         observerQuery = query
         store.execute(query)
-
+        
         store.enableBackgroundDelivery(
             for: stepType,
             frequency: .immediate
@@ -113,7 +140,7 @@ final class HealthKitStepManager {
             }
         }
     }
-
+    
     func stopBackgroundDelivery() {
         if let q = observerQuery {
             store.stop(q)
@@ -121,12 +148,12 @@ final class HealthKitStepManager {
         observerQuery = nil
         store.disableAllBackgroundDelivery { _, _ in }
     }
-
+    
     // MARK: - Cached values for Flutter
     func getCachedTodaySteps() -> Int {
         defaults.integer(forKey: keyTodaySteps)
     }
-
+    
     func getCachedLastUpdate() -> Double {
         defaults.double(forKey: keyLastUpdate)
     }

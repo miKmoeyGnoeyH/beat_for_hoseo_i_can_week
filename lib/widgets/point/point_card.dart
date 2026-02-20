@@ -72,7 +72,7 @@ class PointCard extends StatelessWidget {
                     ),
                     Text(
                       LocalizationService.instance.homeTapToCheckYourHistory,
-                      style: AppTextTheme.subtitle1.designWhite,
+                      style: AppTextTheme.subtitle2.common300,
                     ),
                   ],
                 ),

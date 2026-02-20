@@ -3,7 +3,14 @@
     "confirm": "확인",
     "cancel": "취소",
     "update_available": "업데이트 가능",
-    "update_available_content": "새로운 버전이 출시되었습니다. 스토어에서 앱을 업데이트해 주세요."
+    "update_available_content": "새로운 버전이 출시되었습니다. 스토어에서 앱을 업데이트해 주세요.",
+
+
+    "beat_requires_location_permission_title": "BEAT는 위치 권한이 필요합니다.",
+    "beat_requires_location_permission_content": "BEAT는 걸음 수 측정 및 QR 인식을 위해 위치 권한이 필요합니다. 설정 화면에서 위치 권한을 항상 허용으로 변경해 주세요.",
+    "beat_requires_activity_permission_title": "BEAT는 활동 권한이 필요합니다.",
+    "beat_requires_activity_permission_content": "BEAT는 걸음 수 측정을 위해 활동 권한이 필요합니다. 설정 화면에서 활동 권한을 허용해 주세요.",
+    "go_to_settings": "설정으로"
   },
   "sign_in_page": {
     "hoseo_univ_email_id": "호서대학교 이메일 ID",

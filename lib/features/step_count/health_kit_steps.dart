@@ -28,4 +28,8 @@ class HealthKitSteps {
     if (ts <= 0) return null;
     return DateTime.fromMillisecondsSinceEpoch((ts * 1000).toInt());
   }
+
+  static Future<void> stopBGDelivery() async {
+    await _ch.invokeMethod('stopBGDelivery');
+  }
 }

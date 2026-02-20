@@ -1,4 +1,3 @@
-
 import 'package:beat/app/route/app_pages.dart';
 import 'package:beat/features/authentication/authentication_controller.dart';
 import 'package:beat/features/step_count/index.dart';
@@ -32,7 +31,10 @@ class _SplashState extends State<Splash> {
             BEATAssets.svg.greenCampusLogoType2,
             width: 500.w,
             height: 500.w,
-            colorFilter: ColorFilter.mode(AppColors.designWhite, BlendMode.srcIn),
+            colorFilter: ColorFilter.mode(
+              AppColors.designWhite,
+              BlendMode.srcIn,
+            ),
           ),
         ),
       ),
@@ -57,7 +59,6 @@ class _SplashState extends State<Splash> {
       Get.offAllNamed(BEATRoute.signIn);
     } else {
       AuthenticationController.to.signInFromJson(savedUser);
-      await StepCountController.to.startService();
       Get.offAllNamed(BEATRoute.mainPageView);
     }
   }

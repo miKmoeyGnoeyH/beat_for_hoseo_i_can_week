@@ -1,5 +1,10 @@
+import 'dart:async';
 import 'dart:developer';
+import 'dart:io';
+import 'dart:ui';
 
+import 'package:app_settings/app_settings.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:beat/features/step_count/index.dart';
 import 'package:beat/shared/index.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -8,80 +13,212 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
-class StepCountCard extends StatelessWidget {
-  StepCountCard({super.key});
+class StepCountCard extends StatefulWidget {
+  const StepCountCard({super.key});
 
+  @override
+  State<StepCountCard> createState() => _StepCountCardState();
+}
+
+class _StepCountCardState extends State<StepCountCard> {
   final StepCountController stepCountController = StepCountController.to;
+  Timer? _permissionCheckTimer;
+  bool _isLocationPermissionGranted = false;
+  bool _isActivityPermissionGranted = false;
+
+  void startPermissionCheckTimer() {
+    _permissionCheckTimer?.cancel();
+    _permissionCheckTimer = Timer.periodic(Duration(seconds: 30), (timer) async {
+      try {
+        final locationStatus = Platform.isIOS
+            ? await PermissionService.instance
+                  .isLocationWhenInUsePermissionGranted()
+            : await PermissionService.instance
+                  .isLocationAlwaysPermissionGranted();
+        final activityStatus = await PermissionService.instance
+            .isActivityPermissionGranted();
+
+        // log(locationStatus.toString());
+        // log(activityStatus.toString());
+
+        setState(() {
+          _isLocationPermissionGranted = locationStatus;
+          _isActivityPermissionGranted = activityStatus;
+        });
+      } catch (e) {
+        log("Error checking permissions: $e");
+      }
+    });
+  }
+
+  void stopPermissionCheckTimer() {
+    _permissionCheckTimer?.cancel();
+    _permissionCheckTimer = null;
+  }
+
+  Future<void> initStepCountCard() async {
+    final locationStatus = Platform.isIOS
+        ? await PermissionService.instance
+              .isLocationWhenInUsePermissionGranted()
+        : await PermissionService.instance.isLocationAlwaysPermissionGranted();
+    final activityStatus = await PermissionService.instance
+        .isActivityPermissionGranted();
+
+    setState(() {
+      _isLocationPermissionGranted = locationStatus;
+      _isActivityPermissionGranted = activityStatus;
+    });
+
+    startPermissionCheckTimer();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    initStepCountCard();
+  }
+
+  @override
+  void dispose() {
+    stopPermissionCheckTimer();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        boxShadow: [
-          BoxShadow(
-            blurRadius: 15.w,
-            spreadRadius: -10.w,
-            color: AppColors.common500,
+    return Stack(
+      children: [
+        Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                blurRadius: 15.w,
+                spreadRadius: -10.w,
+                color: AppColors.common500,
+              ),
+            ],
           ),
-        ],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(15),
-        clipBehavior: Clip.antiAlias,
-        child: InkWell(
-          onTap: () {
-            log("onTap");
-          },
-          highlightColor: AppColors.disabledColorLight,
-          splashColor: AppColors.disabledColorLight,
-          child: Ink(
-            padding: EdgeInsets.all(16.w),
-            decoration: BoxDecoration(color: AppColors.primary),
-            child: Stack(
-              children: [
-                Positioned(
-                  height: 86.w,
-                  right: 0,
-                  child: SvgPicture.asset(
-                    BEATAssets.svg.footprint,
-                    colorFilter: ColorFilter.mode(
-                      AppColors.designWhite,
-                      BlendMode.srcIn,
-                    ),
-                  ),
-                ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+          child: Material(
+            color: Colors.transparent,
+            borderRadius: BorderRadius.circular(15),
+            clipBehavior: Clip.antiAlias,
+            child: InkWell(
+              onTap: () {},
+              highlightColor: AppColors.disabledColorLight,
+              splashColor: AppColors.disabledColorLight,
+              child: Ink(
+                padding: EdgeInsets.all(16.w),
+                decoration: BoxDecoration(color: AppColors.primary),
+                child: Stack(
                   children: [
-                    Text(
-                      LocalizationService.instance.homeTodaysWalkCount,
-                      style: AppTextTheme.subtitle1.designWhite,
+                    Positioned(
+                      height: 86.w,
+                      right: 0,
+                      child: SvgPicture.asset(
+                        BEATAssets.svg.footprint,
+                        colorFilter: ColorFilter.mode(
+                          AppColors.designWhite,
+                          BlendMode.srcIn,
+                        ),
+                      ),
                     ),
-                    // TODO: 권한 상태에 따라 권한이 없다면 권한을 요청하는 UI를 출력해야함. 권한 확인은 상위의 home에서 처리하는데, 권한 상태 변경을 어떻게 감지할 것인지?
-                    Obx(() {
-                      return Text(
-                        NumberFormat(
-                          "###,###,###,###",
-                        ).format(stepCountController.stepCount),
-                        style: AppTextTheme.headline1.designWhite,
-                      );
-                    }),
-                    // Text(
-                    //   LocalizationService.instance.homeMonthlyWalkCount(
-                    //     NumberFormat("###,###,###,###").format(1000),
-                    //   ),
-                    //   style: AppTextTheme.subtitle1.designWhite,
-                    // ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          LocalizationService.instance.homeTodaysWalkCount,
+                          style: AppTextTheme.subtitle1.designWhite,
+                        ),
+                        Obx(() {
+                          return Text(
+                            NumberFormat(
+                              "###,###,###,###",
+                            ).format(stepCountController.stepCount),
+                            style: AppTextTheme.headline1.designWhite,
+                          );
+                        }),
+                      ],
+                    ),
                   ],
                 ),
-              ],
+              ),
             ),
           ),
         ),
-      ),
+        !_isActivityPermissionGranted
+            ? Positioned.fill(
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.black.withValues(alpha: 0.8),
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  alignment: Alignment.center,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      AutoSizeText(
+                        LocalizationService
+                            .instance
+                            .generalRequiresActivityPermissionTitle,
+                        style: AppTextTheme.subtitle1.designWhite,
+                        maxLines: 1,
+                      ),
+                      SizedBox(height: 10.w),
+                      SizedBox(
+                        width: 150.w,
+                        height: 40.w,
+                        child: BEATTextButton(
+                          contentPadding: EdgeInsets.zero,
+                          text:
+                              LocalizationService.instance.generalGoToSettings,
+                          onTap: () => AppSettings.openAppSettings(
+                            type: AppSettingsType.settings,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            : !_isLocationPermissionGranted
+            ? Positioned.fill(
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.black.withValues(alpha: 0.8),
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  alignment: Alignment.center,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      AutoSizeText(
+                        LocalizationService
+                            .instance
+                            .generalRequiresLocationPermissionTitle,
+                        style: AppTextTheme.subtitle1.designWhite,
+                        maxLines: 1,
+                      ),
+                      SizedBox(height: 10.w),
+                      SizedBox(
+                        width: 150.w,
+                        height: 40.w,
+                        child: BEATTextButton(
+                          contentPadding: EdgeInsets.zero,
+                          text:
+                              LocalizationService.instance.generalGoToSettings,
+                          onTap: () => AppSettings.openAppSettings(
+                            type: AppSettingsType.settings,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            : SizedBox.shrink(),
+      ],
     );
   }
 }

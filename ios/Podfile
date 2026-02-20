@@ -63,5 +63,17 @@ end
 post_install do |installer|
   installer.pods_project.targets.each do |target|
     flutter_additional_ios_build_settings(target)
+
+    target.build_configurations.each do |config|
+      config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= ['$(inherited)']
+
+      # permission_handler 권한 스위치
+      config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] += [
+        'PERMISSION_LOCATION=1',
+        'PERMISSION_NOTIFICATIONS=1',
+        'PERMISSION_SENSORS=1',          # motion/activity(걸음/활동) 쪽이 이걸로 걸리는 경우 많음
+        # 'PERMISSION_LOCATION_ALWAYS=1', # 버전에 따라 필요할 수 있음(대부분 LOCATION=1로 포함되기도 함)
+      ]
+    end
   end
 end

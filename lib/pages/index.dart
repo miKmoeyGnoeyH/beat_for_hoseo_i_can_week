@@ -1,6 +1,7 @@
 export 'change_password/index.dart';
 export 'home/index.dart';
 export 'init/index.dart';
+export 'leaderboard/index.dart';
 export 'main_page_view/index.dart';
 export 'point_history/index.dart';
 export 'notice_list/index.dart';

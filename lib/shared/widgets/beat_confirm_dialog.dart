@@ -10,7 +10,8 @@ class BEATConfirmDialog extends StatelessWidget {
     super.key,
     this.title,
     this.message,
-    this.buttonText,
+    this.cancelText,
+    this.confirmText,
     this.onTap,
   });
 
@@ -39,21 +40,26 @@ class BEATConfirmDialog extends StatelessWidget {
             SizedBox(height: 24.w),
             Row(
               children: [
-                BEATTextButton(
-                  text: buttonText ?? LocalizationService.instance.generalCancel,
-                  textColor: AppColors.common300,
-                  buttonColor: AppColors.common200,
-                  onTap: () {
-                    Get.back();
-                  },
+                Flexible(
+                  child: BEATTextButton(
+                    text: cancelText ?? LocalizationService.instance.generalCancel,
+                    textColor: AppColors.common400,
+                    buttonColor: AppColors.common200,
+                    onTap: () {
+                      Get.back();
+                    },
+                  ),
                 ),
-                BEATTextButton(
-                  text: buttonText ?? LocalizationService.instance.generalConfirm,
-                  buttonColor: AppColors.primary,
-                  onTap: () {
-                    onTap?.call();
-                    Get.back();
-                  },
+                SizedBox(width: 10.w),
+                Flexible(
+                  child: BEATTextButton(
+                    text: confirmText ?? LocalizationService.instance.generalConfirm,
+                    buttonColor: AppColors.primary,
+                    onTap: () {
+                      onTap?.call();
+                      Get.back();
+                    },
+                  ),
                 ),
               ],
             ),
@@ -65,6 +71,7 @@ class BEATConfirmDialog extends StatelessWidget {
 
   final String? title;
   final String? message;
-  final String? buttonText;
+  final String? cancelText;
+  final String? confirmText;
   final VoidCallback? onTap;
 }

@@ -22,6 +22,23 @@ class LocalizationService {
   String get generalUpdateAvailableContent =>
       "general".tr(gender: "update_available_content");
 
+  String get generalRequiresLocationPermissionTitle =>
+      "general".tr(gender: "beat_requires_location_permission_title");
+
+  String get generalRequiresLocationPermissionContent =>
+      "general".tr(gender: "beat_requires_location_permission_content");
+
+  String get generalRequiresActivityPermissionTitle =>
+      "general".tr(gender: "beat_requires_activity_permission_title");
+
+  String get generalRequiresActivityPermissionContent =>
+      "general".tr(gender: "beat_requires_activity_permission_content");
+
+  String get generalGoToSettings =>
+      "general".tr(gender: "go_to_settings");
+
+
+
   /// sign in
   String get signInHoseoUnivEmailID =>
       "sign_in_page".tr(gender: "hoseo_univ_email_id");

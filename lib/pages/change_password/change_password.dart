@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:beat/app/route/app_pages.dart';
 import 'package:beat/features/authentication/authentication_controller.dart';
+import 'package:beat/features/step_count/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -79,6 +81,7 @@ class _ChangePasswordState extends State<ChangePassword> {
               message:
                   LocalizationService.instance.changePasswordCompleteContent,
               onConfirm: () {
+                StepCountController.to.stopService();
                 AuthenticationController.to.SignOut();
                 Get.offAllNamed(BEATRoute.signIn);
               },
@@ -102,8 +105,9 @@ class _ChangePasswordState extends State<ChangePassword> {
       }
       ExceptionService.to.addException(BEATTimeoutException());
     } on BEATTokenExpired catch (e) {
+      log(e.toString());
       await AuthenticationController.to.reissueToken();
-      changePassword();
+      await changePassword();
     } on BEATException catch (e) {
       if (Get.isDialogOpen == true) {
         Get.back();

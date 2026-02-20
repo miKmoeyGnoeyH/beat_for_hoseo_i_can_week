@@ -241,7 +241,6 @@ class _CPSIDSectionState extends State<CPSIDSection> {
                         hintText:
                             LocalizationService.instance.signUpAuthcodeHint,
                         maxLength: maxAuthCodeLength,
-                        obscureText: true,
                         onChanged: (value) {
                           if (value.length >= minAuthCodeLength) {
                             setState(() {

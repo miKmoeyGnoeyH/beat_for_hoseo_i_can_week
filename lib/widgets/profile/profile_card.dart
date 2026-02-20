@@ -41,9 +41,9 @@ class ProfileCard extends StatelessWidget {
                 children: [
                   Text(
                     LocalizationService.instance.profileName,
-                    style: AppTextTheme.body2,
+                    style: AppTextTheme.body1,
                   ),
-                  Text(state!.name, style: AppTextTheme.body2),
+                  Text(state!.name, style: AppTextTheme.body1),
                 ],
               ),
               SizedBox(height: rowSpacing),
@@ -54,9 +54,9 @@ class ProfileCard extends StatelessWidget {
                 children: [
                   Text(
                     LocalizationService.instance.profileStudentId,
-                    style: AppTextTheme.body2,
+                    style: AppTextTheme.body1,
                   ),
-                  Text(state.studentId, style: AppTextTheme.body2),
+                  Text(state.studentId, style: AppTextTheme.body1),
                 ],
               ),
               SizedBox(height: rowSpacing),
@@ -67,9 +67,9 @@ class ProfileCard extends StatelessWidget {
                 children: [
                   Text(
                     LocalizationService.instance.profileEmail,
-                    style: AppTextTheme.body2,
+                    style: AppTextTheme.body1,
                   ),
-                  Text(state.email, style: AppTextTheme.body2),
+                  Text(state.email, style: AppTextTheme.body1),
                 ],
               ),
               SizedBox(height: rowSpacing),
@@ -80,9 +80,9 @@ class ProfileCard extends StatelessWidget {
                 children: [
                   Text(
                     LocalizationService.instance.profileDepartment,
-                    style: AppTextTheme.body2,
+                    style: AppTextTheme.body1,
                   ),
-                  Text(state.department, style: AppTextTheme.body2),
+                  Text(state.department, style: AppTextTheme.body1),
                 ],
               ),
               SizedBox(height: rowSpacing),
@@ -93,9 +93,9 @@ class ProfileCard extends StatelessWidget {
                 children: [
                   Text(
                     LocalizationService.instance.profileNickname,
-                    style: AppTextTheme.body2,
+                    style: AppTextTheme.body1,
                   ),
-                  Text(state.nickname, style: AppTextTheme.body2),
+                  Text(state.nickname, style: AppTextTheme.body1),
                 ],
               ),
               SizedBox(height: rowSpacing),
@@ -106,9 +106,9 @@ class ProfileCard extends StatelessWidget {
                 children: [
                   Text(
                     LocalizationService.instance.profileCampus,
-                    style: AppTextTheme.body2,
+                    style: AppTextTheme.body1,
                   ),
-                  Text(state.campus, style: AppTextTheme.body2),
+                  Text(state.campus, style: AppTextTheme.body1),
                 ],
               ),
               SizedBox(height: rowSpacing),
@@ -119,9 +119,9 @@ class ProfileCard extends StatelessWidget {
                 children: [
                   Text(
                     LocalizationService.instance.profileStudentType,
-                    style: AppTextTheme.body2,
+                    style: AppTextTheme.body1,
                   ),
-                  Text(state.studentType.value, style: AppTextTheme.body2),
+                  Text(state.studentType.value, style: AppTextTheme.body1),
                 ],
               ),
               SizedBox(height: rowSpacing),
@@ -132,12 +132,12 @@ class ProfileCard extends StatelessWidget {
                 children: [
                   Text(
                     LocalizationService.instance.profileTeamName,
-                    style: AppTextTheme.body2,
+                    style: AppTextTheme.body1,
                   ),
-                  Text(state.teamName, style: AppTextTheme.body2),
+                  Text(state.teamName, style: AppTextTheme.body1),
                 ],
               ),
-              if (profileController.state?.studentType == StudentType.mentee)
+              if (profileController.state?.studentType == StudentType.mentor)
                 Column(
                   children: [
                     SizedBox(height: rowSpacing),
