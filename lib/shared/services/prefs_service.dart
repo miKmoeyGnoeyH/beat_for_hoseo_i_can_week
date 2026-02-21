@@ -52,17 +52,36 @@ class PrefsService {
   }
 
   /// Steps Management
-  static const String _iOSBaselineYmdKey = "ios_baseline_Ymd";
-  static const String _iOSBaselineKey = "ios_baseline";
+  static const String _healthKitStepsYmdKey = "health_kit_Ymd";
+  static const String _healthKitStepsKey = "health_kit";
 
-  Future<bool> setiOSBaseline(DateTime ymd, int baseline) async {
-    await _prefs.setString(_iOSBaselineYmdKey, ymd.toIso8601String());
-    return await _prefs.setInt(_iOSBaselineKey, baseline);
+  Future<bool> setHealthKitSteps(DateTime ymd, int baseline) async {
+    await _prefs.setString(_healthKitStepsYmdKey, ymd.toIso8601String());
+    return await _prefs.setInt(_healthKitStepsKey, baseline);
   }
 
-  Future<(DateTime?, int?)> getiOSBaseline() async {
-    final String? ymdString = _prefs.getString(_iOSBaselineYmdKey);
-    final int? baseline = _prefs.getInt(_iOSBaselineKey);
+  Future<(DateTime?, int?)> getHealthKitSteps() async {
+    final String? ymdString = _prefs.getString(_healthKitStepsYmdKey);
+    final int? baseline = _prefs.getInt(_healthKitStepsKey);
+
+    if (ymdString == null || baseline == null) {
+      return (null, null);
+    } else {
+      return (DateTime.parse(ymdString), baseline);
+    }
+  }
+
+  static const String _stepYmdKey = "steps_Ymd";
+  static const String _stepKey = "steps";
+
+  Future<bool> setSteps(DateTime ymd, int baseline) async {
+    await _prefs.setString(_stepYmdKey, ymd.toIso8601String());
+    return await _prefs.setInt(_stepKey, baseline);
+  }
+
+  Future<(DateTime?, int?)> getSteps() async {
+    final String? ymdString = _prefs.getString(_stepYmdKey);
+    final int? baseline = _prefs.getInt(_stepKey);
 
     if (ymdString == null || baseline == null) {
       return (null, null);

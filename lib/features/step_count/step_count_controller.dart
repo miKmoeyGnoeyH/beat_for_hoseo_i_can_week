@@ -9,116 +9,245 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:pedometer/pedometer.dart';
 
+/// 걸음 수 관리를 위한 GetxController.
+/// 안드로이드용 컨트롤러, iOS용 컨트롤러를 따로 구현하기보다는
+/// 단일 컨트롤러 내부에서 OS 종류에 따라 분기하는 편이 더 나아보임.
+/// OS별 컨트롤러를 따로 두게 되면 이후에 걸음 수를 참조해야 하는 모든 부분에서 OS 종류를 확인하고
+/// 그에 맞게 따로 호출해야 하기 때문.
+/// 컨트롤러 자체를 UI와 비즈니스 로직 사이의 인터페이스로 사용하고,
+/// UI로부터 비즈니스 로직의 구현 세부사항을 은닉한다.
 class StepCountController extends GetxController {
   static StepCountController get to => Get.find<StepCountController>();
 
   final Rx<int> _stepCount = 0.obs;
+
   int get stepCount => _stepCount.value;
+
   set _stepCount(int v) => _stepCount.value = v;
 
   final Rx<bool> _isInCampus = false.obs;
+
   bool get isInCampus => _isInCampus.value;
+
   set _isInCampus(bool v) => _isInCampus.value = v;
 
-  static const MethodChannel _androidMethodChannel = MethodChannel("beat/steps");
-  static const EventChannel _androidEventsChannel = EventChannel("beat/steps_events");
+  /// Android Specific Method Channel
+  /// 안드로이드에서는 네이티브에서 센서 데이터를 수집/측정하고
+  /// 이를 메소드 채널로 전달
+  static const MethodChannel _androidMethodChannel = MethodChannel(
+    "beat/steps",
+  );
+  static const EventChannel _androidEventsChannel = EventChannel(
+    "beat/steps_events",
+  );
 
   StreamSubscription? _sub;
 
-  static const MethodChannel _campusChannel = MethodChannel("beat/campus_location");
-
-  StreamSubscription<StepCount>? _iOSSub;
-  int? _iOSStepsAfterBoot;
+  /// iOS Specific Step Count Stream
+  /// iOS에서는 네이티브 코드를 통해 HealthKit의 걸음 수를 전달받아 앱 실행 시의 걸음 수 baseline을 설정
+  /// 다만, 이 경우 실시간 걸음수 동기화는 불가능함
+  /// 따라서 UI Isolate에서 Pedometer 패키지를 사용해 걸음 수 증분을 기록, 오늘 총 걸음 수는 baseline + 증분으로 계산
+  /// 앱이 백그라운드로 전환되면 Pedometer 패키지의 걸음 수 증분 계산은 중지
+  /// 다시 앱이 포어그라운드로 전환됐을 때 다시 HealthKit에 누적된 걸음 수를 전달받아 baseline을 갱신,
+  /// Pedometer 패키지를 통한 걸음 수 증분 계산 재개
+  /// 오늘 걸음 수는 이전과 마찬가지로 baseline + 증분
+  /// 위 방식을 통해 걸음 수가 "실시간으로 반영되는 것처럼" 사용자를 속임
+  static const MethodChannel _campusChannel = MethodChannel(
+    "beat/campus_location",
+  );
 
   bool _isiOSServiceRunning = false;
-  bool _campusHandlerRegistered = false;
 
-  StepCountController();
+  /// 2026.02.21 Memo
+  /// iOS의 걸음 수 측정 흐름
+  /// - 앱 실행 시 HealthKit으로부터 오늘 걸음 수를 받아옴(healthKitSteps)
+  /// - 앱이 백그라운드에서 포어그라운드로 전환 시 HealthKit으로부터 오늘 걸음 수 갱신(newHealthKitSteps)
+  /// - 새로운 HealthKit 걸음 수와 기존 HealthKit 걸음 수의 차를 걸음 수에 더해 백그라운드에서 측정된 걸음 수를 보정(steps += newHealthKitSteps - healthKitSteps)
+  /// - healKitSteps = newHealthKitSteps
+  ///
+  /// 유효 걸음 수 측정 범위 이탈 시?
+  /// - 앱 실행 시 HealthKit으로부터 오늘 걸음 수를 받아옴(healthKitSteps)
+  /// - UI Isolate에서 측정범위 이탈 감지 시, 해당 시점의 HealthKit 걸음 수를 저장(outSnapshot)
+  /// - UI Isolate에서 측정범위 진입 감지 시, 해당 시점의 HealthKit 걸음 수를 저장(inSnapshot)
+  /// - 이탈 시 걸음 수와 진입 시 걸음 수의 차이를 계산(inSnapshot - outSnapshot = excludedSteps)
+  /// - 백그라운드 걸음 수 보정 시 HealthKit으로부터 걸음 수 갱신, steps = newHealthKitSteps - (healthKitSteps + excludedSteps)
+  ///
+  /// - newHealthKitSteps = steps + healthKitSteps + excludedSteps이고, healthKitSteps = newHealthKitSteps, excludesSteps는 변동 없을 때
+  ///   기존 excludedSteps를 excludesSteps1, 새로 측정된 excludedSteps를 excludedSteps2,
+  ///   오늘 유효 범위 바깥에서 측정된 걸음 수 excludedSteps1 + excludedSteps2 = excludedSteps'이라고 하면
+  ///   이후 백그라운드 걸음 수 보정에서
+  ///   steps2 = newHealthKitSteps2 - (healthKitSteps2 + excludedSteps')
+  ///   steps2 = newHealthKitSteps2 - ((steps1 + healthKitSteps1 + excludedSteps1) + (excludedSteps1 + excludedSteps2))이므로
+  ///   excludedSteps1을 중복으로 계산하게 된다. 따라서
+  ///   (1) 백그라운드 걸음 수 보정 시 healthKitSteps를 newHealthKitSteps로 갱신하고, excludedSteps를 0으로 초기화한다
+  ///   (2) 백그라운드 걸음 수 보정 시 healthKitSteps를 newHealthKitSteps로 갱신하지 않고, excludedSteps도 갱신하지 않는다
+  ///   둘 중 하나를 택해 적용해야 함.
+  ///
+  /// 추가로 고려해야 할 시나리오
+  /// 1. 앱 실행 -> 유효 범위 이탈 -> 걸음 수 변경 -> 유효 범위 진입 -> 걸음 수 변경 -> 유효 범위 이탈
+  /// - 앱 실행 시 HealthKit으로부터 오늘 걸음 수를 받아옴(healthKitSteps)
+  /// - 측정범위 이탈 시, 해당 시점의 HealthKit 걸음 수, 시간을 저장(outSnapshot, outSnapshotYmd)
+  /// - 측정범위 진입 시, 해당 시점의 HealthKit 걸음 수, 시간을 저장(inSnapshot, inSnapshotYmd)
+  /// - 이탈 시 걸음 수와 진입 시 걸음 수의 차이를 계산(inSnapshot - outSnapshot = excludedSteps)
+  /// - 측정범위 이탈 시, 해당 시점의 HealthKit 걸음 수, 시간을 저장(outSnapshot, outSnapshotYmd)
+  /// - 측정범위 진입 시, 해당 시점의 HealthKit 걸음 수, 시간을 저장(inSnapshot, inSnapshotYmd)
+  /// - 이탈 시 걸음 수와 진입 시 걸음 수의 차이를 계산, 이전 excludedSteps에 추가(excludedSteps += inSnapshot - outSnapshot)
+  /// - 백그라운드 걸음 수 보정 시 HealthKit으로부터 걸음 수 갱신, steps = newHealthKitSteps - (healthKitSteps + excludedSteps)
+  /// - excludedSteps에는 유효 범위 바깥에서 측정된 걸음 수만이 누적되어 있으므로, 문제가 생기지 않음
+  ///
+  /// 2. 앱 실행 -> 유효 범위 이탈 -> 걸음 수 변경 -> 날짜 변경 -> 유효 범위 진입
+  /// - 앱 실행 시 HealthKit으로부터 오늘 걸음 수를 받아옴(healthKitSteps)
+  /// - 측정범위 이탈 시, 해당 시점의 HealthKit 걸음 수, 시간을 저장(outSnapshot, outSnapshotYmd)
+  /// - 날짜가 변경되어 HealthKit 걸음 수가 초기화됨
+  /// - 측정범위 진입 시, 해당 시점의 HealthKit 걸음 수, 시간을 저장(inSnapshot, inSnapshotYmd)
+  /// - excludedSteps += inSnapshot - outSnapshot인데, 이 경우 두 가지 문제가 발생함
+  ///   1. inSnapshot이 outSnapshot보다 작은 경우
+  ///   - inSnapshot - outSnapshot < 0이 되어 excludedSteps가 감소, 부정확한 값이 저장됨
+  ///   - 하지만 이 경우 inSnapshot은 모두 유효 범위 바깥에서 기록된 값이므로,
+  ///     inSnapshotYmd와 outSnapshotYmd를 비교, 날짜가 다른 경우 excludedSteps = inSnapshot으로 초기화
+  ///   - 이후 흐름은 이전과 같음
+  ///
+  ///   2. inSnapshot이 outSnapshot보다 큰 경우
+  ///   - 이 경우에는 inSnapshot - outSnapshot > 0이지만, 이틀치 excludedSteps가 누적되어 이후 걸음 수 보정이 부정확해짐
+  ///   - 이 경우에도 마찬가지로 날짜를 비교, 날짜가 다를 경우 excludedSteps = inSnapshot으로 초기화
+  ///   - 이후 흐름은 이전과 같음
+  ///
+  /// 앱 흐름(중간정리)
+  /// - 1, 2에 의해, iOS 걸음 수 측정 흐름은 다음과 같이 정리할 수 있음
+  /// - healthKitSteps = 0, excludedSteps = 0, outSnapshot = null, outSanpshotYmd = null
+  /// - 앱 실행 시 HealthKit으로부터 오늘 걸음 수를 저장(healthKitSteps)
+  /// - 측정범위 이탈 시, 해당 시점의 HealthKit 걸음 수와 시간을 저장(outSnapshot, outSnapshotYmd)
+  /// - 측정범위 진입 시, 해당 시점의 HealthKit 걸음 수와 시간을 읽어옴(inSnapshot, inSnapshotYmd)
+  /// - if (outSnapshotYmd != inSnapshotYmd) excludedSteps = inSnapshot, healthKitSteps = 0, steps = 0, outSnapshot = null, outSnapshotYmd = null
+  /// - else excludedSteps += inSnapshot - outSnapshot
+  /// - 백그라운드 걸음 수 보정 시, steps += newHealthKitSteps - healthKitSteps - excludedSteps,
+  ///   healthKitSteps = newHealthKitSteps, excludedSteps = 0
+  ///
+  /// 문제점
+  /// - 앱 오류로 인해 측정범위 이탈/진입 이벤트를 중복으로 수신할 수 있음
+  /// - 따라서 isInCampus 플래그를 함께 저장
+  /// - 측정범위 이탈/진입 이벤트 수신 시, isInCampus가 이미 false/true인 경우 해당 이벤트를 무시함
+  ///
+  /// 최종 앱 흐름
+  /// - healthKitSteps = 0, excludedSteps = 0, outSnapshot = null, outSanpshotYmd = null, isInCampus = 네이티브로부터 수신한 값
+  /// - 앱 실행 시 HealthKit으로부터 오늘 걸음 수를 저장(healthKitSteps)
+  /// - 측정범위 이탈 시, 해당 시점의 HealthKit 걸음 수와 시간을 저장(outSnapshot, outSnapshotYmd), isInCampus = false
+  ///   이미 isInCampus가 false인 경우, 이벤트를 무시
+  /// - 측정범위 진입 시, 해당 시점의 HealthKit 걸음 수와 시간을 읽어옴(inSnapshot, inSnapshotYmd), isInCampus = true
+  ///   이미 isInCampus가 true인 경우, 이벤트를 무시
+  /// - if (outSnapshotYmd != inSnapshotYmd) excludedSteps = inSnapshot, healthKitSteps = 0, steps = 0
+  /// - else excludedSteps += inSnapshot - outSnapshot
+  /// - 백그라운드 걸음 수 보정 시, steps += newHealthKitSteps - healthKitSteps - excludedSteps,
+  ///   healthKitSteps = newHealthKitSteps, excludedSteps = 0
+  ///
+  /// 2026.02.21 Memo +
+  /// 1. 유효 범위 재진입 후, 앱이 즉시 백그라운드에서 포어그라운드로 전환되지 않기 때문에,
+  ///   유효 범위 재진입 -> pedometer 재시작 -> steps에 증분 누적 -> BG2FG -> 백그라운드 걸음 수 보정 시
+  ///   보정 걸음 수에 pedometer로 측정된 증분이 포함되어 증분이 중복됨.
+  ///   따라서 백그라운드 걸음 수 보정 로직은 steps += newHealthKitSteps - healthKitSteps - excludedSteps가 아닌
+  ///   steps = max(0, newHealthKitSteps - excludedSteps)로 계산해야함
+  /// 2. BG2FG에서 excludedSteps를 초기화하면
+  ///   유효 범위 바깥에서 BG2FG가 여러 번 호출 -> BG2FG에서 excludedSteps가 초기화 -> 유효 범위 재진입 -> 백그라운드 걸음 수 보정 시
+  ///   excludedSteps가 반영되기 전에 초기화되어 값이 부정확해짐, 보정이 부정확해짐
+  ///   따라서 excludedSteps 초기화는 날짜 변경 시에만 수행되어야 함
+  /// 3. outSnapshot 값을 사용한 뒤에는 반드시 null로 폐기할 것
+  /// 4. 유효 범위 진입/이탈 이벤트 수행 시 flag값을 사용해 원자적으로 처리할 것
 
-  // -----------------------------
-  // Public
-  // -----------------------------
+  int _healthKitSteps = 0;
+  int? _iOSStepsAfterBoot;
 
-  Future<void> checkIsServiceRunningAndStartIfNot() async {
-    if (Platform.isAndroid) {
-      final bool isRunning =
-          await _androidMethodChannel.invokeMethod("isServiceRunning") ?? false;
-      if (!isRunning) await startService();
-      return;
-    }
+  // int _iOSIncrement = 0;
+  Stream<StepCount>? _iOSStepCountStream;
 
-    if (Platform.isIOS) {
-      if (!_isiOSServiceRunning) {
-        await startService();
-      } else {
-        await onStateChangedBG2FGiOS();
-      }
-      return;
-    }
-
-    throw BEATExceptionPlatformNotSupported();
-  }
+  bool _isCampusHandlerRegistered = false;
 
   Future<void> startService() async {
     if (Platform.isAndroid) {
       await _androidMethodChannel.invokeMethod("startService");
       await _refreshOnce();
       _listenEvents();
-      return;
+    } else if (Platform.isIOS) {
+      if (_isiOSServiceRunning) return;
+      _isiOSServiceRunning = true;
+
+      await HealthKitSteps.requestAuth();
+      await HealthKitSteps.startBGDelivery();
+
+      /// 내부 저장소에 저장된 healthKitSteps와 날짜를 읽어옴
+      // final (ymd, healthKitSteps) = await PrefsService.instance.getHealthKitSteps();
+
+      /// 날짜가 없거나, healthKitSteps가 없는 경우
+      /// 데이터가 손상되었거나 최초 실행임
+      /// 따라서 값을 새로 저장해줌
+      // if (ymd == null || healthKitSteps == null) {
+      //   _healthKitSteps = await _getHelthKitStepsAndUseCachedAsFallback();
+      //   PrefsService.instance.setHealthKitSteps(DateTime.now(), _healthKitSteps);
+      /// 둘 다 있는 경우
+      /// 앱을 종료했다 다시 실행했거나, 로그아웃했다 다시 로그인
+      /// 앱이 종료되어있는 동안 추가된 걸음 수를 반영해줘야 함
+      /// 로직 수정 필요:
+      /// 유효 범위 이탈 전 앱 종료 -> 유효 범위 바깥에서 걸음 수 누적 -> 유효 범위 재진입 -> 앱 재실행
+      /// 이 경우 유효 범위 바깥에서 누적된 걸음 수가 제외되지 않음.
+      /// 위에서 세운 최종 앱 흐름에 따라 변경할 것
+      /// 앱이 종료되어있는 동안 누적된 걸음 수는 무시하는 것이 맞다.
+      /// healthKitSteps 갱신만 할 것
+      // } else {
+      //   _healthKitSteps = await _getHelthKitStepsAndUseCachedAsFallback();
+      //   PrefsService.instance.setHealthKitSteps(DateTime.now(), _healthKitSteps);
+      //   // if ((newHealthKitSteps - healthKitSteps) > stepCount) {
+      //   //   _stepCount = newHealthKitSteps - healthKitSteps;
+      //   // }
+      // }
+
+      /// 위치 채널 핸들러 등록
+      _registerCampusHandler();
+
+      /// 위치 스트림 시작
+      _campusChannel.invokeMethod("start");
+
+      /// 캠퍼스 내에 있는지 여부 최초 1회 초기화
+      try {
+        _isInCampus =
+            await _campusChannel.invokeMethod("isInsideCampus") ?? false;
+      } on PlatformException catch (e) {
+        log("step_count_controller: startService: Failed to get initial campus location: ${e.message}");
+        _isInCampus = false;
+      } finally {
+        log("step_count_controller: startService: isInCampus: $_isInCampus");
+        PrefsService.instance.setIsInCampus(isInCampus);
+      }
+
+      /// healthKitSteps 초기화
+      /// 서비스가 실행되고 있지 않는 동안 누적된 걸음수는 무시할 것이므로 그냥 HealthKit 데이터로 갱신한다.
+      _healthKitSteps = await _getHelthKitStepsAndUseCachedAsFallback();
+      PrefsService.instance.setHealthKitSteps(DateTime.now(), _healthKitSteps);
+
+      /// 오늘 걸음 수 초기화
+      /// 날짜, 걸음 수 둘 중 하나라도 null이거나 날짜가 다르면 앱 최초 실행이거나 데이터 손상됨 혹은 날짜 변경이다.
+      /// 0으로 초기화해준다.
+      final (ymd, steps) = await PrefsService.instance.getSteps();
+      if (ymd == null || steps == null || ymd.day != DateTime
+          .now()
+          .day) {
+        _stepCount = 0;
+        PrefsService.instance.setSteps(DateTime.now(), 0);
+      } else {
+        _stepCount = steps;
+      }
+
+      /// 유효 범위 내라면 UI용 걸음 수 스트림을 시작
+      if (isInCampus == true) {
+        _startPedometerStreamiOS();
+      }
+    } else {
+      throw BEATExceptionPlatformNotSupported();
     }
-
-    if (!Platform.isIOS) throw BEATExceptionPlatformNotSupported();
-    if (_isiOSServiceRunning) return;
-
-    await HealthKitSteps.requestAuth();
-    await HealthKitSteps.startBGDelivery();
-
-    _registerCampusHandler();
-    await _campusChannel.invokeMethod("start");
-
-    // Restore persisted campus state first
-    final persistedIsInCampus = await PrefsService.instance.getIsInCampus();
-    _isInCampus = persistedIsInCampus;
-
-    // Sync "today state" without wiping persisted excluded/outSnapshot
-    await _syncTodayStateIOS(source: "startService");
-
-    // Pedometer stream policy: only when inside
-    // await _stopPedometerStreamiOS();
-    // if (isInCampus) _startPedometerStreamiOS();
-
-    _isiOSServiceRunning = true;
   }
 
-  Future<void> stopService() async {
-    if (Platform.isAndroid) {
-      await _androidMethodChannel.invokeMethod("stopService");
-      await _sub?.cancel();
-      _sub = null;
-      return;
-    }
-
-    if (!Platform.isIOS) throw BEATExceptionPlatformNotSupported();
-
-    await HealthKitSteps.stopBGDelivery();
-    await _campusChannel.invokeMethod("stop");
-    await _stopPedometerStreamiOS();
-    _isiOSServiceRunning = false;
-  }
-
-  @override
-  void onClose() {
-    _sub?.cancel();
-    super.onClose();
-  }
-
-  // -----------------------------
-  // Android
-  // -----------------------------
-
+  /// Android startService
   Future<void> _refreshOnce() async {
     final v = await _androidMethodChannel.invokeMethod('getTodaySteps') ?? 0;
-    _stepCount = (v is num) ? v.toInt() : (v as int);
+    _stepCount = v;
   }
 
   void _listenEvents() {
@@ -128,113 +257,25 @@ class StepCountController extends GetxController {
     });
   }
 
-  // -----------------------------
-  // iOS core helpers
-  // -----------------------------
+  /// iOS startService
+  bool _handlingCampusEvent = false;
+  Future<void> onCampusExit() async {
+    if (_handlingCampusEvent) return;
+    if (!isInCampus) return;
 
-  bool _sameDay(DateTime a, DateTime b) =>
-      a.year == b.year && a.month == b.month && a.day == b.day;
-
-  Future<int> _getHealthKitStepsAndUseCachedAsFallback() async {
-    try {
-      final live = await HealthKitSteps.getTodaySteps();
-      if (live > 0) return live;
-    } catch (_) {}
-
-    return await HealthKitSteps.getCachedTodaySteps();
+    try {} catch (e) {} finally {}
   }
 
-  Future<int> _calcBaseStepsFrom(int hkNow) async {
-    final excluded = await PrefsService.instance.getExcludedSteps() ?? 0;
-    return math.max(0, hkNow - excluded);
+  Future<void> onCampusEnter() async {
+    if (_handlingCampusEvent) return;
+    if (isInCampus) return;
+
+    try {} catch (e) {} finally {}
   }
-
-  /// Policy:
-  /// - Inside: show hkNow - excluded (typically excluded=0)
-  /// - Outside: show 0
-  Future<void> _renderIOS(int hkNow) async {
-    if (isInCampus) {
-      _stepCount = await _calcBaseStepsFrom(hkNow);
-    } else {
-      _stepCount = 0;
-    }
-  }
-
-  /// This is the ONLY place that handles "new day" initialization.
-  ///
-  /// Policy:
-  /// - If you are outside at new day: all today's hkNow counts as outside => excludedSteps = hkNow, UI=0.
-  /// - If you are inside at new day: excludedSteps = 0, UI=hkNow.
-  Future<void> _handleNewDayIOS({required int hkNow, required bool inCampusNow}) async {
-    // Record baseline for consistency / debugging
-    await PrefsService.instance.setiOSBaseline(DateTime.now(), hkNow);
-
-    if (inCampusNow) {
-      await PrefsService.instance.setExcludedSteps(0);
-      await PrefsService.instance.setOutSnapshot(outStepsSnapshot: null, outSnapshotYmd: null);
-      _isInCampus = true;
-      await PrefsService.instance.setIsInCampus(true);
-
-      await _stopPedometerStreamiOS();
-      _stepCount = hkNow; // inside => counts
-      _startPedometerStreamiOS();
-    } else {
-      // outside at the start of the day => exclude everything accumulated so far
-      await PrefsService.instance.setExcludedSteps(hkNow);
-      await PrefsService.instance.setOutSnapshot(
-        outStepsSnapshot: hkNow,
-        outSnapshotYmd: DateTime.now(),
-      );
-      _isInCampus = false;
-      await PrefsService.instance.setIsInCampus(false);
-
-      await _stopPedometerStreamiOS();
-      _stepCount = 0;
-    }
-  }
-
-  /// Make persisted state consistent for "today".
-  /// - If baseline day != today => call _handleNewDayIOS(...) based on current isInCampus.
-  /// - Else:
-  ///   - If outside and outSnapshot missing => set it to hkNow (so deltaOutside works on next enter).
-  ///   - Clamp excludedSteps to <= hkNow to avoid negative base.
-  Future<void> _syncTodayStateIOS({required String source}) async {
-    final now = DateTime.now();
-    final hkNow = await _getHealthKitStepsAndUseCachedAsFallback();
-
-    final (ymd, _) = await PrefsService.instance.getiOSBaseline();
-    if (ymd == null || !_sameDay(ymd, now)) {
-      await _handleNewDayIOS(hkNow: hkNow, inCampusNow: isInCampus);
-      return;
-    }
-
-    // Same day: ensure outside snapshot exists if outside
-    if (!isInCampus) {
-      final (outSteps, outYmd) = await PrefsService.instance.getOutSnapshot();
-      if (outSteps == null || outYmd == null || !_sameDay(outYmd, now)) {
-        await PrefsService.instance.setOutSnapshot(
-          outStepsSnapshot: hkNow,
-          outSnapshotYmd: now,
-        );
-      }
-    }
-
-    // Clamp excluded
-    final excluded = await PrefsService.instance.getExcludedSteps() ?? 0;
-    if (excluded > hkNow) {
-      await PrefsService.instance.setExcludedSteps(hkNow);
-    }
-
-    await _renderIOS(hkNow);
-  }
-
-  // -----------------------------
-  // iOS campus events
-  // -----------------------------
 
   void _registerCampusHandler() {
-    if (_campusHandlerRegistered) return;
-    _campusHandlerRegistered = true;
+    if (_isCampusHandlerRegistered) return;
+    _isCampusHandlerRegistered = true;
 
     _campusChannel.setMethodCallHandler((call) async {
       switch (call.method) {
@@ -248,136 +289,142 @@ class StepCountController extends GetxController {
     });
   }
 
-  Future<void> onCampusExit() async {
-    if (!Platform.isIOS) return;
+  /// HealthKit에서 오늘 걸음 수를 가져오되,
+  /// 실패할 경우 캐시된 오늘 걸음 수를 반환하는 함수
+  Future<int> _getHelthKitStepsAndUseCachedAsFallback() async {
+    final cached = await HealthKitSteps.getCachedTodaySteps();
+    int newBaseline = cached;
 
-    _isInCampus = false;
-    await PrefsService.instance.setIsInCampus(false);
+    try {
+      final fresh = await HealthKitSteps.getTodaySteps();
+      if (fresh > 0) newBaseline = fresh;
+    } catch (_) {}
 
-    final hkNow = await _getHealthKitStepsAndUseCachedAsFallback();
-
-    // snapshot the moment we became outside (always overwrite; it's the "outside start" anchor)
-    await PrefsService.instance.setOutSnapshot(
-      outStepsSnapshot: hkNow,
-      outSnapshotYmd: DateTime.now(),
-    );
-
-    await _stopPedometerStreamiOS();
-    _stepCount = 0; // UI policy: outside => 0
+    return newBaseline;
   }
 
-  Future<void> onCampusEnter() async {
+  /// iOS에서, 앱이 백그라운드에서 포어그라운드로 전환되었을 때 실행되는 함수
+  /// Proper Ref Count: 1
+  /// - init 페이지에서, 앱 라이프사이클 변경 시
+  Future<void> onStateChangedBG2FGiOS() async {
     if (!Platform.isIOS) return;
+    if (!_isiOSServiceRunning) return;
 
-    final hkNow = await _getHealthKitStepsAndUseCachedAsFallback();
-    final now = DateTime.now();
+    final (ymd, baseline) = await PrefsService.instance.getHealthKitSteps();
 
-    // If baseline is not today, treat as new day first (based on "we were outside until this enter")
-    final (baselineYmd, _) = await PrefsService.instance.getiOSBaseline();
-    final baselineIsToday = baselineYmd != null && _sameDay(baselineYmd, now);
-
-    final (outSteps, outYmd) = await PrefsService.instance.getOutSnapshot();
-    final outIsToday = outYmd != null && _sameDay(outYmd, now);
-
-    if (!baselineIsToday) {
-      // You are entering campus on a new day.
-      // Your policy: "before entering, you were outside" => exclude all hkNow.
-      await PrefsService.instance.setExcludedSteps(hkNow);
-      await PrefsService.instance.setiOSBaseline(now, hkNow);
-      await PrefsService.instance.setOutSnapshot(outStepsSnapshot: null, outSnapshotYmd: null);
-
-      _isInCampus = true;
-      await PrefsService.instance.setIsInCampus(true);
-
-      await _stopPedometerStreamiOS();
+    if (ymd == null || baseline == null) {
+      /// 날짜 혹은 baseline이 null인 경우
+      /// 1. 앱 실행 후, startService가 완전히 끝나기 전에 백그라운드 -> 포어그라운드 전환된 경우
+      /// 2. 앱 실행 후, 임의로 내부 저장소를 비운 경우
+      /// 이므로, 최초 실행 시와 동일한 로직을 적용
       _stepCount = 0;
-      _startPedometerStreamiOS();
-      return;
-    }
-
-    // Same-day enter:
-    // If we don't have a valid out snapshot for today, be conservative: anchor it now (deltaOutside = 0)
-    if (outSteps == null || outYmd == null || !outIsToday) {
-      await PrefsService.instance.setOutSnapshot(outStepsSnapshot: hkNow, outSnapshotYmd: now);
+      _healthKitSteps = await _getHelthKitStepsAndUseCachedAsFallback();
+      PrefsService.instance.setHealthKitSteps(DateTime.now(), _healthKitSteps);
+    } else if (ymd.day != DateTime
+        .now()
+        .day) {
+      /// 저장된 날짜가 다른 경우
+      /// 1. 자정이 지난 경우
+      /// 이므로, 오늘 걸음 수를 다시 측정해야 함.
+      /// 기본적으로 최초 실행 시의 동작과 동일하지만, 앱을 설치한 이후, 정상적으로 사용한 이후 날짜가 지난 것이므로
+      /// 현재 걸음 수를 HealthKit의 값으로 그대로 사용한다.
+      _healthKitSteps = await _getHelthKitStepsAndUseCachedAsFallback();
+      PrefsService.instance.setHealthKitSteps(DateTime.now(), _healthKitSteps);
+      _stepCount = _healthKitSteps;
     } else {
-      // Compute outside delta and add to excluded
-      final deltaOutside = math.max(0, hkNow - outSteps);
-      final excluded = await PrefsService.instance.getExcludedSteps() ?? 0;
-      final newExcluded = excluded + deltaOutside;
-      await PrefsService.instance.setExcludedSteps(newExcluded);
+      /// 위 경우 모두 아닌 경우
+      /// 1. 앱을 정상적으로 사용하던 중, 날짜가 변경되기 전 백그라운드 -> 포어그라운드 전환된 경우
+      /// 이므로, HealthKit에서 걸음 수를 다시 전달받고
+      /// 이전에 저장된 baseline과 비교,
+      /// UI Isolate에서 측정한 증분보다 증가값이 크다면
+      /// (앱이 포어그라운드에 있을 때 측정한 걸음 수보다 더 많이 걸은 경우)
+      /// _iOSIncrement를 갱신해 백그라운드에서 증가한 걸음 수 만큼 보정해준다.
+      final int newBaseline = await _getHelthKitStepsAndUseCachedAsFallback();
 
-      // Snapshot consumed
-      await PrefsService.instance.setOutSnapshot(outStepsSnapshot: null, outSnapshotYmd: null);
+      if ((newBaseline - baseline) > stepCount) {
+        _stepCount = newBaseline - baseline;
+      }
     }
 
-    _isInCampus = true;
-    await PrefsService.instance.setIsInCampus(true);
-
-    await _stopPedometerStreamiOS();
-    _stepCount = await _calcBaseStepsFrom(hkNow);
     _startPedometerStreamiOS();
   }
 
-  // -----------------------------
-  // iOS lifecycle events
-  // -----------------------------
-
-  /// Called on BG -> FG
-  Future<void> onStateChangedBG2FGiOS() async {
-    if (!Platform.isIOS || !_isiOSServiceRunning) return;
-
-    // final live = await HealthKitSteps.getTodaySteps();
-
-    // resync day + render
-    await _syncTodayStateIOS(source: "BG2FG");
-
-    // pedometer policy
-    await _stopPedometerStreamiOS();
-    if (isInCampus) _startPedometerStreamiOS();
-  }
-
-  /// Called on FG -> BG
+  /// iOS에서 앱이 포어그라운드에서 백그라운드로 전환되었을 때 실행되는 함수
+  /// Pedometer 패키지의 걸음 수 스트림을 중지
+  /// 여기에서는 _iOSStepsAfterBoot만 초기화하고 나머지는 초기화하지 않는데,
+  /// 이는 나머지 두 변수들이 백그라운드 -> 포어그라운드 전환 시 로직을 처리하기 위해 필요하기 때문이다.
+  /// 나머지 두 변수는 [onStateChangedBG2FGiOS]에서 처리된다.
+  /// /// Proper Ref Count: 1
+  /// - init 페이지에서, 앱 라이프사이클 변경 시
   void onStateChangedFG2BGiOS() async {
-    if (!Platform.isIOS || !_isiOSServiceRunning) return;
-    await _stopPedometerStreamiOS();
+    if (!Platform.isIOS) return;
+    if (!_isiOSServiceRunning) return;
     _iOSStepsAfterBoot = null;
+    _iOSStepCountStream = null;
   }
 
-  // -----------------------------
-  // iOS pedometer stream
-  // -----------------------------
-
+  /// iOS Only 걸음 수 스트림 구독
+  /// Proper Ref Count: 2
+  /// - 앱 실행 시, startService에서
+  /// - 백그라운드 -> 포어그라운드 전환 시, onStateChangedBG2FGiOS에서
   void _startPedometerStreamiOS() {
     if (!Platform.isIOS) return;
-    if (_iOSSub != null) return;
-
-    _iOSSub = Pedometer.stepCountStream.listen(
-      _oniOSStepCount,
-      onError: (_) {},
-    );
+    _iOSStepCountStream = Pedometer.stepCountStream;
+    _iOSStepCountStream!.listen(_oniOSStepCount).onError((_) {});
   }
 
-  Future<void> _stopPedometerStreamiOS() async {
-    await _iOSSub?.cancel();
-    _iOSSub = null;
-    _iOSStepsAfterBoot = null;
-  }
-
+  /// iOS Only 걸음 수 이벤트 핸들러
   void _oniOSStepCount(StepCount event) {
-    // Hard policy: only count increments while inside
-    if (!isInCampus) return;
-
-    log("oniOSStepCount: steps=${event.steps}, time=${event.timeStamp}");
-
     if (_iOSStepsAfterBoot == null) {
       _iOSStepsAfterBoot = event.steps;
       return;
     }
 
-    final inc = event.steps - _iOSStepsAfterBoot!;
+    final int increment = event.steps - _iOSStepsAfterBoot!;
     _iOSStepsAfterBoot = event.steps;
+    _stepCount = increment < 0 ? stepCount : stepCount + increment;
+  }
 
-    if (inc < 0) return; // ignore weird resets
-    _stepCount = stepCount + inc;
+  Future<void> stopService() async {
+    if (Platform.isAndroid) {
+      await _androidMethodChannel.invokeMethod("stopService");
+      await _sub?.cancel();
+      _sub = null;
+    } else if (Platform.isIOS) {
+      log("stopService");
+      _iOSStepsAfterBoot = null;
+      _iOSStepCountStream = null;
+      _isiOSServiceRunning = false;
+    } else {
+      throw BEATExceptionPlatformNotSupported();
+    }
+  }
+
+  @override
+  void onClose() {
+    _sub?.cancel();
+    super.onClose();
+  }
+
+  Future<void> checkIsServiceRunningAndStartIfNot() async {
+    if (Platform.isAndroid) {
+      final bool isRunning =
+          await _androidMethodChannel.invokeMethod("isServiceRunning") ?? false;
+      if (!isRunning) await startService();
+      return;
+    }
+
+    if (Platform.isIOS) {
+      log(_isiOSServiceRunning.toString());
+
+      if (!_isiOSServiceRunning) {
+        await startService();
+      } else {
+        await onStateChangedBG2FGiOS();
+      }
+      return;
+    }
+
+    throw BEATExceptionPlatformNotSupported();
   }
 }

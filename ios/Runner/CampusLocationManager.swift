@@ -18,6 +18,9 @@ final class CampusLocationManager: NSObject, CLLocationManagerDelegate {
     private let manager = CLLocationManager()
     private let defaults = UserDefaults.standard
 
+    private var pendingLocationCompletion: ((Bool?, FlutterError?) -> Void)?
+    private var locationTimeoutTimer: Timer?
+    
     private let keyLastInside = "campus_last_inside"
     private let keyRunning = "campus_location_running"
     
@@ -97,31 +100,49 @@ final class CampusLocationManager: NSObject, CLLocationManagerDelegate {
     }
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        guard isRunning() else { return }
         guard let loc = locations.last else { return }
 
         let inside = isInsideCampus(lat: loc.coordinate.latitude, lng: loc.coordinate.longitude)
 
-        // 최초 값 저장
-        if defaults.object(forKey: keyLastInside) == nil {
-            defaults.set(inside, forKey: keyLastInside)
+        // 이전값 읽기
+        let hadLast = defaults.object(forKey: keyLastInside) != nil
+        let lastInside = defaults.bool(forKey: keyLastInside)
+
+        // 최신값 저장
+        defaults.set(inside, forKey: keyLastInside)
+
+        // ✅ 원샷 응답
+        if let cb = pendingLocationCompletion {
+            pendingLocationCompletion = nil
+            locationTimeoutTimer?.invalidate()
+            locationTimeoutTimer = nil
+            
+            manager.stopUpdatingLocation()
+            
+            cb(inside, nil)
             return
         }
 
-        let lastInside = defaults.bool(forKey: keyLastInside)
-        if lastInside == inside { return } // 변화 없으면 스팸 방지
+        // ✅ running 이벤트 처리
+        guard isRunning() else { return }
 
-        defaults.set(inside, forKey: keyLastInside)
+        if !hadLast { return }              // 최초는 이벤트 안 쏨
+        if lastInside == inside { return }  // 변화 없으면 스팸 방지
 
-        if inside {
-            notifyEntered()
-        } else {
-            notifyLeft()
-        }
+        if inside { notifyEntered() } else { notifyLeft() }
     }
 
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        // 위치 실패 시에도 필요하면 중지/로깅
+        if let cb = pendingLocationCompletion {
+                pendingLocationCompletion = nil
+                locationTimeoutTimer?.invalidate()
+                locationTimeoutTimer = nil
+
+                cb(nil, FlutterError(code: "LOCATION_ERROR",
+                                     message: error.localizedDescription,
+                                     details: nil))
+                return
+            }
         // print("Location error: \(error)")
     }
 
@@ -188,6 +209,60 @@ final class CampusLocationManager: NSObject, CLLocationManagerDelegate {
         }
 
         return inside
+    }
+    
+    // MARK: - Immediate State Query
+    func requestInsideOnce(timeout: TimeInterval = 6.0,
+                           completion: @escaping (Bool?, FlutterError?) -> Void) {
+        DispatchQueue.main.async {
+            // 권한 체크
+            let status = self.manager.authorizationStatus
+            if status == .denied || status == .restricted {
+                completion(nil, FlutterError(code: "LOCATION_DENIED",
+                                             message: "Location permission denied/restricted",
+                                             details: nil))
+                return
+            }
+
+            if status == .notDetermined {
+                self.manager.requestAlwaysAuthorization()
+                completion(nil, FlutterError(code: "LOCATION_NOT_DETERMINED",
+                                             message: "Location permission not determined yet",
+                                             details: nil))
+                return
+            }
+
+            if self.pendingLocationCompletion != nil {
+                completion(nil, FlutterError(code: "LOCATION_IN_PROGRESS",
+                                             message: "Location request already in progress",
+                                             details: nil))
+                return
+            }
+
+            self.pendingLocationCompletion = completion
+
+            // timeout
+            self.locationTimeoutTimer?.invalidate()
+            self.locationTimeoutTimer = Timer.scheduledTimer(withTimeInterval: timeout, repeats: false) { [weak self] _ in
+                guard let self else { return }
+
+                self.manager.stopUpdatingLocation()
+
+                let fallback: Bool? = self.defaults.object(forKey: self.keyLastInside) != nil
+                    ? self.defaults.bool(forKey: self.keyLastInside)
+                    : nil
+
+                let cb = self.pendingLocationCompletion
+                self.pendingLocationCompletion = nil
+                cb?(fallback, FlutterError(code: "LOCATION_TIMEOUT",
+                                          message: "Timed out waiting for a fresh location",
+                                          details: nil))
+            }
+
+            // ✅ 원샷을 더 안정적으로: 잠깐 켜고 첫 업데이트 때 끄기
+            self.manager.desiredAccuracy = kCLLocationAccuracyHundredMeters
+            self.manager.startUpdatingLocation()
+        }
     }
 
     // MARK: - Campus Polygons (lat, lng)

@@ -100,6 +100,16 @@ import HealthKit
             case "isRunning":
                 result(CampusLocationManager.shared.isRunning())
                 
+            case "isInsideCampus":
+                CampusLocationManager.shared.requestInsideOnce { inside, err in
+                        if let err = err {
+                            result(err) // ✅ 에러로 올려
+                            return
+                        }
+                        // inside가 nil이면(unknown) nil 반환 (Flutter에서 null 처리)
+                        result(inside as Any)
+                    }
+                
             default:
                 result(FlutterMethodNotImplemented)
             }

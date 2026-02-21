@@ -25,6 +25,9 @@ class LocalizationService {
   String get generalRequiresLocationPermissionTitle =>
       "general".tr(gender: "beat_requires_location_permission_title");
 
+  String get generalPleaseAllowAlwaysLocation =>
+      "general".tr(gender: "please_allow_always_location");
+
   String get generalRequiresLocationPermissionContent =>
       "general".tr(gender: "beat_requires_location_permission_content");
 
@@ -36,6 +39,7 @@ class LocalizationService {
 
   String get generalGoToSettings =>
       "general".tr(gender: "go_to_settings");
+
 
   String generalCampus(String campus) => "general".tr(gender: campus);
 
@@ -277,6 +281,9 @@ class LocalizationService {
   String get homeBingoCheckSuccessTitle => "home_page".tr(gender: "bingo_check_success_title");
 
   String get homeBingoCheckSuccessContent => "home_page".tr(gender: "bingo_check_success_content");
+
+  String get homeNotInCampus =>
+      "home_page".tr(gender: "not_in_campus");
 
 
   /// Settings

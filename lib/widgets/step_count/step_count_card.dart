@@ -28,7 +28,9 @@ class _StepCountCardState extends State<StepCountCard> {
 
   void startPermissionCheckTimer() {
     _permissionCheckTimer?.cancel();
-    _permissionCheckTimer = Timer.periodic(Duration(seconds: 10), (timer) async {
+    _permissionCheckTimer = Timer.periodic(Duration(seconds: 10), (
+      timer,
+    ) async {
       try {
         final locationStatus = Platform.isIOS
             ? await PermissionService.instance
@@ -147,77 +149,99 @@ class _StepCountCardState extends State<StepCountCard> {
             ),
           ),
         ),
-        !_isActivityPermissionGranted
-            ? Positioned.fill(
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.black.withValues(alpha: 0.8),
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  alignment: Alignment.center,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      AutoSizeText(
-                        LocalizationService
-                            .instance
-                            .generalRequiresActivityPermissionTitle,
-                        style: AppTextTheme.subtitle1.designWhite,
-                        maxLines: 1,
-                      ),
-                      SizedBox(height: 10.w),
-                      SizedBox(
-                        width: 150.w,
-                        height: 40.w,
-                        child: BEATTextButton(
-                          contentPadding: EdgeInsets.zero,
-                          text:
-                              LocalizationService.instance.generalGoToSettings,
-                          onTap: () => AppSettings.openAppSettings(
-                            type: AppSettingsType.settings,
-                          ),
+        Obx(() {
+          if (!stepCountController.isInCampus) {
+            return Positioned.fill(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.black.withValues(alpha: 0.8),
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                alignment: Alignment.center,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    AutoSizeText(
+                      LocalizationService.instance.homeNotInCampus,
+                      style: AppTextTheme.subtitle1.designWhite,
+                      maxLines: 1,
+                    ),
+                  ],
+                ),
+              ),
+            );
+          } else if (!_isActivityPermissionGranted) {
+            return Positioned.fill(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.black.withValues(alpha: 0.8),
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                alignment: Alignment.center,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    AutoSizeText(
+                      LocalizationService
+                          .instance
+                          .generalRequiresActivityPermissionTitle,
+                      style: AppTextTheme.subtitle1.designWhite,
+                      maxLines: 1,
+                    ),
+                    SizedBox(height: 10.w),
+                    SizedBox(
+                      width: 150.w,
+                      height: 40.w,
+                      child: BEATTextButton(
+                        contentPadding: EdgeInsets.zero,
+                        text: LocalizationService.instance.generalGoToSettings,
+                        onTap: () => AppSettings.openAppSettings(
+                          type: AppSettingsType.settings,
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              )
-            : !_isLocationPermissionGranted
-            ? Positioned.fill(
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.black.withValues(alpha: 0.8),
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  alignment: Alignment.center,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      AutoSizeText(
-                        LocalizationService
-                            .instance
-                            .generalRequiresLocationPermissionTitle,
-                        style: AppTextTheme.subtitle1.designWhite,
-                        maxLines: 1,
-                      ),
-                      SizedBox(height: 10.w),
-                      SizedBox(
-                        width: 150.w,
-                        height: 40.w,
-                        child: BEATTextButton(
-                          contentPadding: EdgeInsets.zero,
-                          text:
-                              LocalizationService.instance.generalGoToSettings,
-                          onTap: () => AppSettings.openAppSettings(
-                            type: AppSettingsType.settings,
-                          ),
+              ),
+            );
+          } else if (!_isLocationPermissionGranted) {
+            return Positioned.fill(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.black.withValues(alpha: 0.8),
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                alignment: Alignment.center,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    AutoSizeText(
+                      LocalizationService
+                          .instance
+                          .generalPleaseAllowAlwaysLocation,
+                      style: AppTextTheme.subtitle1.designWhite,
+                      maxLines: 1,
+                    ),
+                    SizedBox(height: 10.w),
+                    SizedBox(
+                      width: 150.w,
+                      height: 40.w,
+                      child: BEATTextButton(
+                        contentPadding: EdgeInsets.zero,
+                        text: LocalizationService.instance.generalGoToSettings,
+                        onTap: () => AppSettings.openAppSettings(
+                          type: AppSettingsType.settings,
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              )
-            : SizedBox.shrink(),
+              ),
+            );
+          } else {
+            return SizedBox.shrink();
+          }
+        }),
       ],
     );
   }

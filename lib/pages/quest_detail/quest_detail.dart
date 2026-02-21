@@ -5,6 +5,7 @@ import 'package:beat/features/quest/index.dart';
 import 'package:beat/widgets/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
@@ -43,8 +44,7 @@ class _QuestDetailState extends State<QuestDetail> {
     String authorization = authenticationController.state!.authorization;
 
     try {
-
-    await questDetailController.fetchQuestDetail(authorization);
+      await questDetailController.fetchQuestDetail(authorization);
     } on BEATTokenExpired catch (e) {
       await authenticationController.reissueToken();
       authorization = authenticationController.state!.authorization;
@@ -63,9 +63,13 @@ class _QuestDetailState extends State<QuestDetail> {
     return Scaffold(
       backgroundColor: AppColors.designWhite,
       body: SafeArea(
+        top: false,
+        bottom: false,
         child: NestedScrollView(
           headerSliverBuilder: (context, innerBoxIsScrolled) {
-            return [BEATSliverBackAppBar()];
+            return [
+              BEATSliverBackAppBar(pinned: true),
+            ];
           },
           body: RefreshIndicator(
             color: AppColors.primary,
@@ -73,6 +77,8 @@ class _QuestDetailState extends State<QuestDetail> {
               return initQuestDetail();
             },
             child: ListView(
+              padding: EdgeInsets.zero,
+              // shrinkWrap: true,
               children: [
                 Skeletonizer(
                   enabled: loading,
