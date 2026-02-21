@@ -203,6 +203,9 @@ class StepCountController extends GetxController {
       /// 위치 채널 핸들러 등록
       _registerCampusHandler();
 
+      /// 위치 스트림 시작
+      await _campusChannel.invokeMethod("start");
+
       /// 캠퍼스 내에 있는지 여부 최초 1회 초기화
       try {
         _isInCampus =
@@ -216,9 +219,6 @@ class StepCountController extends GetxController {
         log("step_count_controller: startService: isInCampus: $_isInCampus");
         PrefsService.instance.setIsInCampus(isInCampus);
       }
-
-      /// 위치 스트림 시작
-      _campusChannel.invokeMethod("start");
 
       /// healthKitSteps 초기화
       /// 서비스가 실행되고 있지 않는 동안 누적된 걸음수는 무시할 것이므로 그냥 HealthKit 데이터로 갱신한다.
@@ -237,8 +237,10 @@ class StepCountController extends GetxController {
       }
 
       /// 유효 범위 내라면 UI용 걸음 수 스트림을 시작
-      if (isInCampus == true) {
+      if (isInCampus) {
         _startPedometerStreamiOS();
+      } else {
+        await _stopPedometerStreamiOS();
       }
     } else {
       throw BEATExceptionPlatformNotSupported();
@@ -287,14 +289,14 @@ class StepCountController extends GetxController {
 
     _handlingCampusEvent = true;
     try {
+      _isInCampus = true;
+      PrefsService.instance.setIsInCampus(isInCampus);
+
       final int inSnapshot = await _getHelthKitStepsAndUseCachedAsFallback();
       final DateTime inSnapshotYmd = DateTime.now();
 
       await _calcExcludedStepsAndSave(inSnapshot, inSnapshotYmd);
       _startPedometerStreamiOS();
-
-      _isInCampus = true;
-      PrefsService.instance.setIsInCampus(isInCampus);
     } catch (e) {
     } finally {
       _handlingCampusEvent = false;
@@ -515,9 +517,9 @@ class StepCountController extends GetxController {
       await _sub?.cancel();
       _sub = null;
     } else if (Platform.isIOS) {
-      log("stopService");
+      await _campusChannel.invokeMethod("stop");
+      await _stopPedometerStreamiOS();
       _iOSStepsAfterBoot = null;
-      _iOSStepCountStreamSub = null;
       _isiOSServiceRunning = false;
     } else {
       throw BEATExceptionPlatformNotSupported();
@@ -527,6 +529,7 @@ class StepCountController extends GetxController {
   @override
   void onClose() {
     _sub?.cancel();
+    _iOSStepCountStreamSub?.cancel();
     super.onClose();
   }
 

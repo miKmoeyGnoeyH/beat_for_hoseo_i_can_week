@@ -4,21 +4,17 @@
     "cancel": "취소",
     "update_available": "업데이트 가능",
     "update_available_content": "새로운 버전이 출시되었습니다. 스토어에서 앱을 업데이트해 주세요.",
-
-
     "beat_requires_location_permission_title": "BEAT는 위치 권한이 필요합니다.",
     "please_allow_always_location": "위치 권한을 항상 허용으로 변경해 주세요.",
     "beat_requires_location_permission_content": "BEAT는 걸음 수 측정 및 QR 인식을 위해 위치 권한이 필요합니다. 설정 화면에서 위치 권한을 항상 허용으로 변경해 주세요.",
     "beat_requires_activity_permission_title": "BEAT는 활동 권한이 필요합니다.",
     "beat_requires_activity_permission_content": "BEAT는 걸음 수 측정을 위해 활동 권한이 필요합니다. 설정 화면에서 활동 권한을 허용해 주세요.",
     "go_to_settings": "설정으로",
-
     "asan": "asan",
     "asan_campus": "asan",
     "asan campus": "asan",
     "아산": "asan",
     "아산캠퍼스": "asan",
-
     "cheonan": "cheonan",
     "cheonan_campus": "cheonan",
     "cheonan campus": "cheonan",
@@ -42,8 +38,8 @@
     "campuses": "아산캠퍼스, 천안캠퍼스",
     "request_campuses": "ASAN, CHEONAN",
     "college": "단과대",
-    "colleges": "AI공과대학, 바이오헬스대학, 아트앤컬처대학, 글로벌융합대학, 교양대학",
-    "request_colleges": "AI공과대학, 바이오헬스대학, 아트앤컬처대학, 글로벌융합대학, 교양대학",
+    "colleges": "AI공과대학, AIT스쿨, 바이오헬스대학, 아트앤컬처대학, 디자인스쿨, 글로벌융합대학, 비즈니스스쿨, 미래융합스쿨, 계약학과, 교양대학, 융합학부",
+    "request_colleges": "AI공과대학, AIT스쿨, 바이오헬스대학, 아트앤컬처대학, 디자인스쿨, 글로벌융합대학, 비즈니스스쿨, 미래융합스쿨, 계약학과, 교양대학, 융합학부",
     "department": "학과(학부)",
     "fill_inform": "정보 기입",
     "name": "이름",
@@ -141,10 +137,8 @@
     "profile": "프로필",
     "quest_check_success_title": "퀘스트 완료",
     "quest_check_success_content": "퀘스트가 완료되었습니다.",
-
     "bingo_check_success_title": "빙고 완료",
     "bingo_check_success_content": "빙고가 완료되었습니다.",
-
     "not_in_campus": "이벤트 진행 지역이 아닙니다."
   },
   "leaderboard_page": {
@@ -309,7 +303,6 @@
     "error_quest_check_failed_title": "퀘스트 완료 실패",
     "error_quest_check_failed_content": "퀘스트 완료 처리 중 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.",
     "error_quest_check_failed_please_refresh": "퀘스트 완료 처리 중 문제가 발생했습니다. 화면을 새로고침해주세요.",
-
     "error_bingo_check_failed_title": "빙고 완료 실패",
     "error_bingo_check_failed_content": "빙고 완료 처리 중 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.",
     "error_bingo_check_failed_please_refresh": "빙고 완료 처리 중 문제가 발생했습니다. 화면을 새로고침해주세요."

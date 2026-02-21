@@ -172,7 +172,7 @@ class _LeaderboardState extends State<Leaderboard> {
                       scrollDirection: Axis.horizontal,
                       itemBuilder: (context, index) {
                         return SizedBox(
-                          width: 130.w,
+                          // width: 130.w,
                           child: BEATTextButton(
                             text: rankingTitles[index],
                             textColor: selectedRankingIndex == index
@@ -210,7 +210,7 @@ class _LeaderboardState extends State<Leaderboard> {
                                 scrollDirection: Axis.horizontal,
                                 itemBuilder: (context, index) {
                                   return SizedBox(
-                                    width: 130.w,
+                                    // width: 130.w,
                                     child: BEATTextButton(
                                       text:
                                           rankingTypeTitles[selectedRankingIndex][index],
