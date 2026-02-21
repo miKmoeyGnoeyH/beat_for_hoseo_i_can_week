@@ -203,9 +203,6 @@ class StepCountController extends GetxController {
       /// 위치 채널 핸들러 등록
       _registerCampusHandler();
 
-      /// 위치 스트림 시작
-      _campusChannel.invokeMethod("start");
-
       /// 캠퍼스 내에 있는지 여부 최초 1회 초기화
       try {
         _isInCampus =
@@ -219,6 +216,9 @@ class StepCountController extends GetxController {
         log("step_count_controller: startService: isInCampus: $_isInCampus");
         PrefsService.instance.setIsInCampus(isInCampus);
       }
+
+      /// 위치 스트림 시작
+      _campusChannel.invokeMethod("start");
 
       /// healthKitSteps 초기화
       /// 서비스가 실행되고 있지 않는 동안 누적된 걸음수는 무시할 것이므로 그냥 HealthKit 데이터로 갱신한다.
@@ -461,6 +461,8 @@ class StepCountController extends GetxController {
   void onStateChangedFG2BGiOS() async {
     if (!Platform.isIOS) return;
     if (!_isiOSServiceRunning) return;
+
+    await _stopPedometerStreamiOS();
     _iOSStepsAfterBoot = null;
     _iOSStepCountStreamSub = null;
   }
@@ -471,6 +473,8 @@ class StepCountController extends GetxController {
   /// - 백그라운드 -> 포어그라운드 전환 시, onStateChangedBG2FGiOS에서
   void _startPedometerStreamiOS() {
     if (!Platform.isIOS) return;
+    if (_iOSStepCountStreamSub != null) return;
+
     _iOSStepCountStreamSub = Pedometer.stepCountStream.listen(
       _oniOSStepCount,
       onError: (_) {},
