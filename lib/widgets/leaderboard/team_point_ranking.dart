@@ -129,20 +129,24 @@ class TeamPointRankingState extends State<TeamPointRanking> {
                   itemCount: teamPointRankingListController.state.length,
                 ),
           onError: (error) {
-            return Column(
-              children: [
-                Text(
-                  LocalizationService.instance.errorConnectivity,
-                  style: AppTextTheme.subtitle1.common300,
+            return SizedBox(
+              height: 350.w,
+              child: GestureDetector(
+                onTap: () {
+                  initTeamPointRanking();
+                },
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      LocalizationService.instance.errorConnectivity,
+                      style: AppTextTheme.subtitle1.common300,
+                    ),
+                    SizedBox(height: 10.w),
+                    Icon(Icons.refresh),
+                  ],
                 ),
-                SizedBox(height: 10.w),
-                GestureDetector(
-                  onTap: () {
-                    initTeamPointRanking();
-                  },
-                  child: Icon(Icons.refresh),
-                ),
-              ],
+              ),
             );
           },
         ),

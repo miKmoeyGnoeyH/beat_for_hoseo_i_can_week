@@ -17,6 +17,9 @@ class QuestListController extends GetxController with StateMixin {
     try {
       final List<QuestModel> questList = await questListRepository
           .fetchQuestList(authorization);
+
+      // throw Exception();
+
       change(questList, status: RxStatus.success());
     } catch (e) {
       log("quest_list_controller.dart: fetchQuestList() : ${e.toString()}");

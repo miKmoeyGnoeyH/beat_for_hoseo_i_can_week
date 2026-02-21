@@ -84,8 +84,8 @@ class _NoticeListState extends State<NoticeList> {
             child: Skeletonizer(
               enabled: loading,
               // enabled: true,
-              containersColor: AppColors.common200,
-              effect: SolidColorEffect(color: AppColors.common200),
+              containersColor: AppColors.common300,
+              effect: SolidColorEffect(color: AppColors.common300),
               child: noticeController.obx(
                 (state) {
                   if (state.length == 0) {
@@ -129,6 +129,27 @@ class _NoticeListState extends State<NoticeList> {
                       ? 10
                       : noticeController.state!.length,
                 ),
+                onError: (_) {
+                  return SizedBox(
+                    height: 500.w,
+                    child: GestureDetector(
+                      onTap: () {
+                        initNotice();
+                      },
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            LocalizationService.instance.errorConnectivity,
+                            style: AppTextTheme.subtitle1.common300,
+                          ),
+                          SizedBox(height: 10.w),
+                          Icon(Icons.refresh),
+                        ],
+                      ),
+                    ),
+                  );
+                }
               ),
             ),
           ),

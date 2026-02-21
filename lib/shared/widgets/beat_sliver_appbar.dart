@@ -13,7 +13,7 @@ class BEATSliverAppBar extends StatelessWidget {
       leading: Padding(
         padding: EdgeInsets.only(left: 20.w),
         child: SvgPicture.asset(
-          BEATAssets.svg.greenCampusLogoType2,
+          BEATAssets.svg.logoType2,
           width: 24.w,
           height: 24.w,
         ),

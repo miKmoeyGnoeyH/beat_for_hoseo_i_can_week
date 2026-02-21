@@ -30,7 +30,7 @@ class MainPageViewAppbar extends StatelessWidget {
         children: [
           SizedBox(width: 16.w),
           SvgPicture.asset(
-            BEATAssets.svg.greenCampusLogoType3,
+            BEATAssets.svg.logoType3,
             colorFilter: ColorFilter.mode(AppColors.primary, BlendMode.srcIn),
             width: 28.w,
             height: 28.w,

@@ -1,4 +1,3 @@
-
 import 'package:beat/app/route/app_pages.dart';
 import 'package:beat/features/point/index.dart';
 import 'package:beat/shared/index.dart';
@@ -6,6 +5,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:path/path.dart';
 
 class PointCard extends StatelessWidget {
   PointCard({super.key});
@@ -21,9 +21,9 @@ class PointCard extends StatelessWidget {
           BoxShadow(
             blurRadius: 15.w,
             spreadRadius: -10.w,
-            color: AppColors.common300
-          )
-        ]
+            color: AppColors.common300,
+          ),
+        ],
       ),
       child: Material(
         color: Colors.transparent,
@@ -65,10 +65,17 @@ class PointCard extends StatelessWidget {
                         style: AppTextTheme.headline1.designWhite,
                       ),
                       onLoading: Text(
-                        NumberFormat("###,###,###,###").format(pointController.state ?? 000),
+                        NumberFormat(
+                          "###,###,###,###",
+                        ).format(pointController.state ?? 000),
                         style: AppTextTheme.headline1.designWhite,
                       ),
-                      // TODO: onError 추가
+                      onError: (_) {
+                        return Text(
+                          LocalizationService.instance.errorConnectivity,
+                          style: AppTextTheme.headline1.designWhite,
+                        );
+                      },
                     ),
                     Text(
                       LocalizationService.instance.homeTapToCheckYourHistory,

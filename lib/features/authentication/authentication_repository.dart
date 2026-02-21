@@ -71,7 +71,10 @@ class AuthenticationRepository {
     try {
       final response = await _apiService.get(
         endpoint: DotEnvService.instance.reissueToken,
-        header: {"refresh-token": refreshToken},
+        header: {
+          "Content-type": "application/json",
+          "refresh-token": refreshToken,
+        },
       );
 
       log("${response.statusCode} ${response.body}");
@@ -92,6 +95,41 @@ class AuthenticationRepository {
       );
     } catch (e) {
       log("AuthenticationRepository : reissueToken() : ${e.toString()}");
+      rethrow;
+    }
+  }
+
+  Future<bool> registerFCMToken(String authorization, String fcmToken) async {
+    try {
+      final response = await _apiService.get(
+        endpoint: "${DotEnvService.instance.registerFCMToken}?token=$fcmToken",
+        header: {
+          "Content-type": "application/json",
+          "authorization": authorization,
+        },
+      );
+
+      log("${response.statusCode} ${response.body}");
+
+      switch (response.statusCode) {
+        case 200:
+          return true;
+        case 400:
+          throw BEATException(title: LocalizationService.instance.errorUnknown);
+        /// registerFCMToken은 로그인 성공 직후(authorization 발급 직후) 유일하게 호출되므로
+        /// 401 에러는 고려할 필요가 없음.
+        // case 401:
+        //   throw BEATTokenExpired();
+        default:
+          throw BEATException(title: LocalizationService.instance.errorUnknown);
+      }
+    } on TimeoutException {
+      throw BEATException(
+        title: LocalizationService.instance.errorTimeout,
+        message: LocalizationService.instance.errorConnectivity,
+      );
+    } catch (e) {
+      log("AuthenticationRepository : registerFCMToken() : ${e.toString()}");
       rethrow;
     }
   }

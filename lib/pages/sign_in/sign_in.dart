@@ -41,9 +41,13 @@ class _SignInState extends State<SignIn> {
                 child: Padding(
                   padding: EdgeInsets.only(top: 120.w, bottom: 80.w),
                   child: SvgPicture.asset(
-                    BEATAssets.svg.greenCampusLogoType1,
+                    BEATAssets.svg.logoType1,
                     // width: 121.w,
                     height: 50.w,
+                    colorFilter: ColorFilter.mode(
+                      AppColors.primary,
+                      BlendMode.srcIn,
+                    ),
                   ),
                 ),
               ),
@@ -76,7 +80,9 @@ class _SignInState extends State<SignIn> {
                             });
                           },
                           child: Icon(
-                            obscurePasswordText ? Icons.remove_red_eye_rounded : Icons.remove_red_eye_outlined,
+                            obscurePasswordText
+                                ? Icons.remove_red_eye_rounded
+                                : Icons.remove_red_eye_outlined,
                             color: AppColors.disabledColorLight,
                           ),
                         ),
@@ -144,8 +150,7 @@ class _SignInState extends State<SignIn> {
       DialogService.to.addDialogEvent(
         AlertDialogEvent(
           title: LocalizationService.instance.errorEmptyField,
-          message:
-              LocalizationService.instance.errorPleaseEnterIDAndPassword,
+          message: LocalizationService.instance.errorPleaseEnterIDAndPassword,
         ),
       );
       return;

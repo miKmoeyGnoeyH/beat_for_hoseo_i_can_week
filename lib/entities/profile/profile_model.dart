@@ -41,6 +41,17 @@ class ProfileModel {
       teamName = json['teamName'] as String,
       teamId = json['teamId'] as int;
 
+  ProfileModel.empty()  : memberId = 0,
+    name = '',
+    studentId = '',
+    email = '',
+    department = '',
+    nickname = '',
+    campus = '',
+    studentType = StudentType.unknown,
+    teamName = '',
+    teamId = 0;
+
   Map<String, dynamic> toJson() => {
     'memberId': memberId,
     'name': name,

@@ -86,30 +86,141 @@ class _ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
         physics: AlwaysScrollableScrollPhysics(),
         slivers: [
           SliverToBoxAdapter(child: SizedBox(height: 16.w)),
-          SliverToBoxAdapter(
-            child: Skeletonizer(
-              enabled: loading,
-              // enabled: true,
-              containersColor: AppColors.common200,
-              effect: SolidColorEffect(color: AppColors.common200),
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.w),
-                child: ProfileCard(),
+          profileController.obx(
+            (state) {
+              return SliverToBoxAdapter(
+                child: Column(
+                  children: [
+                    Skeletonizer(
+                      enabled: loading,
+                      // enabled: true,
+                      containersColor: AppColors.common300,
+                      effect: SolidColorEffect(color: AppColors.common300),
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16.w),
+                        child: ProfileCard(state!),
+                      ),
+                    ),
+                    SizedBox(height: 16.w),
+                    Skeletonizer(
+                      enabled: loading,
+                      // enabled: true,
+                      containersColor: AppColors.common300,
+                      effect: SolidColorEffect(color: AppColors.common300),
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16.w),
+                        child: AccountManagement(),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+            onEmpty: SliverToBoxAdapter(
+              child: Column(
+                children: [
+                  Skeletonizer(
+                    enabled: loading,
+                    // enabled: true,
+                    containersColor: AppColors.common300,
+                    effect: SolidColorEffect(color: AppColors.common300),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16.w),
+                      child: ProfileCard(ProfileModel.empty()),
+                    ),
+                  ),
+                  SizedBox(height: 16.w),
+                  Skeletonizer(
+                    enabled: loading,
+                    // enabled: true,
+                    containersColor: AppColors.common300,
+                    effect: SolidColorEffect(color: AppColors.common300),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16.w),
+                      child: AccountManagement(),
+                    ),
+                  ),
+                ],
               ),
             ),
-          ),
-          SliverToBoxAdapter(child: SizedBox(height: 16.w)),
-          SliverToBoxAdapter(
-            child: Skeletonizer(
-              enabled: loading,
-              // enabled: true,
-              containersColor: AppColors.common200,
-              effect: SolidColorEffect(color: AppColors.common200),
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.w),
-                child: AccountManagement(),
-              ),
-            ),
+            onLoading: profileController.state == null
+                ? SliverToBoxAdapter(
+                    child: Column(
+                      children: [
+                        Skeletonizer(
+                          enabled: loading,
+                          // enabled: true,
+                          containersColor: AppColors.common300,
+                          effect: SolidColorEffect(color: AppColors.common300),
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 16.w),
+                            child: ProfileCard(ProfileModel.empty()),
+                          ),
+                        ),
+                        SizedBox(height: 16.w),
+                        Skeletonizer(
+                          enabled: loading,
+                          // enabled: true,
+                          containersColor: AppColors.common300,
+                          effect: SolidColorEffect(color: AppColors.common300),
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 16.w),
+                            child: AccountManagement(),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                : SliverToBoxAdapter(
+                    child: Column(
+                      children: [
+                        Skeletonizer(
+                          enabled: loading,
+                          // enabled: true,
+                          containersColor: AppColors.common300,
+                          effect: SolidColorEffect(color: AppColors.common300),
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 16.w),
+                            child: ProfileCard(profileController.state!),
+                          ),
+                        ),
+                        SizedBox(height: 16.w),
+                        Skeletonizer(
+                          enabled: loading,
+                          // enabled: true,
+                          containersColor: AppColors.common300,
+                          effect: SolidColorEffect(color: AppColors.common300),
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 16.w),
+                            child: AccountManagement(),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+            onError: (_) {
+              return SliverToBoxAdapter(
+                child: SizedBox(
+                  height: 550.w,
+                  child: GestureDetector(
+                    onTap: () {
+                      initProfile();
+                    },
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          LocalizationService.instance.errorConnectivity,
+                          style: AppTextTheme.subtitle1.common300,
+                        ),
+                        SizedBox(height: 10.w),
+                        Icon(Icons.refresh),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
           ),
           SliverToBoxAdapter(child: SizedBox(height: 16.w)),
         ],

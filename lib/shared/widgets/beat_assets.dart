@@ -9,9 +9,9 @@ class _Svgs {
   const _Svgs._();
 
   /// logo
-  final String greenCampusLogoType1 = 'assets/svg/green_campus_logo_type1.svg';
-  final String greenCampusLogoType2 = 'assets/svg/green_campus_logo_type2.svg';
-  final String greenCampusLogoType3 = 'assets/svg/green_campus_logo_type3.svg';
+  final String logoType1 = 'assets/svg/logo_type1.svg';
+  final String logoType2 = 'assets/svg/logo_type2.svg';
+  final String logoType3 = 'assets/svg/logo_type3.svg';
 
   /// icons
   final String leaderboard = 'assets/svg/leaderboard.svg';

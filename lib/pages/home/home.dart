@@ -89,7 +89,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
       await authenticationController.reissueToken();
       authorization = authenticationController.state!.authorization;
       await pointController.fetchPointBalanceOnce(authorization);
-    }
+    } catch (e) {}
 
     try {
       await questListController.fetchQuestListOnce(authorization);
@@ -97,7 +97,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
       await authenticationController.reissueToken();
       authorization = authenticationController.state!.authorization;
       await questListController.fetchQuestListOnce(authorization);
-    }
+    } catch (e) {}
 
     setState(() {
       loading = false;
@@ -115,7 +115,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
       await authenticationController.reissueToken();
       authorization = authenticationController.state!.authorization;
       await pointController.fetchPointBalance(authorization);
-    }
+    } catch (e) {}
 
     try {
       await questListController.fetchQuestList(authorization);
@@ -123,7 +123,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
       await authenticationController.reissueToken();
       authorization = authenticationController.state!.authorization;
       await questListController.fetchQuestList(authorization);
-    }
+    } catch (e) {}
   }
 
   void showIndicatorThenAutoHide() {
@@ -159,7 +159,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
             child: Skeletonizer(
               enabled: loading,
               // enabled: true,
-              containersColor: AppColors.common200,
+              containersColor: AppColors.common300,
               effect: SolidColorEffect(color: AppColors.common200),
               child: SizedBox(
                 height: 150.w,
@@ -207,30 +207,30 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
               ),
             ),
           ),
-          // TODO: pageview를 사용하도록 변경
           SliverToBoxAdapter(
             child: Skeletonizer(
               enabled: loading,
+              // enabled: true,
               containersColor: AppColors.common300,
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16.w),
-                child: Container(
-                  clipBehavior: Clip.hardEdge,
-                  decoration: BoxDecoration(
-                    color: AppColors.designWhite,
-                    borderRadius: BorderRadius.circular(15),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColors.common400,
-                        blurRadius: 30.w,
-                        spreadRadius: -20.w,
-                        offset: Offset(0, -3.w),
+                child: questListController.obx(
+                  (state) {
+                    return Container(
+                      clipBehavior: Clip.hardEdge,
+                      decoration: BoxDecoration(
+                        color: AppColors.designWhite,
+                        borderRadius: BorderRadius.circular(15),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.common400,
+                            blurRadius: 30.w,
+                            spreadRadius: -20.w,
+                            offset: Offset(0, -3.w),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                  child: questListController.obx(
-                    (state) {
-                      return BingoBoard(
+                      child: BingoBoard(
                         questSummaryAppView:
                             questListController.state.first.localData.board,
                         countPerAxis: questListController
@@ -240,9 +240,24 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                             .countPerAxis,
                         rowSpacing: 5.w,
                         columnSpacing: 5.w,
-                      );
-                    },
-                    onEmpty: BingoBoard(
+                      ),
+                    );
+                  },
+                  onEmpty: Container(
+                    clipBehavior: Clip.hardEdge,
+                    decoration: BoxDecoration(
+                      color: AppColors.designWhite,
+                      borderRadius: BorderRadius.circular(15),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.common400,
+                          blurRadius: 30.w,
+                          spreadRadius: -20.w,
+                          offset: Offset(0, -3.w),
+                        ),
+                      ],
+                    ),
+                    child: BingoBoard(
                       questSummaryAppView: List.generate(
                         25,
                         (index) => ItemSummaryModel.empty(),
@@ -251,23 +266,87 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                       rowSpacing: 5.w,
                       columnSpacing: 5.w,
                     ),
-                    onLoading: questListController.state == null
-                        ? BingoBoard(
-                            questSummaryAppView: List.generate(
-                              25,
-                              (index) => ItemSummaryModel.empty(),
+                  ),
+                  onLoading: questListController.state == null
+                      ? Container(
+                          clipBehavior: Clip.hardEdge,
+                          decoration: BoxDecoration(
+                            color: AppColors.designWhite,
+                            borderRadius: BorderRadius.circular(15),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.common400,
+                                blurRadius: 30.w,
+                                spreadRadius: -20.w,
+                                offset: Offset(0, -3.w),
+                              ),
+                            ],
+                          ),
+                          child: Container(
+                            clipBehavior: Clip.hardEdge,
+                            decoration: BoxDecoration(
+                              color: AppColors.designWhite,
+                              borderRadius: BorderRadius.circular(15),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: AppColors.common400,
+                                  blurRadius: 30.w,
+                                  spreadRadius: -20.w,
+                                  offset: Offset(0, -3.w),
+                                ),
+                              ],
                             ),
-                            countPerAxis: 5,
-                            rowSpacing: 5.w,
-                            columnSpacing: 5.w,
-                          )
-                        : BingoBoard(
+                            child: BingoBoard(
+                              questSummaryAppView: List.generate(
+                                25,
+                                (index) => ItemSummaryModel.empty(),
+                              ),
+                              countPerAxis: 5,
+                              rowSpacing: 5.w,
+                              columnSpacing: 5.w,
+                            ),
+                          ),
+                        )
+                      : Container(
+                          clipBehavior: Clip.hardEdge,
+                          decoration: BoxDecoration(
+                            color: AppColors.designWhite,
+                            borderRadius: BorderRadius.circular(15),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.common400,
+                                blurRadius: 30.w,
+                                spreadRadius: -20.w,
+                                offset: Offset(0, -3.w),
+                              ),
+                            ],
+                          ),
+                          child: BingoBoard(
                             questSummaryAppView:
                                 questListController.state.first.localData.board,
                             countPerAxis: 5,
                             rowSpacing: 5.w,
                             columnSpacing: 5.w,
                           ),
+                        ),
+                  onError: (_) => SizedBox(
+                    height: 350.w,
+                    child: GestureDetector(
+                      onTap: () {
+                        initHome();
+                      },
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            LocalizationService.instance.errorConnectivity,
+                            style: AppTextTheme.subtitle1.common300,
+                          ),
+                          SizedBox(height: 10.w),
+                          Icon(Icons.refresh),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -277,6 +356,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
           SliverToBoxAdapter(
             child: Skeletonizer(
               enabled: loading,
+              // enabled: true,
               containersColor: AppColors.common300,
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -313,6 +393,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                               .localData
                               .completedLineCount,
                         ),
+                  onError: (_) => SizedBox.shrink(),
                 ),
               ),
             ),
@@ -361,6 +442,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                               .localData
                               .completedItemCount,
                         ),
+                  onError: (_) => SizedBox.shrink(),
                 ),
               ),
             ),

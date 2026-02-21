@@ -18,6 +18,9 @@ class ProfileController extends GetxController with StateMixin<ProfileModel> {
     try {
       final ProfileModel profileModel =
       await profileRepository.fetchData(authorization);
+
+      // throw Exception();
+
       change(profileModel, status: RxStatus.success());
     } catch (e) {
       log("ProfileController : fetchData() : ${e.toString()}");

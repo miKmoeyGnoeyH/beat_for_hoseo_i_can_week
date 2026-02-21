@@ -42,9 +42,10 @@ class BingoBoard extends StatelessWidget {
         ),
         itemCount: countPerAxis * countPerAxis,
         itemBuilder: (context, i) {
-          // TODO: 조건문들 더 줄일 수 있을 것 같은데?
           return GestureDetector(
             onTap: () {
+              /// 퀘스트를 완료하지 않았고(보상을 수령하지 않았고)
+              /// 각 퀘스트 타입 별 완료 조건을 충족했을 때만 보상 수령 활성화
               if (questSummaryAppView[i]?.completed == false) {
                 if ((questSummaryAppView[i]!.questInfoView!.questType ==
                         QuestType.walk) &&

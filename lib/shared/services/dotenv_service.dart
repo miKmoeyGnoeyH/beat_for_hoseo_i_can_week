@@ -65,5 +65,7 @@ class DotEnvService {
 
   String get bingoRanking => dotenv.env['RANKING_BINGO'] ?? "";
 
+  String get registerFCMToken => dotenv.env['REGISTER_FCM_TOKEN'] ?? "";
+
   String get privacyPolicy => dotenv.env['PRIVACY_POLICY'] ?? "";
 }

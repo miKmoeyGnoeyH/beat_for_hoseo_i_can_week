@@ -1,4 +1,5 @@
 import 'package:beat/app/route/app_pages.dart';
+import 'package:beat/fcm.dart';
 import 'package:beat/features/authentication/authentication_controller.dart';
 import 'package:beat/features/step_count/index.dart';
 import 'package:beat/shared/index.dart';
@@ -28,9 +29,9 @@ class _SplashState extends State<Splash> {
         color: AppColors.primary,
         child: Center(
           child: SvgPicture.asset(
-            BEATAssets.svg.greenCampusLogoType2,
-            width: 500.w,
-            height: 500.w,
+            BEATAssets.svg.logoType2,
+            width: 100.w,
+            height: 100.w,
             colorFilter: ColorFilter.mode(
               AppColors.designWhite,
               BlendMode.srcIn,
@@ -49,6 +50,7 @@ class _SplashState extends State<Splash> {
 
   Future<void> bootstrap() async {
     await Future.delayed(Duration(seconds: 1));
+    await fcmInit();
     await checkLoginStatusAndNavigate();
   }
 

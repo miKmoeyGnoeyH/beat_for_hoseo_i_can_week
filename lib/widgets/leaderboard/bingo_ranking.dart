@@ -31,10 +31,10 @@ class BingoRankingState extends State<BingoRanking> {
   @override
   void initState() {
     super.initState();
-    initAsanBingoRanking();
+    initBingoRanking();
   }
 
-  Future<void> initAsanBingoRanking() async {
+  Future<void> initBingoRanking() async {
     setState(() {
       loading = true;
     });
@@ -142,20 +142,23 @@ class BingoRankingState extends State<BingoRanking> {
                   itemCount: bingoRankingListController.state.length,
                 ),
           onError: (error) {
-            return GestureDetector(
-              onTap: () {
-                log("onTap");
-                initAsanBingoRanking();
-              },
-              child: Column(
-                children: [
-                  Text(
-                    LocalizationService.instance.errorConnectivity,
-                    style: AppTextTheme.subtitle1.common300,
-                  ),
-                  SizedBox(height: 10.w),
-                  Icon(Icons.refresh),
-                ],
+            return SizedBox(
+              height: 350.w,
+              child: GestureDetector(
+                onTap: () {
+                  initBingoRanking();
+                },
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      LocalizationService.instance.errorConnectivity,
+                      style: AppTextTheme.subtitle1.common300,
+                    ),
+                    SizedBox(height: 10.w),
+                    Icon(Icons.refresh),
+                  ],
+                ),
               ),
             );
           },

@@ -14,7 +14,7 @@ enum QuestType {
 
   static QuestType fromString(String? value) {
     return QuestType.values.firstWhere(
-          (e) => e.value == value,
+      (e) => e.value == value,
       orElse: () => unknown,
     );
   }
@@ -42,28 +42,35 @@ class QuestModel {
   });
 
   QuestModel.dummy()
-      : questCommonSummaryDto = QuestCommonSummaryDto.dummy(),
-        questSummaryAppView =
-        QuestSummaryAppView(lineSummaryList: [], itemSummaryList: []),
-        localData = LocalData.empty(countPerAxis: 5);
+    : questCommonSummaryDto = QuestCommonSummaryDto.dummy(),
+      questSummaryAppView = QuestSummaryAppView(
+        lineSummaryList: [],
+        itemSummaryList: [],
+      ),
+      localData = LocalData.empty(countPerAxis: 5);
 
   factory QuestModel.fromJson(Map<String, dynamic> json) {
-    final common = QuestCommonSummaryDto.fromJson(json["questCommonSummaryDto"]);
+    final common = QuestCommonSummaryDto.fromJson(
+      json["questCommonSummaryDto"],
+    );
     final view = QuestSummaryAppView.fromJson(json["questSummaryAppView"]);
 
-    // ✅ 보드 구성
+    /// 빙고 각 칸의 정보 리스트를 읽어옴
     final items = view.itemSummaryList;
     final length = items.length;
 
-    // itemSummaryList가 비어있을 수도 있으니 방어
+    /// 빙고 각 칸 정보 리스트의 길이로부터 빙고판 크기를 계산
     final axis = length == 0 ? 0 : sqrt(length).toInt();
     final boardSize = axis * axis;
 
+    /// 빙고판 크기만큼 리스트를 생성, 빈 아이템으로 초기화
     final board = List<ItemSummaryModel>.generate(
       boardSize,
-          (_) => ItemSummaryModel.empty(),
+      (_) => ItemSummaryModel.empty(),
     );
 
+    /// 실제 응답에 포함된 빙고 각 칸 아이템 정보를 순회하며
+    /// 보드의 적절한 위치에 아이템을 배치
     for (final item in items) {
       final r = item.rowIndex ?? 0;
       final c = item.columnIndex ?? 0;
@@ -74,23 +81,69 @@ class QuestModel {
       }
     }
 
+    /// 완료한(보상 수령한) 빙고 칸 개수를 계산
     final completedItemCount = items.where((e) => e.completed == true).length;
 
-    // ✅ completedLineCount / completedLines는 서버 lineSummaryList 기반으로 초기화
-    final completedLineCount =
-        view.lineSummaryList.where((e) => e.completed == true).length;
-
-    // 서버가 "어떤 줄이 완료됐는지" (가로/세로/대각, 인덱스)까지 안 주면
-    // 여기선 일단 빈 배열로 두고, UI에서 계산해서 채우는 형태로 가는 게 안전함.
-    // (원하면 board 기반으로 계산하는 함수도 만들어줄게)
+    /// 빙고판을 전체 순회하며 완료한 줄 정보를 계산
     final completedLines = <CompletedLineInfo>[];
+
+    /// 행 검사
+    for (int i = 0; i < axis; i++) {
+      if (List.generate(
+        axis,
+        (j) => board[i * axis + j],
+      ).every((item) => item.completed == true)) {
+        completedLines.add(
+          CompletedLineInfo(axisIndex: i, lineType: BingoLineType.horizontal),
+        );
+      }
+    }
+
+    /// 열 검사
+    for (int i = 0; i < axis; i++) {
+      if (List.generate(
+        axis,
+            (j) => board[i + axis * j],
+      ).every((item) => item.completed == true)) {
+        completedLines.add(
+          CompletedLineInfo(axisIndex: i, lineType: BingoLineType.vertical),
+        );
+      }
+    }
+
+    /// 대각선 검사
+    /// 좌상-우하 대각선
+    for (int i = 0; i < axis; i++) {
+      if (board[i * axis + i].completed != true) {
+        break;
+      }
+      if (i == axis - 1) {
+        completedLines.add(
+          CompletedLineInfo(axisIndex: 0, lineType: BingoLineType.diagonal),
+        );
+      }
+    }
+
+    /// 우상-좌하 대각선
+    for (int i = axis - 1; i >= 0; i--) {
+      if (board[i * axis + i].completed != true) {
+        break;
+      }
+      if (i == axis - 1) {
+        completedLines.add(
+          CompletedLineInfo(axisIndex: axis - 1, lineType: BingoLineType.diagonal),
+        );
+      }
+    }
+
+    final int completedLineCount = completedLines.length;
 
     final local = LocalData(
       countPerAxis: axis,
       board: board,
       completedItemCount: completedItemCount,
-      completedLineCount: completedLineCount,
       completedLines: completedLines,
+      completedLineCount: completedLineCount,
     );
 
     return QuestModel(
@@ -102,8 +155,7 @@ class QuestModel {
 
   /// ✅ 서버 데이터만 저장 (권장: 로컬 UI 상태는 저장 안 함)
   String toServerJsonString() => jsonEncode({
-    'questCommonSummaryDto':
-    jsonDecode(questCommonSummaryDto.toJsonString()),
+    'questCommonSummaryDto': jsonDecode(questCommonSummaryDto.toJsonString()),
     'questSummaryAppView': {
       'lineSummaryList': questSummaryAppView.lineSummaryList
           .map((e) => e.toJson())
@@ -116,8 +168,7 @@ class QuestModel {
 
   /// ✅ 필요하면 로컬(UI)도 같이 저장
   String toJsonString() => jsonEncode({
-    'questCommonSummaryDto':
-    jsonDecode(questCommonSummaryDto.toJsonString()),
+    'questCommonSummaryDto': jsonDecode(questCommonSummaryDto.toJsonString()),
     'questSummaryAppView': {
       'lineSummaryList': questSummaryAppView.lineSummaryList
           .map((e) => e.toJson())
@@ -141,32 +192,29 @@ class LocalData {
     required this.countPerAxis,
     required this.board,
     required this.completedItemCount,
-    required this.completedLineCount,
     required this.completedLines,
+    required this.completedLineCount,
   });
 
   factory LocalData.empty({required int countPerAxis}) => LocalData(
     countPerAxis: countPerAxis,
     board: List.generate(
       countPerAxis * countPerAxis,
-          (_) => ItemSummaryModel.empty(),
+      (_) => ItemSummaryModel.empty(),
     ),
     completedItemCount: 0,
-    completedLineCount: 0,
     completedLines: <CompletedLineInfo>[],
+    completedLineCount: 0,
   );
 
   Map<String, dynamic> toJson() => {
     'countPerAxis': countPerAxis,
     'board': board.map((e) => jsonDecode(e.toJsonString())).toList(),
     'completedItemCount': completedItemCount,
-    'completedLineCount': completedLineCount,
     'completedLines': completedLines
-        .map((e) => {
-      'axisIndex': e.axisIndex,
-      'lineType': e.lineType.value,
-    })
+        .map((e) => {'axisIndex': e.axisIndex, 'lineType': e.lineType.value})
         .toList(),
+    'completedLineCount': completedLineCount,
   };
 
   /// 한 변의 개수(예: 5)
@@ -180,11 +228,11 @@ class LocalData {
   /// 퀘스트 완료 시 UI 반응성 위해 API 요청과 함께 이 값을 변경
   int completedItemCount;
 
+  List<CompletedLineInfo> completedLines;
+
   /// 완료된 줄 수
   /// 퀘스트 완료 시 UI 반응성 위해 API 요청과 함께 이 값을 변경
   int completedLineCount;
-
-  List<CompletedLineInfo> completedLines;
 }
 
 /// 완료된 빙고 줄 객체
@@ -192,15 +240,13 @@ class LocalData {
 /// - 열 : axisIndex = 0~n, lineType = VERTICAL
 /// - 대각선 : axisIndex = 0(좌상-우하), n(우상-좌하), lineType = DIAGONAL
 class CompletedLineInfo {
-  const CompletedLineInfo({
-    required this.axisIndex,
-    required this.lineType,
-  });
+  const CompletedLineInfo({required this.axisIndex, required this.lineType});
 
   final int axisIndex;
   final BingoLineType lineType;
 }
 
+/// 빙고 퀘스트 전체 이름, 정보
 class QuestCommonSummaryDto {
   QuestCommonSummaryDto({
     required this.questId,
@@ -213,13 +259,13 @@ class QuestCommonSummaryDto {
   });
 
   QuestCommonSummaryDto.fromJson(Map<String, dynamic> json)
-      : questId = json['questId'],
-        name = json['name'],
-        descriptionShort = json['descriptionShort'],
-        totalPoint = json['totalPoint'],
-        questType = QuestType.fromString(json['questType']),
-        startDate = DateTime.parse(json['startDate']),
-        endDate = DateTime.parse(json['endDate']);
+    : questId = json['questId'],
+      name = json['name'],
+      descriptionShort = json['descriptionShort'],
+      totalPoint = json['totalPoint'],
+      questType = QuestType.fromString(json['questType']),
+      startDate = DateTime.parse(json['startDate']),
+      endDate = DateTime.parse(json['endDate']);
 
   String toJsonString() => jsonEncode({
     'questId': questId,
@@ -232,13 +278,13 @@ class QuestCommonSummaryDto {
   });
 
   QuestCommonSummaryDto.dummy()
-      : questId = 0,
-        name = 'Dummy Quest',
-        descriptionShort = 'This is a dummy quest for testing purposes.',
-        totalPoint = 0,
-        questType = QuestType.dummy,
-        startDate = DateTime.now(),
-        endDate = DateTime.now().add(const Duration(days: 7));
+    : questId = 0,
+      name = 'Dummy Quest',
+      descriptionShort = 'This is a dummy quest for testing purposes.',
+      totalPoint = 0,
+      questType = QuestType.dummy,
+      startDate = DateTime.now(),
+      endDate = DateTime.now().add(const Duration(days: 7));
 
   final int questId;
   final String name;
@@ -249,6 +295,7 @@ class QuestCommonSummaryDto {
   final DateTime endDate;
 }
 
+/// 빙고 완성 보상 정보, 빙고 각 칸의 정보
 class QuestSummaryAppView {
   QuestSummaryAppView({
     required this.lineSummaryList,
@@ -256,17 +303,18 @@ class QuestSummaryAppView {
   });
 
   QuestSummaryAppView.fromJson(Map<String, dynamic> json)
-      : lineSummaryList = (json['lineSummaryList'] as List)
-      .map((e) => LineSummaryModel.fromJson(e))
-      .toList(),
-        itemSummaryList = (json['itemSummaryList'] as List)
-            .map((e) => ItemSummaryModel.fromJson(e))
-            .toList();
+    : lineSummaryList = (json['lineSummaryList'] as List)
+          .map((e) => LineSummaryModel.fromJson(e))
+          .toList(),
+      itemSummaryList = (json['itemSummaryList'] as List)
+          .map((e) => ItemSummaryModel.fromJson(e))
+          .toList();
 
   final List<LineSummaryModel> lineSummaryList;
   final List<ItemSummaryModel> itemSummaryList;
 }
 
+/// 빙고 줄 완성 보상 정보
 class LineSummaryModel {
   LineSummaryModel({
     required this.bingoLinePolicyId,
@@ -276,16 +324,16 @@ class LineSummaryModel {
   });
 
   LineSummaryModel.fromJson(Map<String, dynamic> json)
-      : bingoLinePolicyId = json['bingoLinePolicyId'],
-        requiredLineCount = json['requiredLineCount'],
-        rewardPoint = json['rewardPoint'],
-        completed = json['completed'];
+    : bingoLinePolicyId = json['bingoLinePolicyId'],
+      requiredLineCount = json['requiredLineCount'],
+      rewardPoint = json['rewardPoint'],
+      completed = json['completed'];
 
   LineSummaryModel.empty()
-      : bingoLinePolicyId = 1,
-        requiredLineCount = 10,
-        rewardPoint = 0,
-        completed = false;
+    : bingoLinePolicyId = 1,
+      requiredLineCount = 10,
+      rewardPoint = 0,
+      completed = false;
 
   Map<String, dynamic> toJson() => {
     'bingoLinePolicyId': bingoLinePolicyId,
@@ -300,6 +348,7 @@ class LineSummaryModel {
   final bool completed;
 }
 
+/// 빙고 칸 하나의 정보
 class ItemSummaryModel {
   ItemSummaryModel({
     required this.bingoQuestItemId,
@@ -310,13 +359,13 @@ class ItemSummaryModel {
   });
 
   ItemSummaryModel.fromJson(Map<String, dynamic> json)
-      : bingoQuestItemId = json['bingoQuestItemId'],
-        rowIndex = json['rowIndex'],
-        columnIndex = json['columnIndex'],
-        completed = json['completed'],
-        questInfoView = json["questInfoView"] == null
-            ? null
-            : QuestInfoView.fromJson(json["questInfoView"]);
+    : bingoQuestItemId = json['bingoQuestItemId'],
+      rowIndex = json['rowIndex'],
+      columnIndex = json['columnIndex'],
+      completed = json['completed'],
+      questInfoView = json["questInfoView"] == null
+          ? null
+          : QuestInfoView.fromJson(json["questInfoView"]);
 
   String toJsonString() => jsonEncode({
     'bingoQuestItemId': bingoQuestItemId,
@@ -326,11 +375,11 @@ class ItemSummaryModel {
   });
 
   ItemSummaryModel.empty()
-      : bingoQuestItemId = 0,
-        rowIndex = 0,
-        columnIndex = 0,
-        completed = false,
-        questInfoView = QuestInfoView.empty();
+    : bingoQuestItemId = 0,
+      rowIndex = 0,
+      columnIndex = 0,
+      completed = false,
+      questInfoView = QuestInfoView.empty();
 
   final int? bingoQuestItemId;
   final int? rowIndex;
@@ -339,6 +388,8 @@ class ItemSummaryModel {
   final QuestInfoView? questInfoView;
 }
 
+/// 해당 빙고 칸의 더욱 상세한 정보
+/// 퀘스트 ID, 퀘스트 타입 등
 class QuestInfoView {
   QuestInfoView({
     required this.questId,
@@ -350,20 +401,20 @@ class QuestInfoView {
   });
 
   QuestInfoView.fromJson(Map<String, dynamic> json)
-      : questId = json['questId'],
-        questName = json['questName'],
-        questType = QuestType.fromString(json['questType']),
-        rewardPoint = json['rewardPoint'],
-        required = json['requiredCount'] ?? json['requiredStep'],
-        completeCount = json['completeCount'];
+    : questId = json['questId'],
+      questName = json['questName'],
+      questType = QuestType.fromString(json['questType']),
+      rewardPoint = json['rewardPoint'],
+      required = json['requiredCount'] ?? json['requiredStep'],
+      completeCount = json['completeCount'];
 
   QuestInfoView.empty()
-      : questId = 0,
-        questName = 'Unknown Quest',
-        questType = QuestType.unknown,
-        rewardPoint = 0,
-        required = 1,
-        completeCount = 0;
+    : questId = 0,
+      questName = 'Unknown Quest',
+      questType = QuestType.unknown,
+      rewardPoint = 0,
+      required = 1,
+      completeCount = 0;
 
   String toJsonString() => jsonEncode({
     'questId': questId,

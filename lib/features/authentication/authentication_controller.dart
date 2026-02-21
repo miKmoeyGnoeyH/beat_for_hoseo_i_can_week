@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:beat/entities/authentication/user_model.dart';
 import 'package:beat/features/authentication/authentication_repository.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:get/get.dart';
 
 class AuthenticationController extends GetxController
@@ -23,6 +24,26 @@ class AuthenticationController extends GetxController
     try {
       final UserModel authenticationModel =
           await authenticationRepository.signIn(id: id, password: password);
+
+      /// signIn()은 성공 시에만 UserModel을 반환하고, 그 외는 모두 Exception을 throw하기 때문에
+      /// UserModel을 반환받았다는 것은 API 호출이 성공했음을 의미.
+      /// 바로 FCMToken 등록으로 넘어감
+      final String authorization = authenticationModel.authorization;
+      String? fcmToken = await FirebaseMessaging.instance.getToken();
+      if (fcmToken == null) {
+        throw Exception();
+      } else {
+        if (!await authenticationRepository.registerFCMToken(authorization, fcmToken)) {
+          throw Exception();
+        }
+      }
+
+      FirebaseMessaging.instance.onTokenRefresh.listen((token) {
+        final String? authorizationAtTime = state?.authorization;
+        if (authorizationAtTime == null) return;
+        authenticationRepository.registerFCMToken(authorizationAtTime, token);
+      });
+
       change(authenticationModel, status: RxStatus.success());
     } catch (e) {
       log("AuthenticationController : signIn() : ${e.toString()}");

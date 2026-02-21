@@ -86,8 +86,8 @@ class _PointHistoryState extends State<PointHistory> {
             child: Skeletonizer(
               enabled: loading,
               // enabled: true,
-              containersColor: AppColors.common200,
-              effect: SolidColorEffect(color: AppColors.common200),
+              containersColor: AppColors.common300,
+              effect: SolidColorEffect(color: AppColors.common300),
               child: pointHistoryController.obx(
                 (state) {
                   return ListView.separated(
@@ -123,6 +123,27 @@ class _PointHistoryState extends State<PointHistory> {
                       ? 10
                       : pointHistoryController.state!.length,
                 ),
+                onError: (_) {
+                  return SizedBox(
+                    height: 500.w,
+                    child: GestureDetector(
+                      onTap: () {
+                        initPointHistory();
+                      },
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            LocalizationService.instance.errorConnectivity,
+                            style: AppTextTheme.subtitle1.common300,
+                          ),
+                          SizedBox(height: 10.w),
+                          Icon(Icons.refresh),
+                        ],
+                      ),
+                    ),
+                  );
+                }
               ),
             ),
           ),

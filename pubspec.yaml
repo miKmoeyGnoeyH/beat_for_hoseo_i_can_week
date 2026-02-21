@@ -58,6 +58,8 @@ dependencies:
   package_info_plus: ^9.0.0
   flutter_oss_licenses: ^3.0.12
   app_settings: ^7.0.0
+  firebase_core: ^4.4.0
+  firebase_messaging: ^16.1.1
 
 dev_dependencies:
   flutter_test:

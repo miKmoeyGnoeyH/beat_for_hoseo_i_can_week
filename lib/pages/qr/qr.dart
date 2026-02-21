@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:beat/entities/quest/index.dart';
 import 'package:beat/features/authentication/authentication_controller.dart';
 import 'package:beat/features/point/index.dart';
 import 'package:beat/features/quest/index.dart';
@@ -56,6 +57,7 @@ class _QRState extends State<QR> {
     String requestUrl,
     double latitude,
     double longitude,
+    int qrMissionId,
   ) async {
     final String authorization = authenticationController.state!.authorization;
 
@@ -86,7 +88,10 @@ class _QRState extends State<QR> {
               message: LocalizationService
                   .instance
                   .qrScanSuccessQuestCompleteContent,
-              onConfirm: () => pointController.fetchPointBalance(authorization),
+              onConfirm: () {
+                pointController.fetchPointBalance(authorization);
+                questListController.fetchQuestList(authorization);
+              },
             ),
           );
           break;
@@ -106,7 +111,7 @@ class _QRState extends State<QR> {
       ExceptionService.to.addException(BEATTimeoutException());
     } on BEATTokenExpired catch (e) {
       await authenticationController.reissueToken();
-      await requestMissionCheck(requestUrl, latitude, longitude);
+      await requestMissionCheck(requestUrl, latitude, longitude, qrMissionId);
     } on BEATException catch (e) {
       if (Get.isDialogOpen == true) {
         Get.back();
@@ -154,8 +159,7 @@ class _QRState extends State<QR> {
               message: LocalizationService
                   .instance
                   .qrScanSuccessQuestCompleteContent,
-              onConfirm: () =>
-                  questListController.fetchQuestList(authorization),
+              onConfirm: () => pointController.fetchPointBalance(authorization),
             ),
           );
           break;
@@ -227,6 +231,9 @@ class _QRState extends State<QR> {
             log("requestUrl : $requestUrl");
 
             if (missionCheckQR.hasMatch(requestUrl)) {
+              final int qrMissionId = int.parse(
+                missionCheckQR.firstMatch(requestUrl)!.group(1)!,
+              );
               Position position = await Geolocator.getCurrentPosition(
                 locationSettings: locationSettings,
               );
@@ -234,6 +241,7 @@ class _QRState extends State<QR> {
                 requestUrl,
                 position.latitude,
                 position.longitude,
+                qrMissionId,
               );
               startScanTimer();
               _isScanning = false;
