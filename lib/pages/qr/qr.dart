@@ -123,7 +123,7 @@ class _QRState extends State<QR> {
       }
       ExceptionService.to.addException(
         BEATException(
-          title: LocalizationService.instance.errorValidateNicknameFailedTitle,
+          title: LocalizationService.instance.errorQRScanFailed,
           message: LocalizationService.instance.errorUnknown,
         ),
       );
@@ -191,7 +191,7 @@ class _QRState extends State<QR> {
       }
       ExceptionService.to.addException(
         BEATException(
-          title: LocalizationService.instance.errorValidateNicknameFailedTitle,
+          title: LocalizationService.instance.errorQRScanFailed,
           message: LocalizationService.instance.errorUnknown,
         ),
       );

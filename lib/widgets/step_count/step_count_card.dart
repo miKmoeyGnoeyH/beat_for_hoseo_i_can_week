@@ -28,7 +28,7 @@ class _StepCountCardState extends State<StepCountCard> {
 
   void startPermissionCheckTimer() {
     _permissionCheckTimer?.cancel();
-    _permissionCheckTimer = Timer.periodic(Duration(seconds: 30), (timer) async {
+    _permissionCheckTimer = Timer.periodic(Duration(seconds: 10), (timer) async {
       try {
         final locationStatus = Platform.isIOS
             ? await PermissionService.instance

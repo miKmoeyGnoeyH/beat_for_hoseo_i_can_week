@@ -270,6 +270,14 @@ class LocalizationService {
 
   String get homeProfile => "home_page".tr(gender: "profile");
 
+  String get homeQuestCheckSuccessTitle => "home_page".tr(gender: "quest_check_success_title");
+
+  String get homeQuestCheckSuccessContent => "home_page".tr(gender: "quest_check_success_content");
+
+  String get homeBingoCheckSuccessTitle => "home_page".tr(gender: "bingo_check_success_title");
+
+  String get homeBingoCheckSuccessContent => "home_page".tr(gender: "bingo_check_success_content");
+
 
   /// Settings
   String get settingsSettings =>
@@ -696,4 +704,23 @@ class LocalizationService {
 
   String get errorChangePasswordFailedContent =>
       "errors".tr(gender: "error_change_password_failed_content");
+
+  String get errorQuestCheckFailedTitle =>
+      "errors".tr(gender: "error_quest_check_failed_title");
+
+  String get errorQuestCheckFailedContent =>
+      "errors".tr(gender: "error_quest_check_failed_content");
+
+  String get errorQuestCheckFailedPleaseRefresh =>
+      "errors".tr(gender: "error_quest_check_failed_please_refresh");
+
+  String get errorBingoCheckFailedTitle =>
+      "errors".tr(gender: "error_bingo_check_failed_title");
+
+  String get errorBingoCheckFailedContent =>
+      "errors".tr(gender: "error_bingo_check_failed_content");
+
+  String get errorBingoCheckFailedPleaseRefresh =>
+      "errors".tr(gender: "error_bingo_check_failed_please_refresh");
+
 }

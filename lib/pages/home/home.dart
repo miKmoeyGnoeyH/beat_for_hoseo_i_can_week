@@ -143,7 +143,6 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
     super.dispose();
   }
 
-  // TODO: 홈 화면 에러 발생 시 어떻게?
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
@@ -231,8 +230,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                         ],
                       ),
                       child: BingoBoard(
-                        questSummaryAppView:
-                            questListController.state.first.localData.board,
+                        board: questListController.state.first.localData.board,
                         countPerAxis: questListController
                             .state
                             .first
@@ -258,7 +256,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                       ],
                     ),
                     child: BingoBoard(
-                      questSummaryAppView: List.generate(
+                      board: List.generate(
                         25,
                         (index) => ItemSummaryModel.empty(),
                       ),
@@ -297,7 +295,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                               ],
                             ),
                             child: BingoBoard(
-                              questSummaryAppView: List.generate(
+                              board: List.generate(
                                 25,
                                 (index) => ItemSummaryModel.empty(),
                               ),
@@ -322,7 +320,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                             ],
                           ),
                           child: BingoBoard(
-                            questSummaryAppView:
+                            board:
                                 questListController.state.first.localData.board,
                             countPerAxis: 5,
                             rowSpacing: 5.w,
@@ -363,6 +361,8 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                 child: questListController.obx(
                   (state) {
                     return BingoStep(
+                      questId: state.first.questCommonSummaryDto.questId,
+                      completedLines: state.first.localData.completedLines,
                       lineSummaryModel: state
                           .first
                           .questSummaryAppView
@@ -372,15 +372,22 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                     );
                   },
                   onEmpty: BingoStep(
+                    questId: -1,
+                    completedLines: [],
                     lineSummaryModel: LineSummaryModel.empty(),
                     completedCount: 0,
                   ),
                   onLoading: questListController.state == null
                       ? BingoStep(
+                          questId: -1,
+                          completedLines: [],
                           lineSummaryModel: LineSummaryModel.empty(),
                           completedCount: 0,
                         )
                       : BingoStep(
+                          questId:
+                              questListController.state!.first.questCommonSummaryDto.questId,
+                          completedLines: questListController.state!.first.localData.completedLines,
                           lineSummaryModel: questListController
                               .state
                               .first

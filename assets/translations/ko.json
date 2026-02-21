@@ -125,7 +125,12 @@
     "square_left": "{}칸 남음",
     "qr": "QR",
     "home": "홈",
-    "profile": "프로필"
+    "profile": "프로필",
+    "quest_check_success_title": "퀘스트 완료",
+    "quest_check_success_content": "퀘스트가 완료되었습니다.",
+
+    "bingo_check_success_title": "빙고 완료",
+    "bingo_check_success_content": "빙고가 완료되었습니다."
   },
   "leaderboard_page": {
     "leaderboard": "랭킹",
@@ -285,6 +290,13 @@
     "error_reset_password_failed_content": "비밀번호 변경 중 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.",
     "error_scan_failed": "QR 코드 스캔 실패",
     "error_scan_failed_default_content": "QR 코드 스캔 중 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.",
-    "error_invalid_qr_code": "유효하지 않은 QR 코드입니다."
+    "error_invalid_qr_code": "유효하지 않은 QR 코드입니다.",
+    "error_quest_check_failed_title": "퀘스트 완료 실패",
+    "error_quest_check_failed_content": "퀘스트 완료 처리 중 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.",
+    "error_quest_check_failed_please_refresh": "퀘스트 완료 처리 중 문제가 발생했습니다. 화면을 새로고침해주세요.",
+
+    "error_bingo_check_failed_title": "빙고 완료 실패",
+    "error_bingo_check_failed_content": "빙고 완료 처리 중 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.",
+    "error_bingo_check_failed_please_refresh": "빙고 완료 처리 중 문제가 발생했습니다. 화면을 새로고침해주세요."
   }
 }

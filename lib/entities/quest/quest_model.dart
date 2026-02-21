@@ -42,7 +42,7 @@ class QuestModel {
   });
 
   QuestModel.dummy()
-    : questCommonSummaryDto = QuestCommonSummaryDto.dummy(),
+    : questCommonSummaryDto = QuestCommonSummaryDto.empty(),
       questSummaryAppView = QuestSummaryAppView(
         lineSummaryList: [],
         itemSummaryList: [],
@@ -222,16 +222,19 @@ class LocalData {
 
   /// UI에서 바로 쓰는 보드(1차원)
   /// 퀘스트 완료 시 UI 반응성 위해 API 요청과 함께 이 값을 변경
+  /// 2026.02.21: 퀘스트 완료 시/QR 스캔 성공 시 퀘스트 목록을 다시 요청함
   List<ItemSummaryModel> board;
 
   /// 완료된 아이템 수
   /// 퀘스트 완료 시 UI 반응성 위해 API 요청과 함께 이 값을 변경
+  /// 2026.02.21: 퀘스트 완료 시/QR 스캔 성공 시 퀘스트 목록을 다시 요청함
   int completedItemCount;
 
   List<CompletedLineInfo> completedLines;
 
   /// 완료된 줄 수
   /// 퀘스트 완료 시 UI 반응성 위해 API 요청과 함께 이 값을 변경
+  /// 2026.02.21: 퀘스트 완료 시/QR 스캔 성공 시 퀘스트 목록을 다시 요청함
   int completedLineCount;
 }
 
@@ -241,6 +244,11 @@ class LocalData {
 /// - 대각선 : axisIndex = 0(좌상-우하), n(우상-좌하), lineType = DIAGONAL
 class CompletedLineInfo {
   const CompletedLineInfo({required this.axisIndex, required this.lineType});
+
+  Map<String, dynamic> toJson() => {
+    'lineIndex': axisIndex,
+    'lineType': lineType.value,
+  };
 
   final int axisIndex;
   final BingoLineType lineType;
@@ -277,7 +285,7 @@ class QuestCommonSummaryDto {
     'endDate': endDate.toIso8601String(),
   });
 
-  QuestCommonSummaryDto.dummy()
+  QuestCommonSummaryDto.empty()
     : questId = 0,
       name = 'Dummy Quest',
       descriptionShort = 'This is a dummy quest for testing purposes.',
