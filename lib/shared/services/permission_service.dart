@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:beat/features/step_count/health_kit_steps.dart';

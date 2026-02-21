@@ -9,7 +9,6 @@ import 'package:beat/features/authentication/authentication_controller.dart';
 import 'package:beat/features/quest/index.dart';
 import 'package:beat/features/step_count/index.dart';
 import 'package:beat/shared/index.dart';
-import 'package:beat/widgets/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -111,7 +110,7 @@ class BingoBoard extends StatelessWidget {
         Get.back();
       }
       ExceptionService.to.addException(BEATTimeoutException());
-    } on BEATTokenExpired catch (e) {
+    } on BEATTokenExpired {
       await authenticationController.reissueToken();
       await walkCheck(quest);
     } on BEATException catch (e) {

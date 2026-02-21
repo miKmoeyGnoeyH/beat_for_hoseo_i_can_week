@@ -5,7 +5,6 @@ import 'package:beat/pages/index.dart';
 import 'package:beat/shared/index.dart';
 import 'package:beat/widgets/index.dart';
 import 'package:flutter/material.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 import '../../features/step_count/index.dart';
 

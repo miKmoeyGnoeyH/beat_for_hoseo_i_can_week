@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 
-import 'package:beat/entities/quest/index.dart';
 import 'package:beat/features/authentication/authentication_controller.dart';
 import 'package:beat/features/point/index.dart';
 import 'package:beat/features/quest/index.dart';
@@ -109,7 +108,7 @@ class _QRState extends State<QR> {
         Get.back();
       }
       ExceptionService.to.addException(BEATTimeoutException());
-    } on BEATTokenExpired catch (e) {
+    } on BEATTokenExpired {
       await authenticationController.reissueToken();
       await requestMissionCheck(requestUrl, latitude, longitude, qrMissionId);
     } on BEATException catch (e) {
@@ -177,7 +176,7 @@ class _QRState extends State<QR> {
         Get.back();
       }
       ExceptionService.to.addException(BEATTimeoutException());
-    } on BEATTokenExpired catch (e) {
+    } on BEATTokenExpired {
       await authenticationController.reissueToken();
       await requestCreditCheck(requestUrl);
     } on BEATException catch (e) {

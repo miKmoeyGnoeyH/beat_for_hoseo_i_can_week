@@ -208,8 +208,8 @@ class StepCountController extends GetxController {
 
       /// 캠퍼스 내에 있는지 여부 최초 1회 초기화
       try {
-        _isInCampus =
-            await _campusChannel.invokeMethod("isInsideCampus") ?? false;
+        final isInsideCampus = await _campusChannel.invokeMethod("isInsideCampus");
+        if (isInsideCampus != null) _isInCampus = isInsideCampus;
       } on PlatformException catch (e) {
         log(
           "step_count_controller: startService: Failed to get initial campus location: ${e.message}",
@@ -277,7 +277,6 @@ class StepCountController extends GetxController {
       final int outSnapshot = await _getHelthKitStepsAndUseCachedAsFallback();
       final DateTime outSnapshotYmd = DateTime.now();
       PrefsService.instance.setOutSnapshot(outSnapshot, outSnapshotYmd);
-    } catch (e) {
     } finally {
       _handlingCampusEvent = false;
     }
@@ -297,7 +296,6 @@ class StepCountController extends GetxController {
 
       await _calcExcludedStepsAndSave(inSnapshot, inSnapshotYmd);
       _startPedometerStreamiOS();
-    } catch (e) {
     } finally {
       _handlingCampusEvent = false;
     }

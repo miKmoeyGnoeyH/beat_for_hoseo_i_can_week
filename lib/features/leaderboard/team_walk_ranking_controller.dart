@@ -1,8 +1,6 @@
 import 'dart:developer';
 
 import 'package:beat/entities/leaderboard/leaderboard_model.dart';
-import 'package:beat/entities/quest/index.dart';
-import 'package:beat/features/quest/index.dart';
 import 'package:get/get.dart';
 
 import 'leaderboard_repository.dart';

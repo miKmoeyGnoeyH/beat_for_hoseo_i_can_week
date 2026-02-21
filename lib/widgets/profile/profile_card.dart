@@ -1,6 +1,4 @@
 import 'package:beat/features/profile/index.dart';
-import 'package:beat/widgets/profile/profile_card_content_on_empty.dart';
-import 'package:beat/widgets/profile/profile_card_content_on_loading.dart';
 import 'package:beat/shared/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -9,7 +7,6 @@ import 'package:get/get.dart';
 import '../../app/route/index.dart';
 import '../../entities/profile/index.dart';
 import '../../features/team/index.dart';
-import 'profile_card_content_on_error.dart';
 
 class ProfileCard extends StatelessWidget {
   ProfileCard(this.profileModel, {super.key});
@@ -41,7 +38,7 @@ class ProfileCard extends StatelessWidget {
                 LocalizationService.instance.profileName,
                 style: AppTextTheme.body1,
               ),
-              Text(profileModel!.name, style: AppTextTheme.body1),
+              Text(profileModel.name, style: AppTextTheme.body1),
             ],
           ),
           SizedBox(height: rowSpacing),

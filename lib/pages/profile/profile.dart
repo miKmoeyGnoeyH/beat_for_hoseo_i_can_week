@@ -1,15 +1,12 @@
 import 'package:beat/entities/profile/index.dart';
 import 'package:beat/features/authentication/index.dart';
 import 'package:beat/features/profile/index.dart';
-import 'package:beat/features/team/index.dart';
-import 'package:beat/pages/index.dart';
 import 'package:beat/widgets/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
-import '../../app/route/index.dart';
 import '../../shared/index.dart';
 
 class Profile extends StatefulWidget {
@@ -51,7 +48,7 @@ class _ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
 
     try {
       await profileController.fetchDataOnce(authorization);
-    } on BEATTokenExpired catch (e) {
+    } on BEATTokenExpired {
       await authenticationController.reissueToken();
       authorization = authenticationController.state!.authorization;
       await profileController.fetchDataOnce(authorization);
@@ -67,7 +64,7 @@ class _ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
 
     try {
       await profileController.fetchData(authorization);
-    } on BEATTokenExpired catch (e) {
+    } on BEATTokenExpired {
       await authenticationController.reissueToken();
       authorization = authenticationController.state!.authorization;
       await profileController.fetchData(authorization);

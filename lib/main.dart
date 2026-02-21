@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'app.dart';
-import 'fcm.dart';
 import 'features/step_count/index.dart';
 import 'firebase_options.dart';
 

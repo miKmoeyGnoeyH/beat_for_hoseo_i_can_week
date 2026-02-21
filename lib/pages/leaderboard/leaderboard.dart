@@ -1,15 +1,10 @@
 import 'dart:developer';
 
-import 'package:beat/entities/notice/index.dart';
 import 'package:beat/features/authentication/index.dart';
 import 'package:beat/features/leaderboard/index.dart';
-import 'package:beat/features/notice/index.dart';
 import 'package:beat/widgets/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:get/get.dart';
-import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../shared/index.dart';
 

@@ -24,6 +24,8 @@ class QRInfo extends StatelessWidget {
             SizedBox(height: 16.w),
             ListView.separated(
               shrinkWrap: true,
+              primary: false,
+              padding: EdgeInsets.zero,
               physics: NeverScrollableScrollPhysics(),
               itemBuilder: (context, index) {
                 final QRMissionItemAppDto item = qrMissionItemAppDtoList[index];

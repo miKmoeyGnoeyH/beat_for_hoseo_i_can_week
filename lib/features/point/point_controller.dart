@@ -1,8 +1,6 @@
 import 'dart:developer';
 
-import 'package:beat/features/authentication/authentication_controller.dart';
 import 'package:beat/features/point/point_repository.dart';
-import 'package:beat/shared/index.dart';
 import 'package:get/get.dart';
 
 class PointController extends GetxController with StateMixin<int> {

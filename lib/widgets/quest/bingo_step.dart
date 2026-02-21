@@ -91,7 +91,7 @@ class BingoStep extends StatelessWidget {
         Get.back();
       }
       ExceptionService.to.addException(BEATTimeoutException());
-    } on BEATTokenExpired catch (e) {
+    } on BEATTokenExpired {
       await authenticationController.reissueToken();
       await bingoCheck();
     } on BEATException catch (e) {

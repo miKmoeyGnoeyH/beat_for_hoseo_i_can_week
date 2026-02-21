@@ -40,7 +40,7 @@ class _PointHistoryState extends State<PointHistory> {
 
     try {
       await pointHistoryController.fetchPointHistory(authorization, memberId);
-    } on BEATTokenExpired catch (e) {
+    } on BEATTokenExpired {
       await authenticationController.reissueToken();
       authorization = authenticationController.state!.authorization;
       await pointHistoryController.fetchPointHistory(authorization, memberId);
@@ -57,7 +57,7 @@ class _PointHistoryState extends State<PointHistory> {
 
     try {
       await pointHistoryController.fetchPointHistory(authorization, memberId);
-    } on BEATTokenExpired catch (e) {
+    } on BEATTokenExpired {
       await authenticationController.reissueToken();
       authorization = authenticationController.state!.authorization;
       await pointHistoryController.fetchPointHistory(authorization, memberId);

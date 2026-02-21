@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
-import 'dart:ui';
 
 import 'package:app_settings/app_settings.dart';
 import 'package:auto_size_text/auto_size_text.dart';

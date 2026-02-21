@@ -1,7 +1,6 @@
 import 'package:beat/widgets/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
@@ -42,7 +41,7 @@ class TeamPointRankingState extends State<TeamPointRanking> {
       await teamPointRankingListController.fetchPointRankingTeamOnce(
         authorization,
       );
-    } on BEATTokenExpired catch (e) {
+    } on BEATTokenExpired {
       await authenticationController.reissueToken();
       authorization = authenticationController.state!.authorization;
       await teamPointRankingListController.fetchPointRankingTeamOnce(
@@ -60,7 +59,7 @@ class TeamPointRankingState extends State<TeamPointRanking> {
 
     try {
       await teamPointRankingListController.pointRankingTeam(authorization);
-    } on BEATTokenExpired catch (e) {
+    } on BEATTokenExpired {
       await authenticationController.reissueToken();
       authorization = authenticationController.state!.authorization;
       await teamPointRankingListController.pointRankingTeam(authorization);

@@ -12,24 +12,24 @@ import UIKit
 import Flutter
 
 final class CampusLocationManager: NSObject, CLLocationManagerDelegate {
-
+    
     static let shared = CampusLocationManager()
-
+    
     private let manager = CLLocationManager()
     private let defaults = UserDefaults.standard
-
+    
     private var pendingLocationCompletion: ((Bool?, FlutterError?) -> Void)?
     private var locationTimeoutTimer: Timer?
-
+    
     private let keyLastInside = "campus_last_inside"
     private let keyRunning = "campus_location_running"
-
+    
     private var flutterChannel: FlutterMethodChannel?
-
+    
     // ✅ one-shot이 desiredAccuracy를 바꿨으면 원복하기 위한 저장
     private var savedDesiredAccuracy: CLLocationAccuracy?
     private var savedDistanceFilter: CLLocationDistance?
-
+    
     private override init() {
         super.init()
         manager.delegate = self
@@ -39,34 +39,34 @@ final class CampusLocationManager: NSObject, CLLocationManagerDelegate {
         manager.allowsBackgroundLocationUpdates = true
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { _, _ in }
     }
-
+    
     // MARK: - Public
-
+    
     func isRunning() -> Bool {
         return defaults.bool(forKey: keyRunning)
     }
-
+    
     func start() {
         let status = manager.authorizationStatus
         if status == .denied || status == .restricted {
             stop()
             return
         }
-
+        
         if status == .notDetermined {
             manager.requestAlwaysAuthorization()
             return
         }
-
+        
         defaults.set(true, forKey: keyRunning)
         manager.startUpdatingLocation()
     }
-
+    
     func stop() {
         manager.stopUpdatingLocation()
         defaults.set(false, forKey: keyRunning)
     }
-
+    
     // MARK: - Flutter Channel
     func bindFlutterChannel(messenger: FlutterBinaryMessenger) {
         flutterChannel = FlutterMethodChannel(
@@ -74,228 +74,178 @@ final class CampusLocationManager: NSObject, CLLocationManagerDelegate {
             binaryMessenger: messenger
         )
     }
-
+    
     // MARK: - CLLocationManagerDelegate
-
+    
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         let status = manager.authorizationStatus
         if status == .denied || status == .restricted {
             stop()
             return
         }
-
+        
         if isRunning() {
             self.manager.startUpdatingLocation()
         }
     }
-
+    
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        let loc = locations.last!
-        let age = -loc.timestamp.timeIntervalSinceNow // seconds
-        if age > 15 {
-           // 15초보다 오래된 캐시 위치면 one-shot 응답에 쓰지 말고 무시
-           return
-        }
-
+        guard let loc = locations.last else { return }
         let inside = isInsideCampus(lat: loc.coordinate.latitude, lng: loc.coordinate.longitude)
-
-        // 이전값 읽기
+        
         let hadLast = defaults.object(forKey: keyLastInside) != nil
         let lastInside = defaults.bool(forKey: keyLastInside)
-
-        // 최신값 저장
+        
         defaults.set(inside, forKey: keyLastInside)
-
-        // ✅ one-shot 응답 우선 처리
+        
         if let cb = pendingLocationCompletion {
             pendingLocationCompletion = nil
             locationTimeoutTimer?.invalidate()
             locationTimeoutTimer = nil
-
-            // ✅ one-shot이 바꿔둔 accuracy/filter 원복
-            if let acc = savedDesiredAccuracy { self.manager.desiredAccuracy = acc }
-            if let df = savedDistanceFilter { self.manager.distanceFilter = df }
-            savedDesiredAccuracy = nil
-            savedDistanceFilter = nil
-
-            // ✅ 핵심: continuous가 돌고 있지 않을 때만 stop
-            if !isRunning() {
-                manager.stopUpdatingLocation()
-            }
-
             cb(inside, nil)
             return
         }
-
+        
         // ✅ running 이벤트 처리
         guard isRunning() else { return }
-
+        
         if !hadLast { return }              // 최초는 이벤트 안 쏨
         if lastInside == inside { return }  // 변화 없으면 스팸 방지
-
+        
         if inside { notifyEntered() } else { notifyLeft() }
     }
-
+    
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         if let cb = pendingLocationCompletion {
             pendingLocationCompletion = nil
             locationTimeoutTimer?.invalidate()
             locationTimeoutTimer = nil
-
+            
             // ✅ one-shot이 바꿔둔 값 원복
             if let acc = savedDesiredAccuracy { self.manager.desiredAccuracy = acc }
             if let df = savedDistanceFilter { self.manager.distanceFilter = df }
             savedDesiredAccuracy = nil
             savedDistanceFilter = nil
-
+            
             // ✅ continuous가 아니면 stop
             if !isRunning() {
                 self.manager.stopUpdatingLocation()
             }
-
+            
             cb(nil, FlutterError(code: "LOCATION_ERROR",
                                  message: error.localizedDescription,
                                  details: nil))
             return
         }
     }
-
+    
     // MARK: - Immediate State Query
     func requestInsideOnce(timeout: TimeInterval = 6.0,
                            completion: @escaping (Bool?, FlutterError?) -> Void) {
         DispatchQueue.main.async {
             let status = self.manager.authorizationStatus
             if status == .denied || status == .restricted {
-                completion(nil, FlutterError(code: "LOCATION_DENIED",
-                                             message: "Location permission denied/restricted",
-                                             details: nil))
+                completion(nil, FlutterError(code: "LOCATION_DENIED", message: "Location denied", details: nil))
                 return
             }
-
             if status == .notDetermined {
                 self.manager.requestAlwaysAuthorization()
-                completion(nil, FlutterError(code: "LOCATION_NOT_DETERMINED",
-                                             message: "Location permission not determined yet",
-                                             details: nil))
+                completion(nil, FlutterError(code: "LOCATION_NOT_DETERMINED", message: "Not determined", details: nil))
                 return
             }
-
             if self.pendingLocationCompletion != nil {
-                completion(nil, FlutterError(code: "LOCATION_IN_PROGRESS",
-                                             message: "Location request already in progress",
-                                             details: nil))
+                completion(nil, FlutterError(code: "LOCATION_IN_PROGRESS", message: "Already in progress", details: nil))
                 return
             }
-
+            
             self.pendingLocationCompletion = completion
-
-            // timeout
+            
             self.locationTimeoutTimer?.invalidate()
             self.locationTimeoutTimer = Timer.scheduledTimer(withTimeInterval: timeout, repeats: false) { [weak self] _ in
                 guard let self else { return }
-
-                // ✅ one-shot이 바꿔둔 값 원복
-                if let acc = self.savedDesiredAccuracy { self.manager.desiredAccuracy = acc }
-                if let df = self.savedDistanceFilter { self.manager.distanceFilter = df }
-                self.savedDesiredAccuracy = nil
-                self.savedDistanceFilter = nil
-
-                // ✅ continuous가 아닐 때만 stop
-                if !self.isRunning() {
-                    self.manager.stopUpdatingLocation()
-                }
-
-                let fallback: Bool? = self.defaults.object(forKey: self.keyLastInside) != nil
-                    ? self.defaults.bool(forKey: self.keyLastInside)
-                    : nil
-
                 let cb = self.pendingLocationCompletion
                 self.pendingLocationCompletion = nil
+                
+                let fallback: Bool? = self.defaults.object(forKey: self.keyLastInside) != nil
+                ? self.defaults.bool(forKey: self.keyLastInside)
+                : nil
+                
                 cb?(fallback, FlutterError(code: "LOCATION_TIMEOUT",
-                                          message: "Timed out waiting for a fresh location",
-                                          details: nil))
+                                           message: "Timed out waiting for location",
+                                           details: nil))
             }
-
-            // ✅ one-shot은 "필요할 때만" 정확도 임시 변경
-            // (continuous의 설정을 망치지 않기 위해 원복할 값을 저장)
-            if self.savedDesiredAccuracy == nil { self.savedDesiredAccuracy = self.manager.desiredAccuracy }
-            if self.savedDistanceFilter == nil { self.savedDistanceFilter = self.manager.distanceFilter }
-
-            self.manager.desiredAccuracy = kCLLocationAccuracyHundredMeters
-            self.manager.distanceFilter = kCLDistanceFilterNone
-
-            // ✅ continuous가 이미 돌고 있어도 상관없음 (stop을 안 하니까)
-            self.manager.startUpdatingLocation()
+            
+            self.manager.requestLocation() // ✅ one-shot
         }
     }
-
+    
     // MARK: - Notification (localized)
-
+    
     private func isKorean() -> Bool {
         // 앱/시스템 언어 기준
         let lang = Locale.preferredLanguages.first ?? "en"
         return lang.lowercased().hasPrefix("ko")
     }
-
+    
     private func notifyLeft() {
         let (title, body) = isKorean()
         ? ("BEAT", "캠퍼스 범위를 벗어났습니다.")
         : ("BEAT", "You have left the campus area.")
-
+        
         pushNotification(id: "campus_left", title: title, body: body)
         
         flutterChannel?.invokeMethod("campusOut", arguments: nil)
     }
-
+    
     private func notifyEntered() {
         let (title, body) = isKorean()
         ? ("BEAT", "캠퍼스 범위에 진입했습니다.")
         : ("BEAT", "You have entered the campus area.")
-
+        
         pushNotification(id: "campus_entered", title: title, body: body)
         
         flutterChannel?.invokeMethod("campusIn", arguments: nil)
     }
-
+    
     private func pushNotification(id: String, title: String, body: String) {
         let content = UNMutableNotificationContent()
         content.title = title
         content.body = body
         content.sound = .default
-
+        
         // 즉시 표시
         let req = UNNotificationRequest(identifier: id, content: content, trigger: nil)
         UNUserNotificationCenter.current().add(req, withCompletionHandler: nil)
     }
-
+    
     // MARK: - Polygon
-
+    
     private func isInsideCampus(lat: Double, lng: Double) -> Bool {
         return isInsidePolygon(lat: lat, lng: lng, polygon: Self.asanArea)
-            || isInsidePolygon(lat: lat, lng: lng, polygon: Self.cheonanArea)
+        || isInsidePolygon(lat: lat, lng: lng, polygon: Self.cheonanArea)
     }
-
+    
     // Ray casting (lat=x, lng=y처럼 취급)
     private func isInsidePolygon(lat: Double, lng: Double, polygon: [(Double, Double)]) -> Bool {
         var inside = false
         var j = polygon.count - 1
-
+        
         for i in 0..<polygon.count {
             let xi = polygon[i].0, yi = polygon[i].1
             let xj = polygon[j].0, yj = polygon[j].1
-
+            
             let intersect = ((yi > lng) != (yj > lng)) &&
-                (lat < (xj - xi) * (lng - yi) / (yj - yi) + xi)
-
+            (lat < (xj - xi) * (lng - yi) / (yj - yi) + xi)
+            
             if intersect { inside.toggle() }
             j = i
         }
-
+        
         return inside
     }
-
+    
     // MARK: - Campus Polygons (lat, lng)
-
+    
     static let asanArea: [(Double, Double)] = [
         (36.738665, 127.077041),
         (36.738750, 127.076391),
@@ -321,7 +271,7 @@ final class CampusLocationManager: NSObject, CLLocationManagerDelegate {
         (36.736264, 127.077744),
         (36.737103, 127.077636),
     ]
-
+    
     static let cheonanArea: [(Double, Double)] = [
         (36.830327274558805, 127.18020021753239),
         (36.83009097680529, 127.18003992692661),

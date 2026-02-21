@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:beat/app/route/app_pages.dart';
@@ -11,7 +10,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 import 'package:beat/shared/index.dart';
-import 'package:beat/widgets/index.dart';
 
 class Withdrawal extends StatefulWidget {
   const Withdrawal({super.key});
@@ -79,7 +77,7 @@ class _WithdrawalState extends State<Withdrawal> {
         Get.back();
       }
       ExceptionService.to.addException(BEATTimeoutException());
-    } on BEATTokenExpired catch (e) {
+    } on BEATTokenExpired {
       await AuthenticationController.to.reissueToken();
       withdrawal();
     } on BEATException catch (e) {

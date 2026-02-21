@@ -1,9 +1,7 @@
-import 'dart:developer';
 
 import 'package:beat/widgets/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
@@ -11,7 +9,6 @@ import '../../entities/leaderboard/leaderboard_model.dart';
 import '../../features/authentication/index.dart';
 import '../../features/leaderboard/index.dart';
 import '../../shared/index.dart';
-import 'member_walk_ranking_card.dart';
 
 class BingoRanking extends StatefulWidget {
   const BingoRanking({super.key});
@@ -48,14 +45,14 @@ class BingoRankingState extends State<BingoRanking> {
         authorization,
         requestCampus,
       );
-    } on BEATTokenExpired catch (e) {
+    } on BEATTokenExpired {
       await authenticationController.reissueToken();
       authorization = authenticationController.state!.authorization;
       await bingoRankingListController.fetchBingoRankingOnce(
         authorization,
         requestCampus,
       );
-    } catch (e) {}
+    }
 
     setState(() {
       loading = false;
@@ -72,14 +69,14 @@ class BingoRankingState extends State<BingoRanking> {
         authorization,
         requestCampus,
       );
-    } on BEATTokenExpired catch (e) {
+    } on BEATTokenExpired {
       await authenticationController.reissueToken();
       authorization = authenticationController.state!.authorization;
       await bingoRankingListController.bingoRankingAsan(
         authorization,
         requestCampus,
       );
-    } catch (e) {}
+    }
   }
 
   @override

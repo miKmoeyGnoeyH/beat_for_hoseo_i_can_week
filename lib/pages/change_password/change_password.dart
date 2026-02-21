@@ -112,7 +112,7 @@ class _ChangePasswordState extends State<ChangePassword> {
         Get.back();
       }
       ExceptionService.to.addException(BEATTimeoutException());
-    } on BEATTokenExpired catch (e) {
+    } on BEATTokenExpired {
       await AuthenticationController.to.reissueToken();
       await changePassword();
     } on BEATException catch (e) {

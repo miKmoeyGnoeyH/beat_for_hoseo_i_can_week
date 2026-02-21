@@ -85,19 +85,19 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
 
     try {
       await pointController.fetchPointBalanceOnce(authorization);
-    } on BEATTokenExpired catch (e) {
+    } on BEATTokenExpired {
       await authenticationController.reissueToken();
       authorization = authenticationController.state!.authorization;
       await pointController.fetchPointBalanceOnce(authorization);
-    } catch (e) {}
+    }
 
     try {
       await questListController.fetchQuestListOnce(authorization);
-    } on BEATTokenExpired catch (e) {
+    } on BEATTokenExpired {
       await authenticationController.reissueToken();
       authorization = authenticationController.state!.authorization;
       await questListController.fetchQuestListOnce(authorization);
-    } catch (e) {}
+    }
 
     setState(() {
       loading = false;
@@ -111,19 +111,19 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
 
     try {
       await pointController.fetchPointBalance(authorization);
-    } on BEATTokenExpired catch (e) {
+    } on BEATTokenExpired {
       await authenticationController.reissueToken();
       authorization = authenticationController.state!.authorization;
       await pointController.fetchPointBalance(authorization);
-    } catch (e) {}
+    }
 
     try {
       await questListController.fetchQuestList(authorization);
-    } on BEATTokenExpired catch (e) {
+    } on BEATTokenExpired {
       await authenticationController.reissueToken();
       authorization = authenticationController.state!.authorization;
       await questListController.fetchQuestList(authorization);
-    } catch (e) {}
+    }
   }
 
   void showIndicatorThenAutoHide() {
