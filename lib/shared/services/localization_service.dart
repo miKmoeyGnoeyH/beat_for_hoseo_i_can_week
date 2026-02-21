@@ -37,6 +37,8 @@ class LocalizationService {
   String get generalGoToSettings =>
       "general".tr(gender: "go_to_settings");
 
+  String generalCampus(String campus) => "general".tr(gender: campus);
+
 
 
   /// sign in
@@ -304,6 +306,7 @@ class LocalizationService {
       "settings_page".tr(gender: "phone_number");
 
 
+
   /// OSS Licenses
   String get ossOSSLicenses => "oss_licenses_page".tr(gender: "oss_licenses");
 
@@ -354,6 +357,55 @@ class LocalizationService {
 
   String get withdrawalCancel =>
       "withdrawal".tr(gender: "cancel");
+
+
+
+  /// Leaderboard
+  String get leaderboardLeaderboard =>
+      "leaderboard_page".tr(gender: "leaderboard");
+
+  String get leaderboardWalk =>
+      "leaderboard_page".tr(gender: "walk");
+
+  String get leaderboardWalkRanking =>
+      "leaderboard_page".tr(gender: "walk_ranking");
+
+  String get leaderboardWalkRankingDescription =>
+      "leaderboard_page".tr(gender: "walk_ranking_description");
+
+  String get leaderboardPoint =>
+      "leaderboard_page".tr(gender: "point");
+
+  String get leaderboardPointRanking =>
+      "leaderboard_page".tr(gender: "point_ranking");
+
+  String get leaderboardPointRankingDescription =>
+      "leaderboard_page".tr(gender: "point_ranking_description");
+
+  String get leaderboardBingo =>
+      "leaderboard_page".tr(gender: "bingo");
+
+  String get leaderboardBingoRanking =>
+      "leaderboard_page".tr(gender: "bingo_ranking");
+
+  String get leaderboardBingoRankingDescription =>
+      "leaderboard_page".tr(gender: "bingo_ranking_description");
+
+  String get leaderboardTeam =>
+      "leaderboard_page".tr(gender: "team");
+
+  String get leaderboardMember =>
+      "leaderboard_page".tr(gender: "member");
+
+  String get leaderboardAsan =>
+      "leaderboard_page".tr(gender: "asan");
+
+  String get leaderboardCheonan =>
+      "leaderboard_page".tr(gender: "cheonan");
+
+  String get leaderboardNoData =>
+      "leaderboard_page".tr(gender: "no_data");
+
 
 
 
@@ -638,4 +690,10 @@ class LocalizationService {
 
   String get errorInvalidQR =>
       "errors".tr(gender: "error_invalid_qr_code");
+
+  String get errorChangePasswordFailedTitle =>
+      "errors".tr(gender: "error_change_password_failed_title");
+
+  String get errorChangePasswordFailedContent =>
+      "errors".tr(gender: "error_change_password_failed_content");
 }

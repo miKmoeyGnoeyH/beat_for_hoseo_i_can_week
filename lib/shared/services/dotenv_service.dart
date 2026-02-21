@@ -59,5 +59,11 @@ class DotEnvService {
 
   String get withdrawal => dotenv.env['WITHDRAWAL'] ?? "";
 
+  String get walkRanking => dotenv.env['RANKING_WALK'] ?? "";
+
+  String get pointRanking => dotenv.env['RANKING_POINT'] ?? "";
+
+  String get bingoRanking => dotenv.env['RANKING_BINGO'] ?? "";
+
   String get privacyPolicy => dotenv.env['PRIVACY_POLICY'] ?? "";
 }

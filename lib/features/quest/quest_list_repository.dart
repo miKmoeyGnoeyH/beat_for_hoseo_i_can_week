@@ -15,8 +15,6 @@ class QuestListRepository {
         header: {"authorization": authorization},
       );
 
-      log(response.body);
-
       switch (response.statusCode) {
         case 200:
           final List<QuestModel> questList = [];
@@ -30,6 +28,8 @@ class QuestListRepository {
           return questList;
         case 400:
           throw BEATException(title: LocalizationService.instance.errorUnknown);
+        case 401:
+          throw BEATTokenExpired();
         default:
           throw BEATException(title: LocalizationService.instance.errorUnknown);
       }

@@ -10,6 +10,7 @@ abstract class BEATRoute {
   static const String mainPageView = "/main_page_view";
   static const String changePassword = "/change_password";
   static const String withdrawal = "/withdrawal";
+  static const String leaderboard = "/leaderboard";
   static const String settings = "/settings";
   static const String pointHistory = "/point_history";
   static const String noticeList = "/notice_list";

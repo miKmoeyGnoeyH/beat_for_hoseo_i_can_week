@@ -11,7 +11,7 @@ class NoticeRepository {
       final response = await _apiService.get(
         endpoint:
         DotEnvService.instance.fetchNoticeList,
-        header: {"authorization": authorization},
+        header: {"Content-Type": "application/json", "authorization": authorization},
       );
 
       log("NoticeRepository : fetchNoticeList() : ${response.body}");

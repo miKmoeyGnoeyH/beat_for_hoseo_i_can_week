@@ -22,6 +22,7 @@ class PointController extends GetxController with StateMixin<int> {
       change(pointBalance, status: RxStatus.success());
     } catch (e) {
       log("point_controller.dart: fetchPointBalance() : ${e.toString()}");
+      _didInitialFetch = false;
       change(state, status: RxStatus.error(e.toString()));
       rethrow;
     }

@@ -20,6 +20,7 @@ class QuestListController extends GetxController with StateMixin {
       change(questList, status: RxStatus.success());
     } catch (e) {
       log("quest_list_controller.dart: fetchQuestList() : ${e.toString()}");
+      _didInitialFetch = false;
       change(state, status: RxStatus.error(e.toString()));
       rethrow;
     }

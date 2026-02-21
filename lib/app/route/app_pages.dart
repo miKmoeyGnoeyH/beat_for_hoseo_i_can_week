@@ -14,6 +14,7 @@ abstract class BEATPages {
     GetPage(name: BEATRoute.mainPageView, page: () => MainPageView(), binding: MainPageViewBinding()),
     GetPage(name: BEATRoute.changePassword, page: () => ChangePassword()),
     GetPage(name: BEATRoute.withdrawal, page: () => Withdrawal()),
+    GetPage(name: BEATRoute.leaderboard, page: () => Leaderboard(), binding: LeaderboardBinding()),
     GetPage(name: BEATRoute.settings, page: () => Settings()),
     GetPage(name: BEATRoute.pointHistory, page: () => PointHistory(), binding: PointHistoryBinding()),
     GetPage(name: BEATRoute.noticeList, page: () => NoticeList(), binding: NoticeListBinding()),

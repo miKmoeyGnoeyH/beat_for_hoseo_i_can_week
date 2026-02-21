@@ -31,4 +31,7 @@ class _Images {
 
   final String greenCampusPoint = 'assets/images/green_campus_point.png';
   final String greenCampusPoints = 'assets/images/green_campus_points.png';
+  final String crownGold = 'assets/images/crown_gold.png';
+  final String crownSilver = 'assets/images/crown_silver.png';
+  final String crownBronze = 'assets/images/crown_bronze.png';
 }

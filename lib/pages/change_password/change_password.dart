@@ -56,12 +56,17 @@ class _ChangePasswordState extends State<ChangePassword> {
     }
 
     try {
+      final String authorization =
+          AuthenticationController.to.state!.authorization;
       final response = await Get.showOverlay(
         asyncFunction: () async {
-          await Future.delayed(Duration(milliseconds: 100));
+          await Future.delayed(Duration(milliseconds: 500));
           return await APIService().post(
             endpoint: DotEnvService.instance.resetPassword,
-            header: {"Content-Type": "application/json"},
+            header: {
+              "Content-Type": "application/json",
+              "Authorization": authorization,
+            },
             body: jsonEncode({
               "studentId": studentIdController.text,
               "authCode": authCodeController.text,
@@ -73,8 +78,11 @@ class _ChangePasswordState extends State<ChangePassword> {
         opacity: 0.3,
       );
 
+      log(response.body);
+
       switch (response.statusCode) {
         case 200:
+          log("change password: statusCode: ${response.statusCode}");
           DialogService.to.addDialogEvent(
             AlertDialogEvent(
               title: LocalizationService.instance.changePasswordComplete,
@@ -105,7 +113,6 @@ class _ChangePasswordState extends State<ChangePassword> {
       }
       ExceptionService.to.addException(BEATTimeoutException());
     } on BEATTokenExpired catch (e) {
-      log(e.toString());
       await AuthenticationController.to.reissueToken();
       await changePassword();
     } on BEATException catch (e) {
@@ -119,7 +126,7 @@ class _ChangePasswordState extends State<ChangePassword> {
       }
       ExceptionService.to.addException(
         BEATException(
-          title: LocalizationService.instance.errorValidateNicknameFailedTitle,
+          title: LocalizationService.instance.errorResetPasswordFailedTitle,
           message: LocalizationService.instance.errorUnknown,
         ),
       );

@@ -10,7 +10,19 @@
     "beat_requires_location_permission_content": "BEAT는 걸음 수 측정 및 QR 인식을 위해 위치 권한이 필요합니다. 설정 화면에서 위치 권한을 항상 허용으로 변경해 주세요.",
     "beat_requires_activity_permission_title": "BEAT는 활동 권한이 필요합니다.",
     "beat_requires_activity_permission_content": "BEAT는 걸음 수 측정을 위해 활동 권한이 필요합니다. 설정 화면에서 활동 권한을 허용해 주세요.",
-    "go_to_settings": "설정으로"
+    "go_to_settings": "설정으로",
+
+    "asan": "asan",
+    "asan_campus": "asan",
+    "asan campus": "asan",
+    "아산": "asan",
+    "아산캠퍼스": "asan",
+
+    "cheonan": "cheonan",
+    "cheonan_campus": "cheonan",
+    "cheonan campus": "cheonan",
+    "천안": "cheonan",
+    "천안캠퍼스": "cheonan"
   },
   "sign_in_page": {
     "hoseo_univ_email_id": "호서대학교 이메일 ID",
@@ -114,6 +126,23 @@
     "qr": "QR",
     "home": "홈",
     "profile": "프로필"
+  },
+  "leaderboard_page": {
+    "leaderboard": "랭킹",
+    "walk": "걸음 수",
+    "walk_ranking": "걸음 수 순위",
+    "walk_ranking_description": "걸음 수 순위는 걸음 수 퀘스트 완료 시점의 걸음 수를 기준으로 산정됩니다.",
+    "point": "포인트",
+    "point_ranking": "포인트 순위",
+    "point_ranking_description": "포인트 순위는 획득/소모한 포인트의 총합을 기준으로 산정됩니다.",
+    "bingo": "빙고",
+    "bingo_ranking": "빙고 순위",
+    "bingo_ranking_description": "빙고 순위는 모든 빙고를 완성한 시각을 기준으로 산정됩니다. 본인이 소속된 캠퍼스의 순위만 확인할 수 있습니다.",
+    "team": "팀 순위",
+    "member": "개인 순위",
+    "asan": "아산캠퍼스",
+    "cheonan": "천안캠퍼스",
+    "no_data": "데이터가 없습니다."
   },
   "settings_page": {
     "settings": "설정",
@@ -251,9 +280,9 @@
     "error_sign_up_failed_title": "회원가입 실패",
     "error_sign_up_empty_field": "하나 이상의 항목이 비어있습니다. 모든 항목을 입력해 주세요.",
     "error_sign_up_failed_content": "회원가입 중 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.",
-    "error_reset_password_failed_title": "회원가입 실패",
+    "error_reset_password_failed_title": "비밀번호 변경 실패",
     "error_reset_password_empty_field": "하나 이상의 항목이 비어있습니다. 모든 항목을 입력해 주세요.",
-    "error_reset_password_failed_content": "회원가입 중 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.",
+    "error_reset_password_failed_content": "비밀번호 변경 중 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.",
     "error_scan_failed": "QR 코드 스캔 실패",
     "error_scan_failed_default_content": "QR 코드 스캔 중 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.",
     "error_invalid_qr_code": "유효하지 않은 QR 코드입니다."

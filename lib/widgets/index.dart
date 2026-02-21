@@ -1,4 +1,5 @@
 export 'change_password/index.dart';
+export 'leaderboard/index.dart';
 export 'main_page_view/index.dart';
 export 'notice/notice_card.dart';
 export 'point/index.dart';

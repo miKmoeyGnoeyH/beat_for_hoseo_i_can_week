@@ -1,6 +1,7 @@
 import 'dart:async';
+import 'dart:developer';
 import 'dart:io';
-import 'dart:math';
+import 'dart:math' as math;
 
 import 'package:beat/features/step_count/health_kit_steps.dart';
 import 'package:beat/shared/index.dart';
@@ -83,8 +84,8 @@ class StepCountController extends GetxController {
     await _syncTodayStateIOS(source: "startService");
 
     // Pedometer stream policy: only when inside
-    await _stopPedometerStreamiOS();
-    if (isInCampus) _startPedometerStreamiOS();
+    // await _stopPedometerStreamiOS();
+    // if (isInCampus) _startPedometerStreamiOS();
 
     _isiOSServiceRunning = true;
   }
@@ -135,20 +136,17 @@ class StepCountController extends GetxController {
       a.year == b.year && a.month == b.month && a.day == b.day;
 
   Future<int> _getHealthKitStepsAndUseCachedAsFallback() async {
-    final cached = await HealthKitSteps.getCachedTodaySteps();
-    var hk = cached;
-
     try {
       final live = await HealthKitSteps.getTodaySteps();
-      if (live > 0) hk = live;
+      if (live > 0) return live;
     } catch (_) {}
 
-    return hk;
+    return await HealthKitSteps.getCachedTodaySteps();
   }
 
   Future<int> _calcBaseStepsFrom(int hkNow) async {
     final excluded = await PrefsService.instance.getExcludedSteps() ?? 0;
-    return max(0, hkNow - excluded);
+    return math.max(0, hkNow - excluded);
   }
 
   /// Policy:
@@ -303,7 +301,7 @@ class StepCountController extends GetxController {
       await PrefsService.instance.setOutSnapshot(outStepsSnapshot: hkNow, outSnapshotYmd: now);
     } else {
       // Compute outside delta and add to excluded
-      final deltaOutside = max(0, hkNow - outSteps);
+      final deltaOutside = math.max(0, hkNow - outSteps);
       final excluded = await PrefsService.instance.getExcludedSteps() ?? 0;
       final newExcluded = excluded + deltaOutside;
       await PrefsService.instance.setExcludedSteps(newExcluded);
@@ -327,6 +325,8 @@ class StepCountController extends GetxController {
   /// Called on BG -> FG
   Future<void> onStateChangedBG2FGiOS() async {
     if (!Platform.isIOS || !_isiOSServiceRunning) return;
+
+    // final live = await HealthKitSteps.getTodaySteps();
 
     // resync day + render
     await _syncTodayStateIOS(source: "BG2FG");
@@ -366,6 +366,8 @@ class StepCountController extends GetxController {
   void _oniOSStepCount(StepCount event) {
     // Hard policy: only count increments while inside
     if (!isInCampus) return;
+
+    log("oniOSStepCount: steps=${event.steps}, time=${event.timeStamp}");
 
     if (_iOSStepsAfterBoot == null) {
       _iOSStepsAfterBoot = event.steps;

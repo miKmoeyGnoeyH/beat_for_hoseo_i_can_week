@@ -1,1 +1,2 @@
-export 'leaderboard.dart`';
+export 'leaderboard.dart';
+export 'leaderboard_binding.dart';

@@ -21,6 +21,7 @@ class ProfileController extends GetxController with StateMixin<ProfileModel> {
       change(profileModel, status: RxStatus.success());
     } catch (e) {
       log("ProfileController : fetchData() : ${e.toString()}");
+      _didInitialFetch = false;
       change(state, status: RxStatus.error(e.toString()));
       rethrow;
     }
