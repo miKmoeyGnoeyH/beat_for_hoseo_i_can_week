@@ -154,10 +154,11 @@ class StepCountController extends GetxController {
   /// 4. 유효 범위 진입/이탈 이벤트 수행 시 flag값을 사용해 원자적으로 처리할 것
 
   int _healthKitSteps = 0;
+  int _excludedSteps = 0;
   int? _iOSStepsAfterBoot;
 
   // int _iOSIncrement = 0;
-  Stream<StepCount>? _iOSStepCountStream;
+  StreamSubscription<StepCount>? _iOSStepCountStreamSub;
 
   bool _isCampusHandlerRegistered = false;
 
@@ -210,7 +211,9 @@ class StepCountController extends GetxController {
         _isInCampus =
             await _campusChannel.invokeMethod("isInsideCampus") ?? false;
       } on PlatformException catch (e) {
-        log("step_count_controller: startService: Failed to get initial campus location: ${e.message}");
+        log(
+          "step_count_controller: startService: Failed to get initial campus location: ${e.message}",
+        );
         _isInCampus = false;
       } finally {
         log("step_count_controller: startService: isInCampus: $_isInCampus");
@@ -220,17 +223,15 @@ class StepCountController extends GetxController {
       /// healthKitSteps 초기화
       /// 서비스가 실행되고 있지 않는 동안 누적된 걸음수는 무시할 것이므로 그냥 HealthKit 데이터로 갱신한다.
       _healthKitSteps = await _getHelthKitStepsAndUseCachedAsFallback();
-      PrefsService.instance.setHealthKitSteps(DateTime.now(), _healthKitSteps);
+      PrefsService.instance.setHealthKitSteps(_healthKitSteps, DateTime.now());
 
       /// 오늘 걸음 수 초기화
       /// 날짜, 걸음 수 둘 중 하나라도 null이거나 날짜가 다르면 앱 최초 실행이거나 데이터 손상됨 혹은 날짜 변경이다.
       /// 0으로 초기화해준다.
-      final (ymd, steps) = await PrefsService.instance.getSteps();
-      if (ymd == null || steps == null || ymd.day != DateTime
-          .now()
-          .day) {
+      final (steps, ymd) = await PrefsService.instance.getSteps();
+      if (ymd == null || steps == null || ymd.day != DateTime.now().day) {
         _stepCount = 0;
-        PrefsService.instance.setSteps(DateTime.now(), 0);
+        PrefsService.instance.setSteps(0, DateTime.now());
       } else {
         _stepCount = steps;
       }
@@ -259,18 +260,79 @@ class StepCountController extends GetxController {
 
   /// iOS startService
   bool _handlingCampusEvent = false;
+
   Future<void> onCampusExit() async {
     if (_handlingCampusEvent) return;
     if (!isInCampus) return;
 
-    try {} catch (e) {} finally {}
+    _handlingCampusEvent = true;
+    try {
+      _isInCampus = false;
+      PrefsService.instance.setIsInCampus(isInCampus);
+
+      _stopPedometerStreamiOS();
+
+      final int outSnapshot = await _getHelthKitStepsAndUseCachedAsFallback();
+      final DateTime outSnapshotYmd = DateTime.now();
+      PrefsService.instance.setOutSnapshot(outSnapshot, outSnapshotYmd);
+    } catch (e) {
+    } finally {
+      _handlingCampusEvent = false;
+    }
   }
 
   Future<void> onCampusEnter() async {
     if (_handlingCampusEvent) return;
     if (isInCampus) return;
 
-    try {} catch (e) {} finally {}
+    _handlingCampusEvent = true;
+    try {
+      final int inSnapshot = await _getHelthKitStepsAndUseCachedAsFallback();
+      final DateTime inSnapshotYmd = DateTime.now();
+
+      await _calcExcludedStepsAndSave(inSnapshot, inSnapshotYmd);
+      _startPedometerStreamiOS();
+
+      _isInCampus = true;
+      PrefsService.instance.setIsInCampus(isInCampus);
+    } catch (e) {
+    } finally {
+      _handlingCampusEvent = false;
+    }
+  }
+
+  /// - if (outSnapshotYmd != inSnapshotYmd) excludedSteps = inSnapshot, healthKitSteps = 0, steps = 0
+  /// - else excludedSteps += inSnapshot - outSnapshot
+  /// 하지만 이 함수에서는 steps는 초기화하지 않는다. UI Steps를 백그라운드/포어그라운드 구분 없이 빈번히 접근하는 것이 버그/꼬임을 일으킬 수 있다고 생각함.
+  /// UI Steps는 최대한 UI 갱신이 꼭 필요한 곳에서만 갱신하도록 한다.
+  Future<void> _calcExcludedStepsAndSave(
+    int inSnapshot,
+    DateTime inSnapshotYmd,
+  ) async {
+    final (outSnapshot, outSnapshotYmd) = await PrefsService.instance
+        .getOutSnapshot();
+
+    /// outSnapshot, outSnapshotYmd 둘 중 하나라도 null인 경우
+    /// 데이터가 손상됐거나 유효범위 바깥에서 앱을 설치한 후 유효범위 진입함
+    if (outSnapshot == null ||
+        outSnapshotYmd == null ||
+        outSnapshotYmd.day != inSnapshotYmd.day) {
+      _excludedSteps = inSnapshot;
+      PrefsService.instance.setExcludedSteps(_excludedSteps);
+
+      _healthKitSteps = 0;
+      PrefsService.instance.setHealthKitSteps(_healthKitSteps, DateTime.now());
+    } else {
+      /// 그 외 경우
+      /// inSnapshot이 outSnapshot보다 작은 경우는 날짜가 변경됐을 때 뿐이다.
+      /// 날짜 변경은 위 분기에서 처리했으므로
+      /// 이 분기에서 inSnapshot - outSnapshot은 반드시 양수이다.
+      _excludedSteps += inSnapshot - outSnapshot;
+      PrefsService.instance.setExcludedSteps(_excludedSteps);
+    }
+
+    /// outSnapshot을 사용한 뒤에는 반드시 폐기
+    PrefsService.instance.setOutSnapshot(null, null);
   }
 
   void _registerCampusHandler() {
@@ -306,47 +368,87 @@ class StepCountController extends GetxController {
   /// iOS에서, 앱이 백그라운드에서 포어그라운드로 전환되었을 때 실행되는 함수
   /// Proper Ref Count: 1
   /// - init 페이지에서, 앱 라이프사이클 변경 시
+  ///
+  /// 2026.02.22 Memo
+  /// - 백그라운드 걸음 수 보정 시, steps += newHealthKitSteps - healthKitSteps - excludedSteps,
+  ///   healthKitSteps = newHealthKitSteps, excludedSteps = 0
+  ///
+  /// 2026.02.21 Memo +
+  /// 1. 유효 범위 재진입 후, 앱이 즉시 백그라운드에서 포어그라운드로 전환되지 않기 때문에,
+  ///   유효 범위 재진입 -> pedometer 재시작 -> steps에 증분 누적 -> BG2FG -> 백그라운드 걸음 수 보정 시
+  ///   보정 걸음 수에 pedometer로 측정된 증분이 포함되어 증분이 중복됨.
+  ///   따라서 백그라운드 걸음 수 보정 로직은 steps += newHealthKitSteps - healthKitSteps - excludedSteps가 아닌
+  ///   steps = max(0, newHealthKitSteps - excludedSteps)로 계산해야함
+  /// 2. BG2FG에서 excludedSteps를 초기화하면
+  ///   유효 범위 바깥에서 BG2FG가 여러 번 호출 -> BG2FG에서 excludedSteps가 초기화 -> 유효 범위 재진입 -> 백그라운드 걸음 수 보정 시
+  ///   excludedSteps가 반영되기 전에 초기화되어 값이 부정확해짐, 보정이 부정확해짐
+  ///   따라서 excludedSteps 초기화는 날짜 변경 시에만 수행되어야 함
+  /// 3. outSnapshot 값을 사용한 뒤에는 반드시 null로 폐기할 것
+  ///
+  /// 앱이 백그라운드에서 포어그라운드로 전환되는 것이므로, 사용자가 걸음 수 UI를 확인할 가능성이 있음.
+  /// 이 시점에 UI Steps를 갱신한다.
+  /// 불필요한 백그라운드 연산을 줄이고 코드가 꼬이는 것을 방지하기 위함.
   Future<void> onStateChangedBG2FGiOS() async {
     if (!Platform.isIOS) return;
     if (!_isiOSServiceRunning) return;
 
-    final (ymd, baseline) = await PrefsService.instance.getHealthKitSteps();
+    final DateTime now = DateTime.now();
+    final (steps, stepsYmd) = await PrefsService.instance.getSteps();
+    final (healthKitSteps, healthKitStepsYmd) = await PrefsService.instance
+        .getHealthKitSteps();
+    final excludedSteps = await PrefsService.instance.getExcludedSteps();
 
-    if (ymd == null || baseline == null) {
-      /// 날짜 혹은 baseline이 null인 경우
-      /// 1. 앱 실행 후, startService가 완전히 끝나기 전에 백그라운드 -> 포어그라운드 전환된 경우
-      /// 2. 앱 실행 후, 임의로 내부 저장소를 비운 경우
-      /// 이므로, 최초 실행 시와 동일한 로직을 적용
+    /// steps, stepsYmd, healthKitSteps, healthKitStepsYmd 중 하나라도 null인 경우
+    /// 데이터가 손상됐음
+    /// 기본값으로 초기화
+    if (healthKitSteps == null ||
+        healthKitStepsYmd == null ||
+        steps == null ||
+        stepsYmd == null) {
       _stepCount = 0;
-      _healthKitSteps = await _getHelthKitStepsAndUseCachedAsFallback();
-      PrefsService.instance.setHealthKitSteps(DateTime.now(), _healthKitSteps);
-    } else if (ymd.day != DateTime
-        .now()
-        .day) {
-      /// 저장된 날짜가 다른 경우
-      /// 1. 자정이 지난 경우
-      /// 이므로, 오늘 걸음 수를 다시 측정해야 함.
-      /// 기본적으로 최초 실행 시의 동작과 동일하지만, 앱을 설치한 이후, 정상적으로 사용한 이후 날짜가 지난 것이므로
-      /// 현재 걸음 수를 HealthKit의 값으로 그대로 사용한다.
-      _healthKitSteps = await _getHelthKitStepsAndUseCachedAsFallback();
-      PrefsService.instance.setHealthKitSteps(DateTime.now(), _healthKitSteps);
-      _stepCount = _healthKitSteps;
-    } else {
-      /// 위 경우 모두 아닌 경우
-      /// 1. 앱을 정상적으로 사용하던 중, 날짜가 변경되기 전 백그라운드 -> 포어그라운드 전환된 경우
-      /// 이므로, HealthKit에서 걸음 수를 다시 전달받고
-      /// 이전에 저장된 baseline과 비교,
-      /// UI Isolate에서 측정한 증분보다 증가값이 크다면
-      /// (앱이 포어그라운드에 있을 때 측정한 걸음 수보다 더 많이 걸은 경우)
-      /// _iOSIncrement를 갱신해 백그라운드에서 증가한 걸음 수 만큼 보정해준다.
-      final int newBaseline = await _getHelthKitStepsAndUseCachedAsFallback();
+      PrefsService.instance.setSteps(0, now);
 
-      if ((newBaseline - baseline) > stepCount) {
-        _stepCount = newBaseline - baseline;
-      }
+      _healthKitSteps = await _getHelthKitStepsAndUseCachedAsFallback();
+      PrefsService.instance.setHealthKitSteps(_healthKitSteps, now);
+    } else if (stepsYmd.day != now.day ||
+        healthKitStepsYmd.day != now.day) {
+      /// 현재 날짜와 마지막으로 저장된 healthKitStepsYmd의 날짜가 다른 경우
+      /// 날짜가 변경됐음.
+      /// 이 경우, isInCampus의 값에 따라 다르게 처리해야 한다.
+      /// - isInCampus가 false인 경우, 사용자에게는 걸음 수가 "측정되지 않는 것처럼" 보여야 함.
+      ///   마지막으로 저장된 healthKitSteps가 오늘이 아니고, isInCampus가 false라는 것은
+      ///   사용자가 유효 범위에서 마지막으로 앱을 사용했고, 유효 범위 이탈/날짜 변경 후 유효 범위 바깥에서 앱을 사용하고 있는 것이므로
+      ///   이 시점에서 유효 범위 내에서 측정된 걸음 수는 0이어야 한다.
+      ///   Ui steps를 0, healthKitSteps = 0으로 초기화한다.
+      ///   - healthKitSteps를 newHealthKitSteps로 갱신할 경우, 이후 excludedSteps 계산에서 중복으로 제외될 가능성이 있다.
+      ///     따라서 이 시점에서는 healthKitSteps를 0으로 초기화하고, 이후 onCampusEnter 이벤트 이후 백그라운드 걸음 수 보정에서
+      ///     excludedSteps를 한 번에 계산하도록 한다.
+      ///   excludedSteps 계산은 onCampusExit/onCampusEnter에 맡긴다.
+      _stepCount = 0;
+      PrefsService.instance.setSteps(0, now);
+
+      _healthKitSteps = 0;
+      PrefsService.instance.setHealthKitSteps(_healthKitSteps, now);
+    }else if (excludedSteps == null) {
+      /// 저장된 excludedSteps가 없는 경우,
+      /// 데이터가 손상됐거나 유효 범위 이탈 후 아직 유효 범위 내에 진입하지 않아
+      /// onCampusEnter에서 excludedSteps가 계산되지 않은 경우이다. 이 경우 아무 것도 하지 않는다.
+      /// (유효 범위 바깥에서는 걸음 수가 "측정되지 않는 것처럼" 보여야 하므로)
+    } else {
+      /// 위 경우가 모두 아니라면, 앱이 정상적으로 구동됐고, 유효 범위 이탈 후 날짜가 변경되기 전에 유효 범위 내에 진입했으며,
+      /// 앱을 포어그라운드로 전환했다는 뜻이다.
+      /// 백그라운드 걸음 수 보정 로직을 수행한다.
+      _healthKitSteps = await _getHelthKitStepsAndUseCachedAsFallback();
+      PrefsService.instance.setHealthKitSteps(_healthKitSteps, now);
+
+      _stepCount = math.max(0, _healthKitSteps - excludedSteps);
+      PrefsService.instance.setSteps(stepCount, now);
     }
 
-    _startPedometerStreamiOS();
+    /// 유효 범위 내라면 걸음 수 스트림을 시작한다.
+    if (isInCampus) {
+      _startPedometerStreamiOS();
+    }
   }
 
   /// iOS에서 앱이 포어그라운드에서 백그라운드로 전환되었을 때 실행되는 함수
@@ -360,7 +462,7 @@ class StepCountController extends GetxController {
     if (!Platform.isIOS) return;
     if (!_isiOSServiceRunning) return;
     _iOSStepsAfterBoot = null;
-    _iOSStepCountStream = null;
+    _iOSStepCountStreamSub = null;
   }
 
   /// iOS Only 걸음 수 스트림 구독
@@ -369,12 +471,30 @@ class StepCountController extends GetxController {
   /// - 백그라운드 -> 포어그라운드 전환 시, onStateChangedBG2FGiOS에서
   void _startPedometerStreamiOS() {
     if (!Platform.isIOS) return;
-    _iOSStepCountStream = Pedometer.stepCountStream;
-    _iOSStepCountStream!.listen(_oniOSStepCount).onError((_) {});
+    _iOSStepCountStreamSub = Pedometer.stepCountStream.listen(
+      _oniOSStepCount,
+      onError: (_) {},
+    );
+  }
+
+  Future<void> _stopPedometerStreamiOS() async {
+    await _iOSStepCountStreamSub?.cancel();
+    _iOSStepCountStreamSub = null;
+    _iOSStepsAfterBoot = null;
   }
 
   /// iOS Only 걸음 수 이벤트 핸들러
-  void _oniOSStepCount(StepCount event) {
+  Future<void> _oniOSStepCount(StepCount event) async {
+    if (!_isiOSServiceRunning) return;
+    if (!isInCampus) return;
+
+    final bool isActivityPermissionGranted = await PermissionService.instance.isActivityPermissionGranted();
+    final bool isLocationPermissionGranted = Platform.isIOS
+        ? await PermissionService.instance.isLocationWhenInUsePermissionGranted()
+        : await PermissionService.instance.isLocationAlwaysPermissionGranted();
+
+    if (!isActivityPermissionGranted || !isLocationPermissionGranted) return;
+
     if (_iOSStepsAfterBoot == null) {
       _iOSStepsAfterBoot = event.steps;
       return;
@@ -393,7 +513,7 @@ class StepCountController extends GetxController {
     } else if (Platform.isIOS) {
       log("stopService");
       _iOSStepsAfterBoot = null;
-      _iOSStepCountStream = null;
+      _iOSStepCountStreamSub = null;
       _isiOSServiceRunning = false;
     } else {
       throw BEATExceptionPlatformNotSupported();

@@ -52,41 +52,41 @@ class PrefsService {
   }
 
   /// Steps Management
-  static const String _healthKitStepsYmdKey = "health_kit_Ymd";
   static const String _healthKitStepsKey = "health_kit";
+  static const String _healthKitStepsYmdKey = "health_kit_Ymd";
 
-  Future<bool> setHealthKitSteps(DateTime ymd, int baseline) async {
-    await _prefs.setString(_healthKitStepsYmdKey, ymd.toIso8601String());
-    return await _prefs.setInt(_healthKitStepsKey, baseline);
+  Future<bool> setHealthKitSteps(int healthKitSteps, DateTime ymd) async {
+    await _prefs.setInt(_healthKitStepsKey, healthKitSteps);
+    return await _prefs.setString(_healthKitStepsYmdKey, ymd.toIso8601String());
   }
 
-  Future<(DateTime?, int?)> getHealthKitSteps() async {
+  Future<(int?, DateTime?)> getHealthKitSteps() async {
+    final int? healthKitSteps = _prefs.getInt(_healthKitStepsKey);
     final String? ymdString = _prefs.getString(_healthKitStepsYmdKey);
-    final int? baseline = _prefs.getInt(_healthKitStepsKey);
 
-    if (ymdString == null || baseline == null) {
+    if (healthKitSteps == null || ymdString == null) {
       return (null, null);
     } else {
-      return (DateTime.parse(ymdString), baseline);
+      return (healthKitSteps, DateTime.parse(ymdString));
     }
   }
 
   static const String _stepYmdKey = "steps_Ymd";
   static const String _stepKey = "steps";
 
-  Future<bool> setSteps(DateTime ymd, int baseline) async {
-    await _prefs.setString(_stepYmdKey, ymd.toIso8601String());
-    return await _prefs.setInt(_stepKey, baseline);
+  Future<bool> setSteps(int steps, DateTime ymd) async {
+    await _prefs.setInt(_stepKey, steps);
+    return await _prefs.setString(_stepYmdKey, ymd.toIso8601String());
   }
 
-  Future<(DateTime?, int?)> getSteps() async {
+  Future<(int?, DateTime?)> getSteps() async {
+    final int? steps = _prefs.getInt(_stepKey);
     final String? ymdString = _prefs.getString(_stepYmdKey);
-    final int? baseline = _prefs.getInt(_stepKey);
 
-    if (ymdString == null || baseline == null) {
+    if (steps == null || ymdString == null) {
       return (null, null);
     } else {
-      return (DateTime.parse(ymdString), baseline);
+      return (steps, DateTime.parse(ymdString));
     }
   }
 
@@ -97,10 +97,10 @@ class PrefsService {
   ///   "outStepsSnapshot": int,
   ///   "outSnapshotYmd": String (ISO8601)
   /// }
-  Future<bool> setOutSnapshot({
+  Future<bool> setOutSnapshot(
     int? outStepsSnapshot,
     DateTime? outSnapshotYmd,
-  }) async {
+  ) async {
     return await _prefs.setString(
       _outSnapshotKey,
       jsonEncode({
@@ -125,8 +125,8 @@ class PrefsService {
 
   static const String _excludedStepsKey = "excluded_steps";
 
-  Future<bool> setExcludedSteps(int baseline) async {
-    return await _prefs.setInt(_excludedStepsKey, baseline);
+  Future<bool> setExcludedSteps(int excludedSteps) async {
+    return await _prefs.setInt(_excludedStepsKey, excludedSteps);
   }
 
   Future<int?> getExcludedSteps() async {
