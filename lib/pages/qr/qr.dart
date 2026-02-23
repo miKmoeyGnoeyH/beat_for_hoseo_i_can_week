@@ -77,16 +77,12 @@ class _QRState extends State<QR> {
         opacity: 0.3,
       );
 
-      log(response.body);
-
       switch (response.statusCode) {
         case 200:
           DialogService.to.addDialogEvent(
             AlertDialogEvent(
               title: LocalizationService.instance.qrScanSuccessTitle,
-              message: LocalizationService
-                  .instance
-                  .qrScanSuccessQuestCompleteContent,
+              message: response.body,
               onConfirm: () {
                 pointController.fetchPointBalance(authorization);
                 questListController.fetchQuestList(authorization);
@@ -100,7 +96,7 @@ class _QRState extends State<QR> {
           throw BEATException(
             title: LocalizationService.instance.errorQRScanFailed,
             message:
-                LocalizationService.instance.errorQRScanFailedDefaultContent,
+                response.body,
           );
       }
     } on TimeoutException {
@@ -155,9 +151,7 @@ class _QRState extends State<QR> {
           DialogService.to.addDialogEvent(
             AlertDialogEvent(
               title: LocalizationService.instance.qrScanSuccessTitle,
-              message: LocalizationService
-                  .instance
-                  .qrScanSuccessQuestCompleteContent,
+              message: response.body,
               onConfirm: () => pointController.fetchPointBalance(authorization),
             ),
           );
@@ -168,7 +162,7 @@ class _QRState extends State<QR> {
           throw BEATException(
             title: LocalizationService.instance.errorQRScanFailed,
             message:
-                LocalizationService.instance.errorQRScanFailedDefaultContent,
+                response.body,
           );
       }
     } on TimeoutException {

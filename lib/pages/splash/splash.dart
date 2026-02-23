@@ -1,6 +1,7 @@
 import 'package:beat/app/route/app_pages.dart';
 import 'package:beat/fcm.dart';
 import 'package:beat/features/authentication/authentication_controller.dart';
+import 'package:beat/features/point/index.dart';
 import 'package:beat/shared/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -59,6 +60,15 @@ class _SplashState extends State<Splash> {
     if (savedUser == null) {
       Get.offAllNamed(BEATRoute.signIn);
     } else {
+      final String authorization = savedUser['authorization'] ?? '';
+
+      try {
+        await PointController.to.fetchPointBalance(authorization);
+      } catch (e) {
+        PrefsService.instance.clearUser();
+        Get.offAllNamed(BEATRoute.signIn);
+      }
+
       AuthenticationController.to.signInFromJson(savedUser);
       Get.offAllNamed(BEATRoute.mainPageView);
     }

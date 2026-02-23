@@ -594,16 +594,14 @@ class StepCountController extends GetxController {
 
       if (!isRunning) await startService();
       return;
-    }
-
-    if (Platform.isIOS) {
+    } else if (Platform.isIOS) {
       if (!_isiOSServiceRunning) {
         await startService();
       }
+    } else {
+      throw BEATExceptionPlatformNotSupported();
     }
 
     onStateChangedBG2FG();
-
-    throw BEATExceptionPlatformNotSupported();
   }
 }

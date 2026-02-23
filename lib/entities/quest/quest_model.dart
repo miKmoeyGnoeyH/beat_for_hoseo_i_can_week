@@ -82,7 +82,7 @@ class QuestModel {
     }
 
     /// 완료한(보상 수령한) 빙고 칸 개수를 계산
-    final completedItemCount = items.where((e) => e.completed == true).length;
+    final completedItemCount = items.where((e) => e.rewardGiven == true).length;
 
     /// 빙고판을 전체 순회하며 완료한 줄 정보를 계산
     final completedLines = <CompletedLineInfo>[];
@@ -92,7 +92,7 @@ class QuestModel {
       if (List.generate(
         axis,
         (j) => board[i * axis + j],
-      ).every((item) => item.completed == true)) {
+      ).every((item) => item.rewardGiven == true)) {
         completedLines.add(
           CompletedLineInfo(axisIndex: i, lineType: BingoLineType.horizontal),
         );
@@ -103,8 +103,8 @@ class QuestModel {
     for (int i = 0; i < axis; i++) {
       if (List.generate(
         axis,
-            (j) => board[i + axis * j],
-      ).every((item) => item.completed == true)) {
+        (j) => board[i + axis * j],
+      ).every((item) => item.rewardGiven == true)) {
         completedLines.add(
           CompletedLineInfo(axisIndex: i, lineType: BingoLineType.vertical),
         );
@@ -114,7 +114,7 @@ class QuestModel {
     /// 대각선 검사
     /// 좌상-우하 대각선
     for (int i = 0; i < axis; i++) {
-      if (board[i * axis + i].completed != true) {
+      if (board[i * axis + i].rewardGiven != true) {
         break;
       }
       if (i == axis - 1) {
@@ -126,12 +126,15 @@ class QuestModel {
 
     /// 우상-좌하 대각선
     for (int i = axis - 1; i >= 0; i--) {
-      if (board[i * axis + i].completed != true) {
+      if (board[i * axis + i].rewardGiven != true) {
         break;
       }
       if (i == axis - 1) {
         completedLines.add(
-          CompletedLineInfo(axisIndex: axis - 1, lineType: BingoLineType.diagonal),
+          CompletedLineInfo(
+            axisIndex: axis - 1,
+            lineType: BingoLineType.diagonal,
+          ),
         );
       }
     }
@@ -362,7 +365,9 @@ class ItemSummaryModel {
     required this.bingoQuestItemId,
     required this.rowIndex,
     required this.columnIndex,
-    required this.completed,
+    required this.teamCompleted,
+    required this.memberCompleted,
+    required this.rewardGiven,
     required this.questInfoView,
   });
 
@@ -370,7 +375,9 @@ class ItemSummaryModel {
     : bingoQuestItemId = json['bingoQuestItemId'],
       rowIndex = json['rowIndex'],
       columnIndex = json['columnIndex'],
-      completed = json['completed'],
+      teamCompleted = json['teamCompleted'] ?? false,
+      memberCompleted = json['memberCompleted'] ?? false,
+      rewardGiven = json['rewardGiven'] ?? false,
       questInfoView = json["questInfoView"] == null
           ? null
           : QuestInfoView.fromJson(json["questInfoView"]);
@@ -379,20 +386,27 @@ class ItemSummaryModel {
     'bingoQuestItemId': bingoQuestItemId,
     'rowIndex': rowIndex,
     'columnIndex': columnIndex,
-    'completed': completed,
+    'teamCompleted': teamCompleted,
+    'memberCompleted': memberCompleted,
+    'rewardGiven': rewardGiven,
+    'questInfoView': questInfoView?.toJsonString(),
   });
 
   ItemSummaryModel.empty()
     : bingoQuestItemId = 0,
       rowIndex = 0,
       columnIndex = 0,
-      completed = false,
+      teamCompleted = false,
+      memberCompleted = false,
+      rewardGiven = false,
       questInfoView = QuestInfoView.empty();
 
   final int? bingoQuestItemId;
   final int? rowIndex;
   final int? columnIndex;
-  final bool? completed;
+  final bool teamCompleted;
+  final bool memberCompleted;
+  final bool rewardGiven;
   final QuestInfoView? questInfoView;
 }
 

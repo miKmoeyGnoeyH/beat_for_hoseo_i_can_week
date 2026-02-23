@@ -69,12 +69,15 @@ class _PointHistoryState extends State<PointHistory> {
     return Scaffold(
       backgroundColor: AppColors.designWhite,
       body: SafeArea(
+        top: false,
+        bottom: false,
         child: NestedScrollView(
           physics: NeverScrollableScrollPhysics(),
           headerSliverBuilder: (context, innerBoxIsScrolled) {
             return [
               BEATSliverBackAppBar(
                 title: LocalizationService.instance.phPointHistory,
+                pinned: true,
               ),
             ];
           },

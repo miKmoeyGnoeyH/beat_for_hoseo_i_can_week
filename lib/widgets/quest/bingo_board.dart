@@ -34,6 +34,34 @@ class BingoBoard extends StatelessWidget {
   final StepCountController stepCountController = StepCountController.to;
   final QuestDetailController questDetailController = QuestDetailController.to;
 
+  final BorderRadius topLeftBorderRadius = BorderRadius.only(
+    topLeft: Radius.circular(15),
+    topRight: Radius.circular(5),
+    bottomLeft: Radius.circular(5),
+    bottomRight: Radius.circular(5),
+  );
+
+  final BorderRadius topRightBorderRadius = BorderRadius.only(
+    topLeft: Radius.circular(5),
+    topRight: Radius.circular(15),
+    bottomLeft: Radius.circular(5),
+    bottomRight: Radius.circular(5),
+  );
+
+  final BorderRadius bottomLeftBorderRadius = BorderRadius.only(
+    topLeft: Radius.circular(5),
+    topRight: Radius.circular(5),
+    bottomLeft: Radius.circular(15),
+    bottomRight: Radius.circular(5),
+  );
+
+  final BorderRadius bottomRightBorderRadius = BorderRadius.only(
+    topLeft: Radius.circular(5),
+    topRight: Radius.circular(5),
+    bottomLeft: Radius.circular(5),
+    bottomRight: Radius.circular(15),
+  );
+
   // Future<void> checkQuest(QuestType questType) async {
   //   switch (questType) {
   //     case QuestType.qr:
@@ -74,8 +102,7 @@ class BingoBoard extends StatelessWidget {
           DialogService.to.addDialogEvent(
             AlertDialogEvent(
               title: LocalizationService.instance.homeQuestCheckSuccessTitle,
-              message:
-                  LocalizationService.instance.homeQuestCheckSuccessContent,
+              message: response.body,
               onConfirm: () {
                 pointController.fetchPointBalance(authorization);
                 questListController.fetchQuestList(authorization);
@@ -88,7 +115,7 @@ class BingoBoard extends StatelessWidget {
         default:
           throw BEATException(
             title: LocalizationService.instance.errorQuestCheckFailedTitle,
-            message: LocalizationService.instance.errorQuestCheckFailedContent,
+            message: response.body,
           );
       }
     } on TimeoutException {
@@ -151,8 +178,7 @@ class BingoBoard extends StatelessWidget {
           DialogService.to.addDialogEvent(
             AlertDialogEvent(
               title: LocalizationService.instance.homeQuestCheckSuccessTitle,
-              message:
-                  LocalizationService.instance.homeQuestCheckSuccessContent,
+              message: response.body,
               onConfirm: () {
                 pointController.fetchPointBalance(authorization);
                 questListController.fetchQuestList(authorization);
@@ -165,7 +191,7 @@ class BingoBoard extends StatelessWidget {
         default:
           throw BEATException(
             title: LocalizationService.instance.errorQuestCheckFailedTitle,
-            message: LocalizationService.instance.errorQuestCheckFailedContent,
+            message: response.body,
           );
       }
     } on TimeoutException {
@@ -196,6 +222,8 @@ class BingoBoard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double borderWidth = 2.w;
+
     return AspectRatio(
       aspectRatio: 1,
       child: GridView.builder(
@@ -214,7 +242,7 @@ class BingoBoard extends StatelessWidget {
             onTap: () {
               /// 퀘스트를 완료하지 않았고(보상을 수령하지 않았고)
               /// 각 퀘스트 타입 별 완료 조건을 충족했을 때만 보상 수령 활성화
-              if (board[i]?.completed == false) {
+              if (board[i]?.rewardGiven == false) {
                 if ((board[i]!.questInfoView!.questType == QuestType.walk) &&
                     (stepCountController.stepCount >=
                         board[i]!.questInfoView!.required)) {
@@ -223,8 +251,8 @@ class BingoBoard extends StatelessWidget {
                 }
 
                 if ((board[i]!.questInfoView!.questType == QuestType.qr) &&
-                    (board[i]!.questInfoView!.completeCount! >=
-                        board[i]!.questInfoView!.required)) {
+                    (board[i]!.memberCompleted == true &&
+                        board[i]!.rewardGiven == false)) {
                   qrCheck(board[i]!.questInfoView!);
                   return;
                 }
@@ -235,34 +263,50 @@ class BingoBoard extends StatelessWidget {
             },
             child: Container(
               decoration: BoxDecoration(
-                color: board[i]!.completed!
+                color: board[i]!.questInfoView!.questType == QuestType.walk
+                    ? board[i]!.rewardGiven
+                          ? AppColors.primary
+                          : AppColors.commonWhite
+                    : board[i]!.rewardGiven == true
                     ? AppColors.primary
                     : AppColors.commonWhite,
-                border: board[i]!.completed!
+                border: board[i]!.rewardGiven == true
                     ? null
                     : (board[i]!.questInfoView!.questType == QuestType.walk)
                     ? (stepCountController.stepCount >=
                               board[i]!.questInfoView!.required)
-                          ? Border.all(width: 1.w, color: AppColors.primary)
+                          ? Border.all(
+                              width: borderWidth,
+                              color: AppColors.primary,
+                            )
                           : null
-                    : (board[i]!.questInfoView!.completeCount! >=
-                          board[i]!.questInfoView!.required)
-                    ? Border.all(width: 1.w, color: AppColors.primary)
+                    : board[i]!.memberCompleted == true
+                    ? Border.all(width: borderWidth, color: AppColors.primary)
+                    : board[i]!.teamCompleted == true
+                    ? Border.all(width: borderWidth, color: AppColors.common300)
                     : null,
-                borderRadius: BorderRadius.circular(5),
+                borderRadius: i == 0
+                    ? topLeftBorderRadius
+                    : i == (countPerAxis - 1)
+                    ? topRightBorderRadius
+                    : i == (countPerAxis * (countPerAxis - 1))
+                    ? bottomLeftBorderRadius
+                    : i == (countPerAxis - 1)
+                    ? bottomRightBorderRadius
+                    : BorderRadius.circular(5),
               ),
               padding: EdgeInsets.all(10.w),
               child: board[i]!.questInfoView?.questType == QuestType.walk
                   ? SvgPicture.asset(
                       BEATAssets.svg.footprint,
                       colorFilter: ColorFilter.mode(
-                        board[i]!.completed!
+                        board[i]!.memberCompleted
                             ? AppColors.designWhite
                             : AppColors.common300,
                         BlendMode.srcIn,
                       ),
                     )
-                  : board[i]!.completed!
+                  : board[i]!.rewardGiven == true
                   ? SvgPicture.asset(
                       BEATAssets.svg.hori,
                       fit: BoxFit.contain,

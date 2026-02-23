@@ -59,6 +59,7 @@ class BNBItem extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               SvgPicture.asset(
+                width: 24.w,
                 svgPictureAssetPath,
                 colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
               ),
@@ -92,6 +93,7 @@ class BEATBNB extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
+      bottom: false,
       child: Container(
         decoration: BoxDecoration(
           color: AppColors.commonWhite,

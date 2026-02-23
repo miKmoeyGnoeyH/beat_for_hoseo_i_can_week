@@ -22,11 +22,14 @@ class NoticeCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                notice.title,
-                style: AppTextTheme.subtitle1,
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
+              SizedBox(
+                width: 270.w,
+                child: Text(
+                  notice.title,
+                  style: AppTextTheme.subtitle1,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                ),
               ),
               SizedBox(height: 10.w),
               Text(

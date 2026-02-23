@@ -44,7 +44,7 @@ class BingoStep extends StatelessWidget {
         asyncFunction: () async {
           await Future.delayed(Duration(milliseconds: 500));
           return await APIService().post(
-            endpoint: DotEnvService.instance.walkCheck,
+            endpoint: DotEnvService.instance.bingoCheck,
             header: {
               "Content-Type": "application/json",
               "authorization": authorization,
@@ -52,10 +52,9 @@ class BingoStep extends StatelessWidget {
             body: jsonEncode({
               "questId": questId,
               "bingoLinePolicyId": lineSummaryModel.bingoLinePolicyId,
-              "lineCompleteRequestList": List.generate(
-                completedLines.length,
-                (index) => {completedLines[index].toJson()},
-              ),
+              "lineCompleteRequestList": completedLines
+                  .map((e) => e.toJson())
+                  .toList(),
             }),
           );
         },
@@ -70,8 +69,7 @@ class BingoStep extends StatelessWidget {
           DialogService.to.addDialogEvent(
             AlertDialogEvent(
               title: LocalizationService.instance.homeBingoCheckSuccessTitle,
-              message:
-                  LocalizationService.instance.homeBingoCheckSuccessContent,
+              message: response.body,
               onConfirm: () {
                 pointController.fetchPointBalance(authorization);
                 questListController.fetchQuestList(authorization);
@@ -84,7 +82,7 @@ class BingoStep extends StatelessWidget {
         default:
           throw BEATException(
             title: LocalizationService.instance.errorBingoCheckFailedTitle,
-            message: LocalizationService.instance.errorBingoCheckFailedContent,
+            message: response.body,
           );
       }
     } on TimeoutException {
@@ -101,6 +99,8 @@ class BingoStep extends StatelessWidget {
       }
       ExceptionService.to.addException(e);
     } catch (e) {
+      log(e.toString());
+
       if (Get.isDialogOpen == true) {
         Get.back();
       }
@@ -198,6 +198,9 @@ class BingoStep extends StatelessWidget {
                   (completedCount >= lineSummaryModel.requiredLineCount)
                   ? AppColors.primary
                   : AppColors.common200,
+              onTap: (completedCount >= lineSummaryModel.requiredLineCount)
+                  ? bingoCheck
+                  : () {},
             ),
           ],
         ),

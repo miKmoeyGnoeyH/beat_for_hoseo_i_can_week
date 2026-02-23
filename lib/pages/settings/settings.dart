@@ -1,4 +1,5 @@
 import 'package:beat/app/route/app_pages.dart';
+import 'package:beat/widgets/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -38,6 +39,21 @@ class Settings extends StatelessWidget {
           body: Column(
             children: [
               SizedBox(height: 16.w),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.w),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      LocalizationService.instance.profileAccountManagement,
+                      style: AppTextTheme.subtitle1,
+                    ),
+                    SizedBox(height: 10.w),
+                    AccountManagement(),
+                  ],
+                ),
+              ),
+              SizedBox(height: rowSpacing),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16.w),
                 child: Column(

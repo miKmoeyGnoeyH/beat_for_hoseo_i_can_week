@@ -98,17 +98,6 @@ class _ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
                         child: ProfileCard(state!),
                       ),
                     ),
-                    SizedBox(height: 16.w),
-                    Skeletonizer(
-                      enabled: loading,
-                      // enabled: true,
-                      containersColor: AppColors.common300,
-                      effect: SolidColorEffect(color: AppColors.common300),
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16.w),
-                        child: AccountManagement(),
-                      ),
-                    ),
                   ],
                 ),
               );
@@ -124,17 +113,6 @@ class _ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
                     child: Padding(
                       padding: EdgeInsets.symmetric(horizontal: 16.w),
                       child: ProfileCard(ProfileModel.empty()),
-                    ),
-                  ),
-                  SizedBox(height: 16.w),
-                  Skeletonizer(
-                    enabled: loading,
-                    // enabled: true,
-                    containersColor: AppColors.common300,
-                    effect: SolidColorEffect(color: AppColors.common300),
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16.w),
-                      child: AccountManagement(),
                     ),
                   ),
                 ],
@@ -154,17 +132,6 @@ class _ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
                             child: ProfileCard(ProfileModel.empty()),
                           ),
                         ),
-                        SizedBox(height: 16.w),
-                        Skeletonizer(
-                          enabled: loading,
-                          // enabled: true,
-                          containersColor: AppColors.common300,
-                          effect: SolidColorEffect(color: AppColors.common300),
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 16.w),
-                            child: AccountManagement(),
-                          ),
-                        ),
                       ],
                     ),
                   )
@@ -179,17 +146,6 @@ class _ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
                           child: Padding(
                             padding: EdgeInsets.symmetric(horizontal: 16.w),
                             child: ProfileCard(profileController.state!),
-                          ),
-                        ),
-                        SizedBox(height: 16.w),
-                        Skeletonizer(
-                          enabled: loading,
-                          // enabled: true,
-                          containersColor: AppColors.common300,
-                          effect: SolidColorEffect(color: AppColors.common300),
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 16.w),
-                            child: AccountManagement(),
                           ),
                         ),
                       ],

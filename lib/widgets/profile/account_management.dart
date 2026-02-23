@@ -20,7 +20,7 @@ class AccountManagement extends StatelessWidget {
 
   void onSignOutTap() async {
     await StepCountController.to.stopService();
-    AuthenticationController.to.SignOut();
+    AuthenticationController.to.signOut();
     Get.offAndToNamed(BEATRoute.signIn);
   }
 
@@ -39,11 +39,11 @@ class AccountManagement extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            LocalizationService.instance.profileAccountManagement,
-            style: AppTextTheme.subtitle1,
-          ),
-          SizedBox(height: rowSpacing),
+          // Text(
+          //   LocalizationService.instance.profileAccountManagement,
+          //   style: AppTextTheme.subtitle1,
+          // ),
+          // SizedBox(height: rowSpacing),
           GestureDetector(
             onTap: onChangePasswordTap,
             behavior: HitTestBehavior.opaque,

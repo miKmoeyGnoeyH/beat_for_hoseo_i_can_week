@@ -21,11 +21,14 @@ class PointHistoryCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                pointHistoryModel.historyName,
-                style: AppTextTheme.subtitle1,
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
+              SizedBox(
+                width: 250.w,
+                child: Text(
+                  pointHistoryModel.historyName,
+                  style: AppTextTheme.subtitle1,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                ),
               ),
               SizedBox(height: 10.w),
               Text(
@@ -36,23 +39,26 @@ class PointHistoryCard extends StatelessWidget {
               ),
             ],
           ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset(
-                BEATAssets.images.greenCampusPoint,
-                width: 30.w,
-              ),
-              SizedBox(height: 5.w),
-              Text(
-                NumberFormat(
-                  "+###,###;-###,###",
-                ).format(pointHistoryModel.point),
-                style: (pointHistoryModel.point >= 0)
-                    ? AppTextTheme.subtitle2.statusError
-                    : AppTextTheme.subtitle2.statusError,
-              ),
-            ],
+          SizedBox(
+            width: 50.w,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(
+                  BEATAssets.images.greenCampusPoint,
+                  width: 30.w,
+                ),
+                SizedBox(height: 5.w),
+                Text(
+                  NumberFormat(
+                    "+###,###;-###,###",
+                  ).format(pointHistoryModel.point),
+                  style: (pointHistoryModel.point >= 0)
+                      ? AppTextTheme.subtitle2.statusError
+                      : AppTextTheme.subtitle2.statusError,
+                ),
+              ],
+            ),
           ),
         ],
       ),

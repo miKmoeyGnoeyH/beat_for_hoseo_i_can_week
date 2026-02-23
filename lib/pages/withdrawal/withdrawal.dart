@@ -56,7 +56,7 @@ class _WithdrawalState extends State<Withdrawal> {
               message: LocalizationService.instance.withdrawalSuccessMessage,
               onConfirm: () async {
                 await StepCountController.to.stopService();
-                AuthenticationController.to.SignOut();
+                AuthenticationController.to.signOut();
                 Get.offAllNamed(BEATRoute.signIn);
               },
             ),

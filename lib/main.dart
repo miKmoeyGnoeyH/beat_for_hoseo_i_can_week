@@ -5,6 +5,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 
 import 'app.dart';
@@ -44,12 +45,51 @@ Future<void> _firebaseMessagingFGHandler(RemoteMessage message) async {
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+
+  const AndroidInitializationSettings androidInit =
+      AndroidInitializationSettings('@mipmap/ic_launcher');
+
+  const DarwinInitializationSettings iosInit = DarwinInitializationSettings(
+    requestAlertPermission: true,
+    requestBadgePermission: true,
+    requestSoundPermission: true,
+  );
+
+  const InitializationSettings initSettings = InitializationSettings(
+    android: androidInit,
+    iOS: iosInit,
+  );
+
+  await flutterLocalNotificationsPlugin.initialize(settings: initSettings);
+
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+    alert: true,
+    badge: true,
+    sound: true,
   );
 
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBGHandler);
-  FirebaseMessaging.onMessage.listen(_firebaseMessagingFGHandler);
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    if (message.notification != null) {
+      flutterLocalNotificationsPlugin.show(
+        id: 0,
+        title: message.notification!.title,
+        body: message.notification!.body,
+        notificationDetails: const NotificationDetails(
+          android: AndroidNotificationDetails(
+            'default_channel',
+            'Default',
+            importance: Importance.max,
+            priority: Priority.high,
+          ),
+        ),
+      );
+    }
+  });
 
   await LocalizationService.instance.init();
   await DotEnvService.instance.init();
@@ -62,10 +102,7 @@ Future<void> main() async {
 
   runApp(
     EasyLocalization(
-      supportedLocales: const [
-        Locale('en'),
-        Locale('ko'),
-      ],
+      supportedLocales: const [Locale('en'), Locale('ko')],
       fallbackLocale: const Locale('en'),
       path: 'assets/translations',
       child: App(),

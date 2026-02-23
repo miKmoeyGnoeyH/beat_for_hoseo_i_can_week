@@ -251,9 +251,8 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                         ],
                       ),
                       child: BingoBoard(
-                        board: questListController.state.first.localData.board,
-                        countPerAxis: questListController
-                            .state
+                        board: state.first.localData.board,
+                        countPerAxis: state
                             .first
                             .localData
                             .countPerAxis,

@@ -33,6 +33,10 @@ class PrefsService {
   /// 최근 로그인한 사용자 정보를 저장하고, 불러옵니다.
   static const String _userKey = 'user';
 
+  Future<bool> clearUser() async {
+    return await _prefs.remove(_userKey);
+  }
+
   /// [Future &lt;bool&gt; saveUser]: 최근 로그인한 사용자 정보를 저장하고, 성공 여부를 boolean으로 반환합니다.
   /// 사용자 정보는 id, password, authorization을 Map으로 저장합니다.
   Future<bool> setUser(Map<String, dynamic> user) async {
