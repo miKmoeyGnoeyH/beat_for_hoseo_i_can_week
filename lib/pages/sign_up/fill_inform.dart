@@ -41,6 +41,8 @@ class _FillInformState extends State<FillInform> {
   final TextEditingController validatePasswordController =
       TextEditingController();
 
+  late final List<Widget> campusCollegeDepartments;
+
   bool _isNameValidated = false;
   bool _isNicknameValidated = false;
   bool _isStudentIdValidated = false;
@@ -192,6 +194,14 @@ class _FillInformState extends State<FillInform> {
         .signUpRequestDepartments(uiCollge)
         .split(", ")[selectedDepartmentIndex];
 
+    campusCollegeDepartments = [
+      SizedBox(width: 6.w),
+      Text(uiCampus, style: AppTextTheme.caption1),
+      Text(uiCollge, style: AppTextTheme.caption1),
+      Text(uiDepartments, style: AppTextTheme.caption1),
+      SizedBox(width: 6.w),
+    ];
+
     super.initState();
   }
 
@@ -242,18 +252,15 @@ class _FillInformState extends State<FillInform> {
             slivers: [
               SliverToBoxAdapter(child: SizedBox(height: 10.w)),
               SliverToBoxAdapter(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16.w),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.baseline,
-                    textBaseline: TextBaseline.alphabetic,
-                    children: [
-                      Text(uiCampus, style: AppTextTheme.caption1),
-                      SizedBox(width: 10.w),
-                      Text(uiCollge, style: AppTextTheme.caption1),
-                      SizedBox(width: 10.w),
-                      Text(uiDepartments, style: AppTextTheme.caption1),
-                    ],
+                child: SizedBox(
+                  height: 15.w,
+                  child: ListView.separated(
+                    padding: EdgeInsets.zero,
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (context, index) =>
+                        campusCollegeDepartments[index],
+                    separatorBuilder: (context, index) => SizedBox(width: 10.w),
+                    itemCount: campusCollegeDepartments.length,
                   ),
                 ),
               ),

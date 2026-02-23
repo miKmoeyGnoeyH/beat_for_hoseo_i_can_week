@@ -93,6 +93,9 @@ final class CampusLocationManager: NSObject, CLLocationManagerDelegate {
         guard let loc = locations.last else { return }
         let inside = isInsideCampus(lat: loc.coordinate.latitude, lng: loc.coordinate.longitude)
         
+        print("LOC lat=\(loc.coordinate.latitude), lng=\(loc.coordinate.longitude)")
+        print("inside=\(inside)")
+        
         let hadLast = defaults.object(forKey: keyLastInside) != nil
         let lastInside = defaults.bool(forKey: keyLastInside)
         
@@ -225,22 +228,29 @@ final class CampusLocationManager: NSObject, CLLocationManagerDelegate {
         || isInsidePolygon(lat: lat, lng: lng, polygon: Self.cheonanArea)
     }
     
-    // Ray casting (lat=x, lng=y처럼 취급)
+    // x = lng, y = lat 기준 Ray Casting
     private func isInsidePolygon(lat: Double, lng: Double, polygon: [(Double, Double)]) -> Bool {
+        let x = lng
+        let y = lat
+
         var inside = false
         var j = polygon.count - 1
-        
+
         for i in 0..<polygon.count {
-            let xi = polygon[i].0, yi = polygon[i].1
-            let xj = polygon[j].0, yj = polygon[j].1
-            
-            let intersect = ((yi > lng) != (yj > lng)) &&
-            (lat < (xj - xi) * (lng - yi) / (yj - yi) + xi)
-            
+            // polygon은 (lat, lng)로 저장되어 있으니
+            let yi = polygon[i].0   // lat
+            let xi = polygon[i].1   // lng
+            let yj = polygon[j].0
+            let xj = polygon[j].1
+
+            // y가 edge를 가로지르는지 + 교차점 x가 현재 x보다 큰지
+            let intersect = ((yi > y) != (yj > y)) &&
+                (x < (xj - xi) * (y - yi) / (yj - yi) + xi)
+
             if intersect { inside.toggle() }
             j = i
         }
-        
+
         return inside
     }
     
