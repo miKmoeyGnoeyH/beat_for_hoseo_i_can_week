@@ -19,6 +19,7 @@ class BingoStep extends StatelessWidget {
     required this.questId,
     required this.completedLines,
     required this.lineSummaryModel,
+    // required this.index,
     required this.completedCount,
   });
 
@@ -207,5 +208,6 @@ class BingoStep extends StatelessWidget {
   final int questId;
   final List<CompletedLineInfo> completedLines;
   final LineSummaryModel lineSummaryModel;
+  // final int index;
   final int completedCount;
 }

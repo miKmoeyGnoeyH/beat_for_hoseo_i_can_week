@@ -39,63 +39,66 @@ class _SignSectionState extends State<SignSection> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) {
-        return Container(
-          clipBehavior: Clip.hardEdge,
-          decoration: BoxDecoration(
-            color: AppColors.commonWhite,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(10),
-              topRight: Radius.circular(10),
+        return SafeArea(
+          child: Container(
+            clipBehavior: Clip.hardEdge,
+            decoration: BoxDecoration(
+              color: AppColors.commonWhite,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(10),
+                topRight: Radius.circular(10),
+              ),
             ),
-          ),
-          child: Padding(
-            padding: EdgeInsets.all(16.w),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  LocalizationService.instance.signUpSign,
-                  style: AppTextTheme.subtitle3,
-                ),
-                SizedBox(height: 16.w),
-                Stack(
-                  children: [
-                    Positioned(
-                      child: AspectRatio(
-                        aspectRatio: 16 / 9,
-                        child: Container(
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              width: 0.5.w,
-                              color: AppColors.common300,
+            child: Padding(
+              padding: EdgeInsets.all(16.w),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    LocalizationService.instance.signUpSign,
+                    style: AppTextTheme.subtitle3,
+                  ),
+                  SizedBox(height: 16.w),
+                  Stack(
+                    children: [
+                      Positioned(
+                        child: AspectRatio(
+                          aspectRatio: 16 / 9,
+                          child: Container(
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                width: 0.5.w,
+                                color: AppColors.common300,
+                              ),
+                              borderRadius: BorderRadius.circular(10),
                             ),
-                            borderRadius: BorderRadius.circular(10),
+                            child: HandSignature(control: handSignatureControl),
                           ),
-                          child: HandSignature(control: handSignatureControl),
                         ),
                       ),
-                    ),
-                    Positioned(
-                      top: 1.w,
-                      right: 1.w,
-                      child: IconButton(
-                        onPressed: handSignatureControl.clear,
-                        icon: Icon(Icons.refresh, color: AppColors.common300),
+                      Positioned(
+                        top: 1.w,
+                        right: 1.w,
+                        child: IconButton(
+                          onPressed: handSignatureControl.clear,
+                          icon: Icon(Icons.refresh, color: AppColors.common300),
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 16.w),
-                BEATTextButton(
-                  text: LocalizationService.instance.generalConfirm,
-                  onTap: () async {
-                    await onSignDone();
-                    Get.back();
-                  },
-                ),
-              ],
+                    ],
+                  ),
+                  SizedBox(height: 16.w),
+                  BEATTextButton(
+                    text: LocalizationService.instance.generalConfirm,
+                    onTap: () async {
+                      await onSignDone();
+                      Get.back();
+                    },
+                  ),
+                  SizedBox(height: 16.w),
+                ],
+              ),
             ),
           ),
         );

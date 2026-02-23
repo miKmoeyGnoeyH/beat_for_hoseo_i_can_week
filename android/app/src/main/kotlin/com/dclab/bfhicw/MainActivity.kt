@@ -9,16 +9,44 @@ import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodChannel
+import android.content.BroadcastReceiver
+import android.content.IntentFilter
 
 class MainActivity: FlutterActivity() {
 
     private val METHOD = "beat/steps"
     private val EVENTS = "beat/steps_events"
 
+    private lateinit var campusChannel: MethodChannel
+    private val campusReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            when (intent.action) {
+                "beat.campus.IN" -> campusChannel.invokeMethod("campusIn", null)
+                "beat.campus.OUT" -> campusChannel.invokeMethod("campusOut", null)
+            }
+        }
+    }
+
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
 
         val prefs = getSharedPreferences("step_store", Context.MODE_PRIVATE)
+
+        campusChannel = MethodChannel(
+            flutterEngine.dartExecutor.binaryMessenger,
+            "beat/campus_location"
+        )
+
+        campusChannel.setMethodCallHandler { call, result ->
+            when (call.method) {
+                "getLastInsideCached" -> {
+                    val prefs = getSharedPreferences("step_store", Context.MODE_PRIVATE)
+                    if (!prefs.contains("lastInside")) result.success(null)
+                    else result.success(prefs.getBoolean(StepCounterService.KEY_LAST_INSIDE, false))
+                }
+                else -> result.notImplemented()
+            }
+        }
 
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, METHOD)
             .setMethodCallHandler { call, result ->
@@ -60,5 +88,24 @@ class MainActivity: FlutterActivity() {
         } else {
             startService(i)
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        val filter = IntentFilter().apply {
+            addAction("beat.campus.IN")
+            addAction("beat.campus.OUT")
+        }
+
+        if (android.os.Build.VERSION.SDK_INT >= 33) {
+            registerReceiver(campusReceiver, filter, Context.RECEIVER_NOT_EXPORTED)
+        } else {
+            registerReceiver(campusReceiver, filter)
+        }
+    }
+
+    override fun onStop() {
+        unregisterReceiver(campusReceiver)
+        super.onStop()
     }
 }

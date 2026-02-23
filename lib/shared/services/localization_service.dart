@@ -285,6 +285,9 @@ class LocalizationService {
   String get homeNotInCampus =>
       "home_page".tr(gender: "not_in_campus");
 
+  String get homeNoData =>
+      "home_page".tr(gender: "no_data");
+
 
   /// Settings
   String get settingsSettings =>

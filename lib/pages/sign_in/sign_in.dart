@@ -167,7 +167,7 @@ class _SignInState extends State<SignIn> {
           await PrefsService.instance.setUser(
             authenticationController.state!.toJson(),
           );
-          await StepCountController.to.startService();
+          // await StepCountController.to.startService();
         },
         loadingWidget: BEATCircularProgressIndicator(),
         opacity: 0.3,

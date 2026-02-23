@@ -28,10 +28,18 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class StepCounterService : Service(), SensorEventListener {
+const val KEY_EXCLUDED_AFTER_BOOT = "excludedAfterBoot"  // 오늘 캠퍼스 밖에서 누적된(제외할) 부팅누적 증가량
+const val KEY_OUT_SNAPSHOT_AFTER_BOOT = "outSnapshotAfterBoot"
+const val KEY_OUT_SNAPSHOT_DAY = "outSnapshotDay"        // yyyy-MM-dd
 
+const val KEY_PENDING_CAMPUS_STATE = "pendingCampusState" // "IN" or "OUT"
+const val PENDING_IN = "IN"
+const val PENDING_OUT = "OUT"
+
+class StepCounterService : Service(), SensorEventListener {
     private lateinit var sensorManager: SensorManager
     private var stepSensor: Sensor? = null
+    private var isStepListening: Boolean = false
 
     // Location
     private lateinit var fusedClient: FusedLocationProviderClient
@@ -62,6 +70,35 @@ class StepCounterService : Service(), SensorEventListener {
     // =========================
     // Location updates
     // =========================
+    @Suppress("MissingPermission")
+    private fun primeInsideStateOnce(onDone: () -> Unit) {
+        // 권한 없으면 바로 done
+        if (!hasLocationPermission()) { onDone(); return }
+
+        // 1) lastLocation 먼저 시도 (빠름)
+        fusedClient.lastLocation
+            .addOnSuccessListener { loc ->
+                if (loc != null) {
+                    val inside = isInsideCampus(loc.latitude, loc.longitude)
+                    prefs.edit().putBoolean(KEY_LAST_INSIDE, inside).apply()
+                    onDone()
+                } else {
+                    // 2) lastLocation이 null이면 currentLocation 시도
+                    fusedClient.getCurrentLocation(
+                        Priority.PRIORITY_BALANCED_POWER_ACCURACY,
+                        null
+                    ).addOnSuccessListener { cur ->
+                        if (cur != null) {
+                            val inside = isInsideCampus(cur.latitude, cur.longitude)
+                            prefs.edit().putBoolean(KEY_LAST_INSIDE, inside).apply()
+                        }
+                        onDone()
+                    }.addOnFailureListener { onDone() }
+                }
+            }
+            .addOnFailureListener { onDone() }
+    }
+
     private fun startLocationUpdates() {
         val request = LocationRequest.Builder(
             Priority.PRIORITY_BALANCED_POWER_ACCURACY,
@@ -78,7 +115,8 @@ class StepCounterService : Service(), SensorEventListener {
     private fun stopLocationUpdates() {
         try {
             fusedClient.removeLocationUpdates(locationCallback)
-        } catch (_: Throwable) {}
+        } catch (_: Throwable) {
+        }
     }
 
     private val locationCallback = object : LocationCallback() {
@@ -130,19 +168,50 @@ class StepCounterService : Service(), SensorEventListener {
         return lang.equals("ko", ignoreCase = true)
     }
 
-    private fun notifyCampusStateIfChanged(isInside: Boolean) {
-        val lastInside = prefs.getBoolean(KEY_LAST_INSIDE, true)
+    private fun setStepListeningEnabled(enabled: Boolean) {
+        if (enabled) {
+            if (isStepListening) return
+            stepSensor?.let {
+                sensorManager.registerListener(this, it, SensorManager.SENSOR_DELAY_NORMAL)
+                isStepListening = true
+            }
+        } else {
+            if (!isStepListening) return
+            try {
+                sensorManager.unregisterListener(this)
+            } catch (_: Throwable) {
+            }
+            isStepListening = false
+        }
+    }
 
-        // 변화 없으면 아무것도 안 함 (스팸 방지)
+    private fun notifyCampusStateIfChanged(isInside: Boolean) {
+        val lastInside = prefs.getBoolean(KEY_LAST_INSIDE, false)
         if (lastInside == isInside) return
+
+        val todayKey = yyyyMMdd(Date())
+        val stepsAfterBoot = prefs.getLong(KEY_STEPS_AFTER_BOOT, -1L)
 
         prefs.edit().putBoolean(KEY_LAST_INSIDE, isInside).apply()
 
-        if (isInside) {
-            showCampusEnteredNotification()
+        // ✅ 해결책 1: 여기서 센서 리스너 토글하지 않음 (항상 켜둠)
+        // setStepListeningEnabled(isInside)  // ❌ 제거
+
+        // 스냅샷/제외량 계산
+        if (stepsAfterBoot >= 0) {
+            if (!isInside) onCampusOut(stepsAfterBoot, todayKey)
+            else onCampusIn(stepsAfterBoot, todayKey)
         } else {
-            showOutOfCampusNotification()
+            prefs.edit()
+                .putString(KEY_PENDING_CAMPUS_STATE, if (isInside) PENDING_IN else PENDING_OUT)
+                .apply()
         }
+
+        // Flutter broadcast
+        val action = if (isInside) "beat.campus.IN" else "beat.campus.OUT"
+        sendBroadcast(Intent(action).setPackage(packageName))
+
+        if (isInside) showCampusEnteredNotification() else showOutOfCampusNotification()
     }
 
     private fun showOutOfCampusNotification() {
@@ -184,6 +253,49 @@ class StepCounterService : Service(), SensorEventListener {
         nm.notify(CAMPUS_ENTERED_NOTI_ID, notification)
     }
 
+    private fun resetForNewDay(stepsAfterBoot: Long, todayKey: String) {
+        prefs.edit()
+            .putString(KEY_LAST_DAY, todayKey)
+            .putLong(KEY_TODAY_STEPS, 0L)
+            .putLong(KEY_BASELINE_AFTER_BOOT, stepsAfterBoot)
+            .putLong(KEY_EXCLUDED_AFTER_BOOT, 0L)
+            .remove(KEY_OUT_SNAPSHOT_AFTER_BOOT)
+            .remove(KEY_OUT_SNAPSHOT_DAY)
+            .remove(KEY_PENDING_CAMPUS_STATE)
+            .apply()
+    }
+
+    private fun onCampusOut(stepsAfterBoot: Long, todayKey: String) {
+        // OUT 스냅샷 저장
+        prefs.edit()
+            .putLong(KEY_OUT_SNAPSHOT_AFTER_BOOT, stepsAfterBoot)
+            .putString(KEY_OUT_SNAPSHOT_DAY, todayKey)
+            .apply()
+    }
+
+    private fun onCampusIn(stepsAfterBoot: Long, todayKey: String) {
+        val outSnap = if (prefs.contains(KEY_OUT_SNAPSHOT_AFTER_BOOT))
+            prefs.getLong(KEY_OUT_SNAPSHOT_AFTER_BOOT, -1L) else null
+        val outDay = prefs.getString(KEY_OUT_SNAPSHOT_DAY, null)
+
+        if (outSnap == null || outDay == null || outDay != todayKey) {
+            // iOS 로직의 "날짜가 다르면 excluded = inSnapshot"에 해당.
+            // Android에서는 "오늘 들어온 시점까지의 증가분"을 모두 제외해야 하므로
+            // excluded를 '오늘(=baseline 이후) 캠퍼스 밖 증가분'으로 맞추려면:
+            // 가장 안전한 처리 = 오늘 계산을 새로 시작하는 것과 동일하게 baseline을 stepsAfterBoot로 리셋.
+            // (캠퍼스 안 유효 걸음은 0부터 다시)
+            resetForNewDay(stepsAfterBoot, todayKey)
+        } else {
+            val deltaOut = (stepsAfterBoot - outSnap).coerceAtLeast(0L)
+            val excluded = prefs.getLong(KEY_EXCLUDED_AFTER_BOOT, 0L)
+            prefs.edit()
+                .putLong(KEY_EXCLUDED_AFTER_BOOT, excluded + deltaOut)
+                .remove(KEY_OUT_SNAPSHOT_AFTER_BOOT)
+                .remove(KEY_OUT_SNAPSHOT_DAY)
+                .apply()
+        }
+    }
+
     // =========================
     // Service lifecycle
     // =========================
@@ -199,21 +311,21 @@ class StepCounterService : Service(), SensorEventListener {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         isRunning = true
-
-        // ✅ 무조건 먼저 foreground로 올려서 5초 룰 만족
         startForeground(NOTI_ID, buildNotification("Step counter running"))
 
-        // ✅ 그 다음 권한 체크. 없으면 바로 종료
         if (!hasActivityPermission() || !hasLocationPermission()) {
             stopSelf()
             return START_NOT_STICKY
         }
 
-        stepSensor?.let {
-            sensorManager.registerListener(this, it, SensorManager.SENSOR_DELAY_NORMAL)
+        // ✅ 센서 리스너는 무조건 켬 (OUT이어도 stepsAfterBoot 갱신해야 해서)
+        setStepListeningEnabled(true)
+
+        primeInsideStateOnce {
+            // 위치 업데이트 시작
+            startLocationUpdates()
         }
 
-        startLocationUpdates()
         return START_STICKY
     }
 
@@ -222,7 +334,8 @@ class StepCounterService : Service(), SensorEventListener {
 
         try {
             sensorManager.unregisterListener(this)
-        } catch (_: Throwable) {}
+        } catch (_: Throwable) {
+        }
 
         stopLocationUpdates()
 
@@ -239,30 +352,50 @@ class StepCounterService : Service(), SensorEventListener {
         val stepsAfterBoot = event.values[0].toLong()
         val todayKey = yyyyMMdd(Date())
 
+        // ✅ 부팅/센서 리셋 감지용 이전값
+        val prevAfterBoot = prefs.getLong(KEY_PREV_STEPS_AFTER_BOOT, -1L)
+
+        // 0) 항상 최신 stepsAfterBoot 저장 (OUT/IN 스냅샷용)
+        prefs.edit()
+            .putLong(KEY_STEPS_AFTER_BOOT, stepsAfterBoot)
+            .putLong(KEY_PREV_STEPS_AFTER_BOOT, stepsAfterBoot)
+            .apply()
+
+        // ✅ (중요) stepsAfterBoot가 감소하면: 부팅/센서리셋으로 간주
+        // -> baseline/outSnap/excluded가 다 깨지므로 오늘 계산 상태를 새로 시작
+        if (prevAfterBoot >= 0 && stepsAfterBoot < prevAfterBoot) {
+            resetForNewDay(stepsAfterBoot, todayKey)
+            // resetForNewDay 안에서 pending/outSnapshot/excluded 다 정리됨
+        }
+
+        // ✅ pending OUT/IN 처리 (센서 첫 이벤트에서 보정)
+        val pending = prefs.getString(KEY_PENDING_CAMPUS_STATE, null)
+        if (pending != null) {
+            prefs.edit().remove(KEY_PENDING_CAMPUS_STATE).apply()
+            if (pending == PENDING_OUT) onCampusOut(stepsAfterBoot, todayKey)
+            else onCampusIn(stepsAfterBoot, todayKey)
+        }
+
         val lastDay = prefs.getString(KEY_LAST_DAY, "") ?: ""
         var baseline = prefs.getLong(KEY_BASELINE_AFTER_BOOT, -1L)
 
-        // 날짜 바뀜 처리
-        if (lastDay != todayKey) {
+        // 1) 날짜 변경 처리
+        if (lastDay != todayKey || baseline < 0) {
+            resetForNewDay(stepsAfterBoot, todayKey)
             baseline = stepsAfterBoot
-            prefs.edit()
-                .putString(KEY_LAST_DAY, todayKey)
-                .putLong(KEY_TODAY_STEPS, 0L)
-                .putLong(KEY_BASELINE_AFTER_BOOT, baseline)
-                .apply()
         }
 
-        // 첫 기준선이 없으면 설정
-        if (baseline < 0) {
-            baseline = stepsAfterBoot
-            prefs.edit().putLong(KEY_BASELINE_AFTER_BOOT, baseline).apply()
+        // 2) OUT이면: stepsAfterBoot는 계속 갱신하지만, 유효 steps 저장/emit만 안 함
+        val inside = prefs.getBoolean(KEY_LAST_INSIDE, false)
+        if (!inside) {
+            return
         }
 
-        // 누적 계산
-        val computedToday = (stepsAfterBoot - baseline).coerceAtLeast(0)
+        // 3) IN이면 excluded 반영하여 계산
+        val excluded = prefs.getLong(KEY_EXCLUDED_AFTER_BOOT, 0L)
+        val computedToday = (stepsAfterBoot - baseline - excluded).coerceAtLeast(0L)
 
         prefs.edit()
-            .putLong(KEY_STEPS_AFTER_BOOT, stepsAfterBoot)
             .putLong(KEY_TODAY_STEPS, computedToday)
             .putLong(KEY_LAST_TS, System.currentTimeMillis())
             .apply()

@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:app_settings/app_settings.dart';
@@ -27,7 +28,8 @@ class _MainPageViewState extends State<MainPageView>
     WidgetsBinding.instance.addObserver(this);
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final bool isFirstLaunch = PrefsService.instance.getIsFirstLaunch() ?? true;
+      final bool isFirstLaunch =
+          PrefsService.instance.getIsFirstLaunch() ?? true;
 
       if (isFirstLaunch) {
         await _requestPermissions();
@@ -105,6 +107,7 @@ class _MainPageViewState extends State<MainPageView>
       return;
     }
 
+    /// 안드로이드 분기
     final isActivityPermissionGranted = await PermissionService.instance
         .isActivityPermissionGranted();
 
@@ -148,7 +151,13 @@ class _MainPageViewState extends State<MainPageView>
       return;
     }
 
-    await StepCountController.to.checkIsServiceRunningAndStartIfNot();
+    log(
+      "MainPageView: _checkAndStartServiceIfPossible: isActivityPermissionGranted: $isActivityPermissionGranted, isLocationAlwaysPermissionGranted: $isLocationAlwaysPermissionGranted",
+    );
+
+    if (isActivityPermissionGranted && isLocationAlwaysPermissionGranted) {
+      await StepCountController.to.checkIsServiceRunningAndStartIfNot();
+    }
   }
 
   @override

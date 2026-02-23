@@ -139,7 +139,8 @@
     "quest_check_success_content": "Quest completed successfully.",
     "bingo_check_success_title": "Bingo Completed",
     "bingo_check_success_content": "Bingo completed successfully.",
-    "not_in_campus": "You are outside the event area."
+    "not_in_campus": "You are outside the event area.",
+    "no_data": "No data available."
   },
   "leaderboard_page": {
     "leaderboard": "Leaderboard",

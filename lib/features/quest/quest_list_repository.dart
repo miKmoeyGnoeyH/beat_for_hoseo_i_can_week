@@ -15,7 +15,7 @@ class QuestListRepository {
         header: {"authorization": authorization},
       );
 
-      // log(response.body);
+      log("QuestListRepository: fetchQuestList: ${response.statusCode} ${response.body}");
 
       switch (response.statusCode) {
         case 200:

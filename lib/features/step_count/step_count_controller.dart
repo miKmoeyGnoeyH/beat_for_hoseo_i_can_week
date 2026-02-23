@@ -166,6 +166,24 @@ class StepCountController extends GetxController {
     if (Platform.isAndroid) {
       await _androidMethodChannel.invokeMethod("startService");
       await _refreshOnce();
+
+      _registerCampusHandler();
+
+      try {
+        final isInsideCampus = await _campusChannel.invokeMethod(
+          "getLastInsideCached",
+        );
+        if (isInsideCampus != null) _isInCampus = isInsideCampus;
+      } on PlatformException catch (e) {
+        log(
+          "step_count_controller: startService: Failed to get initial campus location: ${e.message}",
+        );
+        _isInCampus = false;
+      } finally {
+        log("step_count_controller: startService: isInCampus: $_isInCampus");
+        PrefsService.instance.setIsInCampus(isInCampus);
+      }
+
       _listenEvents();
     } else if (Platform.isIOS) {
       if (_isiOSServiceRunning) return;
@@ -208,7 +226,9 @@ class StepCountController extends GetxController {
 
       /// 캠퍼스 내에 있는지 여부 최초 1회 초기화
       try {
-        final isInsideCampus = await _campusChannel.invokeMethod("isInsideCampus");
+        final isInsideCampus = await _campusChannel.invokeMethod(
+          "isInsideCampus",
+        );
         if (isInsideCampus != null) _isInCampus = isInsideCampus;
       } on PlatformException catch (e) {
         log(
@@ -264,6 +284,7 @@ class StepCountController extends GetxController {
   bool _handlingCampusEvent = false;
 
   Future<void> onCampusExit() async {
+    if (!Platform.isIOS) return;
     if (_handlingCampusEvent) return;
     if (!isInCampus) return;
 
@@ -283,6 +304,7 @@ class StepCountController extends GetxController {
   }
 
   Future<void> onCampusEnter() async {
+    if (!Platform.isIOS) return;
     if (_handlingCampusEvent) return;
     if (isInCampus) return;
 
@@ -365,6 +387,35 @@ class StepCountController extends GetxController {
     return newBaseline;
   }
 
+  Future<void> onStateChangedBG2FG() async {
+    if (Platform.isAndroid) {
+      await onStateChangedBG2FGAndroid();
+    } else if (Platform.isIOS) {
+      await onStateChangedBG2FGiOS();
+    } else {
+      return;
+    }
+  }
+
+  Future<void> onStateChangedBG2FGAndroid() async {
+    await _refreshOnce();
+
+    try {
+      final isInsideCampus = await _campusChannel.invokeMethod(
+        "getLastInsideCached",
+      );
+      if (isInsideCampus != null) _isInCampus = isInsideCampus;
+    } on PlatformException catch (e) {
+      log(
+        "step_count_controller: startService: Failed to get initial campus location: ${e.message}",
+      );
+      _isInCampus = false;
+    } finally {
+      log("step_count_controller: startService: isInCampus: $_isInCampus");
+      PrefsService.instance.setIsInCampus(isInCampus);
+    }
+  }
+
   /// iOS에서, 앱이 백그라운드에서 포어그라운드로 전환되었을 때 실행되는 함수
   /// Proper Ref Count: 1
   /// - init 페이지에서, 앱 라이프사이클 변경 시
@@ -410,8 +461,7 @@ class StepCountController extends GetxController {
 
       _healthKitSteps = await _getHelthKitStepsAndUseCachedAsFallback();
       PrefsService.instance.setHealthKitSteps(_healthKitSteps, now);
-    } else if (stepsYmd.day != now.day ||
-        healthKitStepsYmd.day != now.day) {
+    } else if (stepsYmd.day != now.day || healthKitStepsYmd.day != now.day) {
       /// 현재 날짜와 마지막으로 저장된 healthKitStepsYmd의 날짜가 다른 경우
       /// 날짜가 변경됐음.
       /// 이 경우, isInCampus의 값에 따라 다르게 처리해야 한다.
@@ -429,7 +479,7 @@ class StepCountController extends GetxController {
 
       _healthKitSteps = 0;
       PrefsService.instance.setHealthKitSteps(_healthKitSteps, now);
-    }else if (excludedSteps == null) {
+    } else if (excludedSteps == null) {
       /// 저장된 excludedSteps가 없는 경우,
       /// 데이터가 손상됐거나 유효 범위 이탈 후 아직 유효 범위 내에 진입하지 않아
       /// onCampusEnter에서 excludedSteps가 계산되지 않은 경우이다. 이 경우 아무 것도 하지 않는다.
@@ -492,9 +542,11 @@ class StepCountController extends GetxController {
     if (!_isiOSServiceRunning) return;
     if (!isInCampus) return;
 
-    final bool isActivityPermissionGranted = await PermissionService.instance.isActivityPermissionGranted();
+    final bool isActivityPermissionGranted = await PermissionService.instance
+        .isActivityPermissionGranted();
     final bool isLocationPermissionGranted = Platform.isIOS
-        ? await PermissionService.instance.isLocationWhenInUsePermissionGranted()
+        ? await PermissionService.instance
+              .isLocationWhenInUsePermissionGranted()
         : await PermissionService.instance.isLocationAlwaysPermissionGranted();
 
     if (!isActivityPermissionGranted || !isLocationPermissionGranted) return;
@@ -535,20 +587,22 @@ class StepCountController extends GetxController {
     if (Platform.isAndroid) {
       final bool isRunning =
           await _androidMethodChannel.invokeMethod("isServiceRunning") ?? false;
+
+      log(
+        "StepCountController: checkIsServiceRunningAndStartIfNot: isRunning: $isRunning",
+      );
+
       if (!isRunning) await startService();
       return;
     }
 
     if (Platform.isIOS) {
-      log(_isiOSServiceRunning.toString());
-
       if (!_isiOSServiceRunning) {
         await startService();
-      } else {
-        await onStateChangedBG2FGiOS();
       }
-      return;
     }
+
+    onStateChangedBG2FG();
 
     throw BEATExceptionPlatformNotSupported();
   }

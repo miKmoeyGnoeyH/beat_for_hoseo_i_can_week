@@ -11,13 +11,13 @@ class MainPageViewAppbarIconButton extends StatelessWidget {
       onTap: onTap,
       customBorder: CircleBorder(),
       child: Ink(
-        width: 33.w,
-        height: 33.w,
+        width: 38.w,
+        height: 38.w,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(100),
         ),
         child: Padding(
-          padding: EdgeInsets.all(2.5.w),
+          padding: EdgeInsets.all(5.w),
           child: Center(
             child: icon,
           ),

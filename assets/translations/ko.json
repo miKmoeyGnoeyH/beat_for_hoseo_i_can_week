@@ -139,7 +139,8 @@
     "quest_check_success_content": "퀘스트가 완료되었습니다.",
     "bingo_check_success_title": "빙고 완료",
     "bingo_check_success_content": "빙고가 완료되었습니다.",
-    "not_in_campus": "이벤트 진행 지역이 아닙니다."
+    "not_in_campus": "이벤트 진행 지역이 아닙니다.",
+    "no_data": "데이터가 없습니다."
   },
   "leaderboard_page": {
     "leaderboard": "랭킹",

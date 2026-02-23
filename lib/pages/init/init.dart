@@ -105,7 +105,7 @@ class _InitState extends State<Init> with WidgetsBindingObserver {
     switch (state) {
       case AppLifecycleState.resumed:
         await _checkUpdate();
-        await StepCountController.to.onStateChangedBG2FGiOS();
+        await StepCountController.to.onStateChangedBG2FG();
         break;
       case AppLifecycleState.inactive:
         StepCountController.to.onStateChangedFG2BGiOS();

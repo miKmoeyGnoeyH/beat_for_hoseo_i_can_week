@@ -12,9 +12,7 @@ class PointRepository {
         header: {"authorization": authorization},
       );
 
-      log(DotEnvService.instance.fetchPointBalance);
-      log(response.body);
-      log(response.statusCode.toString());
+      // log("PointRepository: fetchPointBalance: ${response.statusCode} ${response.body}");
 
       switch (response.statusCode) {
         case 200:

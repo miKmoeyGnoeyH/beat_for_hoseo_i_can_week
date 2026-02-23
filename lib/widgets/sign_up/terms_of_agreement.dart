@@ -95,120 +95,122 @@ class TOABottomSheet extends StatefulWidget {
 class _TOABottomSheetState extends State<TOABottomSheet> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      clipBehavior: Clip.hardEdge,
-      decoration: BoxDecoration(
-        color: AppColors.commonWhite,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(10),
-          topRight: Radius.circular(10),
+    return SafeArea(
+      child: Container(
+        clipBehavior: Clip.hardEdge,
+        decoration: BoxDecoration(
+          color: AppColors.commonWhite,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(10),
+            topRight: Radius.circular(10),
+          ),
         ),
-      ),
-      child: Padding(
-        padding: EdgeInsets.all(16.w),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              LocalizationService.instance.signUpTermsOfAgreement,
-              style: AppTextTheme.subtitle3,
-            ),
-            SizedBox(height: 16.w),
-            Container(
-              width: double.infinity,
-              padding: EdgeInsets.all(16.w),
-              decoration: BoxDecoration(
-                border: Border.all(width: 0.5.w, color: AppColors.common300),
-                borderRadius: BorderRadius.circular(10),
+        child: Padding(
+          padding: EdgeInsets.all(16.w),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                LocalizationService.instance.signUpTermsOfAgreement,
+                style: AppTextTheme.subtitle3,
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "1. ${LocalizationService.instance.signUpToaPurpose}",
-                    style: AppTextTheme.subtitle3,
-                  ),
-                  SizedBox(height: 5.w),
-                  Text(
-                    LocalizationService.instance.signUpToaPurposeContent,
-                    style: AppTextTheme.body2,
-                  ),
-                  SizedBox(height: 20.w),
-                  Text(
-                    "2. ${LocalizationService.instance.signUpToaItems}",
-                    style: AppTextTheme.subtitle3,
-                  ),
-                  SizedBox(height: 5.w),
-                  Text(
-                    LocalizationService.instance.signUpToaItemsContent,
-                    style: AppTextTheme.body2,
-                  ),
-                  SizedBox(height: 20.w),
-                  Text(
-                    "3. ${LocalizationService.instance.signUpToaRetention}",
-                    style: AppTextTheme.subtitle3,
-                  ),
-                  SizedBox(height: 5.w),
-                  Text(
-                    LocalizationService.instance.signUpToaRetentionContent,
-                    style: AppTextTheme.body2,
-                  ),
-                  SizedBox(height: 20.w),
-                  Text(
-                    "4. ${LocalizationService.instance.signUpToaRightToRefusal}",
-                    style: AppTextTheme.subtitle3,
-                  ),
-                  SizedBox(height: 5.w),
-                  Text(
-                    LocalizationService.instance.signUpToaRightToRefusalContent,
-                    style: AppTextTheme.body2,
-                  ),
-                ],
+              SizedBox(height: 16.w),
+              Container(
+                width: double.infinity,
+                padding: EdgeInsets.all(16.w),
+                decoration: BoxDecoration(
+                  border: Border.all(width: 0.5.w, color: AppColors.common300),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "1. ${LocalizationService.instance.signUpToaPurpose}",
+                      style: AppTextTheme.subtitle3,
+                    ),
+                    SizedBox(height: 5.w),
+                    Text(
+                      LocalizationService.instance.signUpToaPurposeContent,
+                      style: AppTextTheme.body2,
+                    ),
+                    SizedBox(height: 20.w),
+                    Text(
+                      "2. ${LocalizationService.instance.signUpToaItems}",
+                      style: AppTextTheme.subtitle3,
+                    ),
+                    SizedBox(height: 5.w),
+                    Text(
+                      LocalizationService.instance.signUpToaItemsContent,
+                      style: AppTextTheme.body2,
+                    ),
+                    SizedBox(height: 20.w),
+                    Text(
+                      "3. ${LocalizationService.instance.signUpToaRetention}",
+                      style: AppTextTheme.subtitle3,
+                    ),
+                    SizedBox(height: 5.w),
+                    Text(
+                      LocalizationService.instance.signUpToaRetentionContent,
+                      style: AppTextTheme.body2,
+                    ),
+                    SizedBox(height: 20.w),
+                    Text(
+                      "4. ${LocalizationService.instance.signUpToaRightToRefusal}",
+                      style: AppTextTheme.subtitle3,
+                    ),
+                    SizedBox(height: 5.w),
+                    Text(
+                      LocalizationService.instance.signUpToaRightToRefusalContent,
+                      style: AppTextTheme.body2,
+                    ),
+                  ],
+                ),
               ),
-            ),
-            Container(
-              padding: EdgeInsets.all(16.w),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () {
+              Container(
+                padding: EdgeInsets.all(16.w),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () {
+                          FocusManager.instance.primaryFocus?.unfocus();
+                          setState(() {
+                            widget.isAgreed = !widget.isAgreed;
+                            widget.toggleAgreement(widget.isAgreed);
+                            Get.back();
+                          });
+                        },
+                        child: Text(
+                          LocalizationService.instance.signUpIAgree,
+                          style: AppTextTheme.subtitle3,
+                        ),
+                      ),
+                    ),
+                    Checkbox(
+                      value: widget.isAgreed,
+                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      visualDensity: VisualDensity(horizontal: -4, vertical: -4),
+                      shape: CircleBorder(),
+                      activeColor: AppColors.primary,
+                      checkColor: AppColors.commonWhite,
+                      onChanged: (value) {
                         FocusManager.instance.primaryFocus?.unfocus();
                         setState(() {
-                          widget.isAgreed = !widget.isAgreed;
-                          widget.toggleAgreement(widget.isAgreed);
+                          widget.isAgreed = value ?? false;
+                          widget.toggleAgreement(value);
                           Get.back();
                         });
                       },
-                      child: Text(
-                        LocalizationService.instance.signUpIAgree,
-                        style: AppTextTheme.subtitle3,
-                      ),
                     ),
-                  ),
-                  Checkbox(
-                    value: widget.isAgreed,
-                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    visualDensity: VisualDensity(horizontal: -4, vertical: -4),
-                    shape: CircleBorder(),
-                    activeColor: AppColors.primary,
-                    checkColor: AppColors.commonWhite,
-                    onChanged: (value) {
-                      FocusManager.instance.primaryFocus?.unfocus();
-                      setState(() {
-                        widget.isAgreed = value ?? false;
-                        widget.toggleAgreement(value);
-                        Get.back();
-                      });
-                    },
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            SizedBox(height: 5.w),
-          ],
+              SizedBox(height: 16.w),
+            ],
+          ),
         ),
       ),
     );

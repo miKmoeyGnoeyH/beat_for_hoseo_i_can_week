@@ -48,31 +48,19 @@ class BingoBoard extends StatelessWidget {
   // }
 
   Future<void> qrCheck(QuestInfoView quest) async {
-    return;
-  }
-
-  Future<void> walkCheck(QuestInfoView quest) async {
-    final String authorization = authenticationController.state!
-        .authorization;
+    final String authorization = authenticationController.state!.authorization;
 
     try {
       final response = await Get.showOverlay(
         asyncFunction: () async {
           await Future.delayed(Duration(milliseconds: 500));
           return await APIService().post(
-              endpoint: DotEnvService.instance.walkCheck,
-              header: {
-                "Content-Type": "application/json",
-                "authorization": authorization,
-              },
-              body: jsonEncode({
-                "questId": quest.questId,
-                "walkHistoryRequest": {
-                  "historyDateTime": DateTime.now().toIso8601String(),
-                  "walkCount": stepCountController.stepCount,
-                  "walkDataType": "QUEST"
-                }
-              })
+            endpoint: DotEnvService.instance.qrCheck,
+            header: {
+              "Content-Type": "application/json",
+              "authorization": authorization,
+            },
+            body: jsonEncode({"questId": quest.questId}),
           );
         },
         loadingWidget: BEATCircularProgressIndicator(),
@@ -86,9 +74,8 @@ class BingoBoard extends StatelessWidget {
           DialogService.to.addDialogEvent(
             AlertDialogEvent(
               title: LocalizationService.instance.homeQuestCheckSuccessTitle,
-              message: LocalizationService
-                  .instance
-                  .homeQuestCheckSuccessContent,
+              message:
+                  LocalizationService.instance.homeQuestCheckSuccessContent,
               onConfirm: () {
                 pointController.fetchPointBalance(authorization);
                 questListController.fetchQuestList(authorization);
@@ -101,8 +88,84 @@ class BingoBoard extends StatelessWidget {
         default:
           throw BEATException(
             title: LocalizationService.instance.errorQuestCheckFailedTitle,
-            message:
-            LocalizationService.instance.errorQuestCheckFailedContent,
+            message: LocalizationService.instance.errorQuestCheckFailedContent,
+          );
+      }
+    } on TimeoutException {
+      if (Get.isDialogOpen == true) {
+        Get.back();
+      }
+      ExceptionService.to.addException(BEATTimeoutException());
+    } on BEATTokenExpired {
+      await authenticationController.reissueToken();
+      await walkCheck(quest);
+    } on BEATException catch (e) {
+      if (Get.isDialogOpen == true) {
+        Get.back();
+      }
+      ExceptionService.to.addException(e);
+    } catch (e) {
+      if (Get.isDialogOpen == true) {
+        Get.back();
+      }
+      ExceptionService.to.addException(
+        BEATException(
+          title: LocalizationService.instance.errorQuestCheckFailedTitle,
+          message: LocalizationService.instance.errorUnknown,
+        ),
+      );
+    }
+  }
+
+  Future<void> walkCheck(QuestInfoView quest) async {
+    final String authorization = authenticationController.state!.authorization;
+
+    try {
+      final response = await Get.showOverlay(
+        asyncFunction: () async {
+          await Future.delayed(Duration(milliseconds: 500));
+          return await APIService().post(
+            endpoint: DotEnvService.instance.walkCheck,
+            header: {
+              "Content-Type": "application/json",
+              "authorization": authorization,
+            },
+            body: jsonEncode({
+              "questId": quest.questId,
+              "walkHistoryRequest": {
+                "historyDateTime": DateTime.now().toIso8601String(),
+                "walkCount": stepCountController.stepCount,
+                "walkDataType": "QUEST",
+              },
+            }),
+          );
+        },
+        loadingWidget: BEATCircularProgressIndicator(),
+        opacity: 0.3,
+      );
+
+      log(response.body);
+
+      switch (response.statusCode) {
+        case 200:
+          DialogService.to.addDialogEvent(
+            AlertDialogEvent(
+              title: LocalizationService.instance.homeQuestCheckSuccessTitle,
+              message:
+                  LocalizationService.instance.homeQuestCheckSuccessContent,
+              onConfirm: () {
+                pointController.fetchPointBalance(authorization);
+                questListController.fetchQuestList(authorization);
+              },
+            ),
+          );
+          break;
+        case 401:
+          throw BEATTokenExpired();
+        default:
+          throw BEATException(
+            title: LocalizationService.instance.errorQuestCheckFailedTitle,
+            message: LocalizationService.instance.errorQuestCheckFailedContent,
           );
       }
     } on TimeoutException {
@@ -152,16 +215,14 @@ class BingoBoard extends StatelessWidget {
               /// 퀘스트를 완료하지 않았고(보상을 수령하지 않았고)
               /// 각 퀘스트 타입 별 완료 조건을 충족했을 때만 보상 수령 활성화
               if (board[i]?.completed == false) {
-                if ((board[i]!.questInfoView!.questType ==
-                    QuestType.walk) &&
+                if ((board[i]!.questInfoView!.questType == QuestType.walk) &&
                     (stepCountController.stepCount >=
                         board[i]!.questInfoView!.required)) {
                   walkCheck(board[i]!.questInfoView!);
                   return;
                 }
 
-                if ((board[i]!.questInfoView!.questType ==
-                    QuestType.qr) &&
+                if ((board[i]!.questInfoView!.questType == QuestType.qr) &&
                     (board[i]!.questInfoView!.completeCount! >=
                         board[i]!.questInfoView!.required)) {
                   qrCheck(board[i]!.questInfoView!);
@@ -179,47 +240,44 @@ class BingoBoard extends StatelessWidget {
                     : AppColors.commonWhite,
                 border: board[i]!.completed!
                     ? null
-                    : (board[i]!.questInfoView!.questType ==
-                    QuestType.walk)
+                    : (board[i]!.questInfoView!.questType == QuestType.walk)
                     ? (stepCountController.stepCount >=
-                    board[i]!.questInfoView!.required)
-                    ? Border.all(width: 0.5.w, color: AppColors.primary)
-                    : null
+                              board[i]!.questInfoView!.required)
+                          ? Border.all(width: 0.5.w, color: AppColors.primary)
+                          : null
                     : (board[i]!.questInfoView!.completeCount! >=
-                    board[i]!.questInfoView!.required)
+                          board[i]!.questInfoView!.required)
                     ? Border.all(width: 0.5.w, color: AppColors.primary)
                     : null,
                 borderRadius: BorderRadius.circular(5),
               ),
               padding: EdgeInsets.all(10.w),
-              child:
-              board[i]!.questInfoView?.questType ==
-                  QuestType.walk
+              child: board[i]!.questInfoView?.questType == QuestType.walk
                   ? SvgPicture.asset(
-                BEATAssets.svg.footprint,
-                colorFilter: ColorFilter.mode(
-                  board[i]!.completed!
-                      ? AppColors.designWhite
-                      : AppColors.common300,
-                  BlendMode.srcIn,
-                ),
-              )
+                      BEATAssets.svg.footprint,
+                      colorFilter: ColorFilter.mode(
+                        board[i]!.completed!
+                            ? AppColors.designWhite
+                            : AppColors.common300,
+                        BlendMode.srcIn,
+                      ),
+                    )
                   : board[i]!.completed!
                   ? SvgPicture.asset(
-                BEATAssets.svg.hori,
-                fit: BoxFit.contain,
-                colorFilter: ColorFilter.mode(
-                  AppColors.designWhite,
-                  BlendMode.srcIn,
-                ),
-              )
+                      BEATAssets.svg.hori,
+                      fit: BoxFit.contain,
+                      colorFilter: ColorFilter.mode(
+                        AppColors.designWhite,
+                        BlendMode.srcIn,
+                      ),
+                    )
                   : Center(
-                child: AutoSizeText(
-                  "${board[i]!.questInfoView?.rewardPoint}P",
-                  style: AppTextTheme.headline3.common300,
-                  maxLines: 1,
-                ),
-              ),
+                      child: AutoSizeText(
+                        "${board[i]!.questInfoView?.rewardPoint}P",
+                        style: AppTextTheme.headline3.common300,
+                        maxLines: 1,
+                      ),
+                    ),
             ),
           );
         },

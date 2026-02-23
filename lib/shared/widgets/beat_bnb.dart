@@ -51,6 +51,7 @@ class BNBItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
         onTap: onTap,
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -90,36 +91,38 @@ class BEATBNB extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.commonWhite,
-        border: Border(
-          top: BorderSide(width: 0.5, color: AppColors.disabledColorLight),
+    return SafeArea(
+      child: Container(
+        decoration: BoxDecoration(
+          color: AppColors.commonWhite,
+          border: Border(
+            top: BorderSide(width: 0.5, color: AppColors.disabledColorLight),
+          ),
         ),
-      ),
-      child: Padding(
-        padding: EdgeInsets.only(
-          top: 12.w,
-          bottom: 16.w,
-          left: 16.w,
-          right: 16.w,
-        ),
-        child: Obx(
-          () => Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              for (int i = 0; i < factories.length; i++)
-                BNBItem(
-                  svgPictureAssetPath: factories[i].svgPictureAssetPath,
-                  labelText: factories[i].labelText,
-                  color: pageViewController.currentPage == i
-                      ? AppColors.primary
-                      : AppColors.designBlack,
-                  onTap: () {
-                    pageViewController.jumpToPage(i);
-                  },
-                ),
-            ],
+        child: Padding(
+          padding: EdgeInsets.only(
+            top: 12.w,
+            bottom: 16.w,
+            left: 16.w,
+            right: 16.w,
+          ),
+          child: Obx(
+            () => Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                for (int i = 0; i < factories.length; i++)
+                  BNBItem(
+                    svgPictureAssetPath: factories[i].svgPictureAssetPath,
+                    labelText: factories[i].labelText,
+                    color: pageViewController.currentPage == i
+                        ? AppColors.primary
+                        : AppColors.designBlack,
+                    onTap: () {
+                      pageViewController.jumpToPage(i);
+                    },
+                  ),
+              ],
+            ),
           ),
         ),
       ),

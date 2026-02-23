@@ -49,6 +49,8 @@ class DotEnvService {
 
   String get walkCheck => dotenv.env['WALK_CHECK'] ?? "";
 
+  String get qrCheck => dotenv.env['QR_CHECK'] ?? "";
+
   String get bingoCheck => dotenv.env['BINGO_CHECK'] ?? "";
 
   String get fetchQuestDetail => dotenv.env['QUEST_DETAIL'] ?? "";

@@ -215,6 +215,27 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                 padding: EdgeInsets.symmetric(horizontal: 16.w),
                 child: questListController.obx(
                   (state) {
+                    if (state.first.localData.board.isEmpty) {
+                      return SizedBox(
+                        height: 350.w,
+                        child: GestureDetector(
+                          onTap: () {
+                            initHome();
+                          },
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                LocalizationService.instance.homeNoData,
+                                style: AppTextTheme.subtitle1.common300,
+                              ),
+                              SizedBox(height: 10.w),
+                              Icon(Icons.refresh),
+                            ],
+                          ),
+                        ),
+                      );
+                    }
                     return Container(
                       clipBehavior: Clip.hardEdge,
                       decoration: BoxDecoration(
@@ -368,6 +389,10 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                           .questSummaryAppView
                           .lineSummaryList
                           .firstWhere((e) => e.completed == false),
+                      // index: state
+                      //     .first
+                      //     .questSummaryAppView
+                      //     .lineSummaryList.first,
                       completedCount: state.first.localData.completedLineCount,
                     );
                   },
@@ -385,9 +410,16 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                           completedCount: 0,
                         )
                       : BingoStep(
-                          questId:
-                              questListController.state!.first.questCommonSummaryDto.questId,
-                          completedLines: questListController.state!.first.localData.completedLines,
+                          questId: questListController
+                              .state!
+                              .first
+                              .questCommonSummaryDto
+                              .questId,
+                          completedLines: questListController
+                              .state!
+                              .first
+                              .localData
+                              .completedLines,
                           lineSummaryModel: questListController
                               .state
                               .first
