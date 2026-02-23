@@ -12,6 +12,8 @@ abstract class BEATRoute {
   static const String withdrawal = "/withdrawal";
   static const String leaderboard = "/leaderboard";
   static const String settings = "/settings";
+  static const String ossLicenses = "/oss_licenses";
+  static const String ossLicenseDetail = "/oss_license_detail";
   static const String pointHistory = "/point_history";
   static const String noticeList = "/notice_list";
   static const String noticeDetail = "/notice_detail";

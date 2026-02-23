@@ -2,6 +2,7 @@ export 'change_password/index.dart';
 export 'leaderboard/index.dart';
 export 'main_page_view/index.dart';
 export 'notice/notice_card.dart';
+export 'notice_detail/index.dart';
 export 'point/index.dart';
 export 'profile/index.dart';
 export 'qr/qr_overlay.dart';

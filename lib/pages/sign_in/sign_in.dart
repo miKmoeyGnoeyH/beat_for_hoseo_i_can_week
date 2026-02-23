@@ -2,7 +2,6 @@ import 'dart:developer';
 
 import 'package:beat/app/route/app_pages.dart';
 import 'package:beat/features/authentication/authentication_controller.dart';
-import 'package:beat/features/step_count/step_count_controller.dart';
 import 'package:beat/shared/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

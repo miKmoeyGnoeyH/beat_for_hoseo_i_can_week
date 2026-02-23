@@ -4,10 +4,13 @@ import 'package:beat/features/notice/index.dart';
 import 'package:beat/widgets/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../shared/index.dart';
+
+part "notice_detail.dart";
 
 class NoticeList extends StatefulWidget {
   const NoticeList({super.key});
@@ -61,6 +64,11 @@ class _NoticeListState extends State<NoticeList> {
     }
   }
 
+  void onNoticeTap(NoticeModel notice) {
+    // Get.toNamed(BEATRoute.noticeDetail, arguments: notice);
+    Get.to(() => NoticeDetail(notice));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -78,6 +86,7 @@ class _NoticeListState extends State<NoticeList> {
           },
           body: RefreshIndicator(
             color: AppColors.primary,
+            backgroundColor: AppColors.commonWhite,
             onRefresh: () {
               return onRefresh();
             },
@@ -100,7 +109,13 @@ class _NoticeListState extends State<NoticeList> {
                       padding: EdgeInsetsGeometry.all(16.w),
                       itemBuilder: (context, index) {
                         final NoticeModel item = state![index];
-                        return NoticeCard(item);
+                        /// NoticeCard에 라우팅 로직을 넣는 것이 훨씬 깔끔하지만
+                        /// FSD 아키텍처 구조 상 NoticeList, NoticeDetail은 Page, NoticeCard는 Widget이기 때문에
+                        /// NoticeCard가 NoticeDetail을 몰라야 한다.
+                        return GestureDetector(
+                          onTap: () => onNoticeTap(item),
+                          child: NoticeCard(item),
+                        );
                       },
                       separatorBuilder: (context, index) =>
                           SizedBox(height: 10.w),
@@ -149,7 +164,7 @@ class _NoticeListState extends State<NoticeList> {
                       ),
                     ),
                   );
-                }
+                },
               ),
             ),
           ),

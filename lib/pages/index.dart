@@ -5,6 +5,7 @@ export 'leaderboard/index.dart';
 export 'main_page_view/index.dart';
 export 'point_history/index.dart';
 export 'notice_list/index.dart';
+export 'oss_licenses/index.dart';
 export 'profile/index.dart';
 export 'qr/index.dart';
 export 'quest_detail/index.dart';

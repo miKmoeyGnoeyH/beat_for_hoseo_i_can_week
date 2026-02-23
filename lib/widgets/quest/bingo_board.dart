@@ -243,11 +243,11 @@ class BingoBoard extends StatelessWidget {
                     : (board[i]!.questInfoView!.questType == QuestType.walk)
                     ? (stepCountController.stepCount >=
                               board[i]!.questInfoView!.required)
-                          ? Border.all(width: 0.5.w, color: AppColors.primary)
+                          ? Border.all(width: 1.w, color: AppColors.primary)
                           : null
                     : (board[i]!.questInfoView!.completeCount! >=
                           board[i]!.questInfoView!.required)
-                    ? Border.all(width: 0.5.w, color: AppColors.primary)
+                    ? Border.all(width: 1.w, color: AppColors.primary)
                     : null,
                 borderRadius: BorderRadius.circular(5),
               ),

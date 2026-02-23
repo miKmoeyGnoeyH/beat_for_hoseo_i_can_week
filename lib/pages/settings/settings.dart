@@ -1,6 +1,8 @@
+import 'package:beat/app/route/app_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../shared/index.dart';
@@ -9,6 +11,7 @@ class Settings extends StatelessWidget {
   const Settings({super.key});
 
   void onOssLicencesTap() {
+    Get.toNamed(BEATRoute.ossLicenses);
   }
 
   Future<void> onPrivacyPolicyTap() async {
@@ -68,7 +71,7 @@ class Settings extends StatelessWidget {
                           ),
                           SizedBox(height: rowSpacing),
                           GestureDetector(
-                            onTap: () => showLicensePage(context: context),
+                            onTap: onOssLicencesTap,
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               crossAxisAlignment: CrossAxisAlignment.baseline,

@@ -25,6 +25,7 @@ class PointHistoryCard extends StatelessWidget {
                 pointHistoryModel.historyName,
                 style: AppTextTheme.subtitle1,
                 overflow: TextOverflow.ellipsis,
+                maxLines: 1,
               ),
               SizedBox(height: 10.w),
               Text(
