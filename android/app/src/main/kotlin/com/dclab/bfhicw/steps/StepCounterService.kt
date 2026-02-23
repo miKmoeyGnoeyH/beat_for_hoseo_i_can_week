@@ -36,6 +36,9 @@ const val KEY_PENDING_CAMPUS_STATE = "pendingCampusState" // "IN" or "OUT"
 const val PENDING_IN = "IN"
 const val PENDING_OUT = "OUT"
 
+const val KEY_PREV_STEPS_AFTER_BOOT = "prevStepsAfterBoot"
+
+
 class StepCounterService : Service(), SensorEventListener {
     private lateinit var sensorManager: SensorManager
     private var stepSensor: Sensor? = null

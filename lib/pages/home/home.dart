@@ -389,10 +389,8 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                           .questSummaryAppView
                           .lineSummaryList
                           .firstWhere((e) => e.completed == false),
-                      // index: state
-                      //     .first
-                      //     .questSummaryAppView
-                      //     .lineSummaryList.first,
+                      index: state.first.questSummaryAppView.lineSummaryList
+                          .indexWhere((e) => e.completed == false),
                       completedCount: state.first.localData.completedLineCount,
                     );
                   },
@@ -400,6 +398,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                     questId: -1,
                     completedLines: [],
                     lineSummaryModel: LineSummaryModel.empty(),
+                    index: 0,
                     completedCount: 0,
                   ),
                   onLoading: questListController.state == null
@@ -407,6 +406,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                           questId: -1,
                           completedLines: [],
                           lineSummaryModel: LineSummaryModel.empty(),
+                          index: 0,
                           completedCount: 0,
                         )
                       : BingoStep(
@@ -426,6 +426,12 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                               .questSummaryAppView
                               .lineSummaryList
                               .firstWhere((e) => e.completed == false),
+                          index: questListController
+                              .state
+                              .first
+                              .questSummaryAppView
+                              .lineSummaryList
+                              .indexWhere((e) => e.completed == false),
                           completedCount: questListController
                               .state
                               .first

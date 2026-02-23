@@ -1,5 +1,6 @@
 import 'package:beat/shared/regexp/password.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../shared/index.dart';
@@ -30,6 +31,7 @@ class _PWSectionState extends State<PWSection> {
           obscureText: true,
           labelText: LocalizationService.instance.signUpPassword,
           hintText: LocalizationService.instance.signUpPasswordHint,
+          inputFormatters: [FilteringTextInputFormatter.allow(passwordAllowedChars)],
           validator: (value) {
             if (value == null || value.isEmpty) {
               return LocalizationService.instance.errorPasswordIsEmpty;
@@ -48,6 +50,7 @@ class _PWSectionState extends State<PWSection> {
           obscureText: true,
           labelText: LocalizationService.instance.signUpValidatePassword,
           hintText: LocalizationService.instance.signUpValidatePasswordHint,
+          inputFormatters: [FilteringTextInputFormatter.allow(passwordAllowedChars)],
           validator: (value) {
             if (value == null || value.isEmpty) {
               return LocalizationService.instance.errorValidatePasswordIsEmpty;

@@ -5,9 +5,12 @@ import 'package:beat/features/authentication/authentication_controller.dart';
 import 'package:beat/features/step_count/step_count_controller.dart';
 import 'package:beat/shared/index.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+
+import '../../shared/regexp/password.dart';
 
 class SignIn extends StatefulWidget {
   const SignIn({super.key});
@@ -64,15 +67,17 @@ class _SignInState extends State<SignIn> {
                         hintText: LocalizationService
                             .instance
                             .signInHoseoUnivEmailIDHint,
+                        textInputType: TextInputType.number,
+                        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                       ),
                       SizedBox(height: 24.w),
                       BEATTextFormField(
                         labelText: LocalizationService.instance.signInPassword,
                         controller: passwordController,
-                        textInputType: TextInputType.emailAddress,
                         hintText:
                             LocalizationService.instance.signInPasswordHint,
                         obscureText: obscurePasswordText,
+                        inputFormatters: [FilteringTextInputFormatter.allow(passwordAllowedChars)],
                         suffixIcon: GestureDetector(
                           onTap: () {
                             setState(() {

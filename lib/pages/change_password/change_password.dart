@@ -88,8 +88,8 @@ class _ChangePasswordState extends State<ChangePassword> {
               title: LocalizationService.instance.changePasswordComplete,
               message:
                   LocalizationService.instance.changePasswordCompleteContent,
-              onConfirm: () {
-                StepCountController.to.stopService();
+              onConfirm: () async {
+                await StepCountController.to.stopService();
                 AuthenticationController.to.SignOut();
                 Get.offAllNamed(BEATRoute.signIn);
               },

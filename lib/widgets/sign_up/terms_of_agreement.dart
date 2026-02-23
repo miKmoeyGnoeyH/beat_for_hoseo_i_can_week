@@ -66,6 +66,10 @@ class _TermsOfAgreementState extends State<TermsOfAgreement> {
             materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
             visualDensity: VisualDensity(horizontal: -4, vertical: -4),
             shape: CircleBorder(),
+            side: BorderSide(
+              color: AppColors.common200,
+              width: 3.w
+            ),
             activeColor: AppColors.primary,
             checkColor: AppColors.commonWhite,
             onChanged: (value) => toggleAgreement(value),
@@ -162,7 +166,9 @@ class _TOABottomSheetState extends State<TOABottomSheet> {
                     ),
                     SizedBox(height: 5.w),
                     Text(
-                      LocalizationService.instance.signUpToaRightToRefusalContent,
+                      LocalizationService
+                          .instance
+                          .signUpToaRightToRefusalContent,
                       style: AppTextTheme.body2,
                     ),
                   ],
@@ -192,8 +198,15 @@ class _TOABottomSheetState extends State<TOABottomSheet> {
                     Checkbox(
                       value: widget.isAgreed,
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      visualDensity: VisualDensity(horizontal: -4, vertical: -4),
+                      visualDensity: VisualDensity(
+                        horizontal: -4,
+                        vertical: -4,
+                      ),
                       shape: CircleBorder(),
+                      side: BorderSide(
+                        color: AppColors.common200,
+                        width: 3.w,
+                      ),
                       activeColor: AppColors.primary,
                       checkColor: AppColors.commonWhite,
                       onChanged: (value) {
@@ -208,7 +221,6 @@ class _TOABottomSheetState extends State<TOABottomSheet> {
                   ],
                 ),
               ),
-              SizedBox(height: 16.w),
             ],
           ),
         ),

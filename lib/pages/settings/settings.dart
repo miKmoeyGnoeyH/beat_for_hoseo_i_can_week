@@ -58,11 +58,11 @@ class Settings extends StatelessWidget {
                             children: [
                               Text(
                                 LocalizationService.instance.settingsVersion,
-                                style: AppTextTheme.subtitle3,
+                                style: AppTextTheme.body1,
                               ),
                               Text(
                                 "${PackageInfoService.instance.version}(${PackageInfoService.instance.buildNumber})",
-                                style: AppTextTheme.subtitle3,
+                                style: AppTextTheme.body1,
                               ),
                             ],
                           ),
@@ -78,7 +78,7 @@ class Settings extends StatelessWidget {
                                   LocalizationService
                                       .instance
                                       .settingsOssLicenses,
-                                  style: AppTextTheme.subtitle3,
+                                  style: AppTextTheme.body1,
                                 ),
                                 SvgPicture.asset(
                                   BEATAssets.svg.rightArrow,
@@ -103,7 +103,7 @@ class Settings extends StatelessWidget {
                                   LocalizationService
                                       .instance
                                       .settingsPrivacyPolicy,
-                                  style: AppTextTheme.subtitle3,
+                                  style: AppTextTheme.body1,
                                 ),
                                 SvgPicture.asset(
                                   BEATAssets.svg.rightArrow,
@@ -146,13 +146,13 @@ class Settings extends StatelessWidget {
                             children: [
                               Text(
                                 LocalizationService.instance.settingsEmail,
-                                style: AppTextTheme.subtitle3,
+                                style: AppTextTheme.body1,
                               ),
                               Text(
                                 LocalizationService
                                     .instance
                                     .settingsEmailAddress,
-                                style: AppTextTheme.subtitle3,
+                                style: AppTextTheme.body1,
                               ),
                             ],
                           ),
@@ -164,13 +164,13 @@ class Settings extends StatelessWidget {
                             children: [
                               Text(
                                 LocalizationService.instance.settingsPhone,
-                                style: AppTextTheme.subtitle3,
+                                style: AppTextTheme.body1,
                               ),
                               Text(
                                 LocalizationService
                                     .instance
                                     .settingsPhoneNumber,
-                                style: AppTextTheme.subtitle3,
+                                style: AppTextTheme.body1,
                               ),
                             ],
                           ),

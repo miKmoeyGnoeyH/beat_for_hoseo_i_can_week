@@ -1,5 +1,6 @@
 import 'package:beat/features/authentication/authentication_controller.dart';
 import 'package:beat/features/profile/index.dart';
+import 'package:beat/features/step_count/index.dart';
 import 'package:beat/shared/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -17,7 +18,8 @@ class AccountManagement extends StatelessWidget {
     Get.toNamed(BEATRoute.changePassword);
   }
 
-  void onSignOutTap() {
+  void onSignOutTap() async {
+    await StepCountController.to.stopService();
     AuthenticationController.to.SignOut();
     Get.offAndToNamed(BEATRoute.signIn);
   }

@@ -33,7 +33,6 @@ class _SignSectionState extends State<SignSection> {
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
-      isDismissible: false,
       enableDrag: false,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
@@ -96,7 +95,6 @@ class _SignSectionState extends State<SignSection> {
                       Get.back();
                     },
                   ),
-                  SizedBox(height: 16.w),
                 ],
               ),
             ),
