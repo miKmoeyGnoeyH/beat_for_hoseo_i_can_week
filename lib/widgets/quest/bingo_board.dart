@@ -261,68 +261,97 @@ class BingoBoard extends StatelessWidget {
               questDetailController.questInfoView = board[i]!.questInfoView!;
               Get.toNamed(BEATRoute.questDetail);
             },
-            child: Container(
-              decoration: BoxDecoration(
-                color: board[i]!.questInfoView!.questType == QuestType.walk
-                    ? board[i]!.rewardGiven
-                          ? AppColors.primary
-                          : AppColors.commonWhite
-                    : board[i]!.rewardGiven == true
-                    ? AppColors.primary
-                    : AppColors.commonWhite,
-                border: board[i]!.rewardGiven == true
-                    ? null
-                    : (board[i]!.questInfoView!.questType == QuestType.walk)
-                    ? (stepCountController.stepCount >=
-                              board[i]!.questInfoView!.required)
-                          ? Border.all(
-                              width: borderWidth,
-                              color: AppColors.primary,
-                            )
-                          : null
-                    : board[i]!.memberCompleted == true
-                    ? Border.all(width: borderWidth, color: AppColors.primary)
-                    : board[i]!.teamCompleted == true
-                    ? Border.all(width: borderWidth, color: AppColors.common300)
-                    : null,
-                borderRadius: i == 0
-                    ? topLeftBorderRadius
-                    : i == (countPerAxis - 1)
-                    ? topRightBorderRadius
-                    : i == (countPerAxis * (countPerAxis - 1))
-                    ? bottomLeftBorderRadius
-                    : i == ((countPerAxis * countPerAxis) - 1)
-                    ? bottomRightBorderRadius
-                    : BorderRadius.circular(5),
-              ),
-              padding: EdgeInsets.all(10.w),
-              child: board[i]!.questInfoView?.questType == QuestType.walk
-                  ? SvgPicture.asset(
-                      BEATAssets.svg.footprint,
-                      colorFilter: ColorFilter.mode(
-                        board[i]!.memberCompleted
-                            ? AppColors.designWhite
-                            : AppColors.common300,
-                        BlendMode.srcIn,
-                      ),
-                    )
-                  : board[i]!.rewardGiven == true
-                  ? SvgPicture.asset(
-                      BEATAssets.svg.hori,
-                      fit: BoxFit.contain,
-                      colorFilter: ColorFilter.mode(
-                        AppColors.designWhite,
-                        BlendMode.srcIn,
-                      ),
-                    )
-                  : Center(
-                      child: AutoSizeText(
-                        "${board[i]!.questInfoView?.rewardPoint}P",
-                        // "보상\n받기",
-                        style: AppTextTheme.headline3.common300,
-                        maxLines: 2,
+            child: Stack(
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    color: board[i]!.questInfoView!.questType == QuestType.walk
+                        ? board[i]!.rewardGiven
+                              ? AppColors.primary
+                              : AppColors.commonWhite
+                        : board[i]!.rewardGiven == true
+                        ? AppColors.primary
+                        : AppColors.commonWhite,
+                    // border: board[i]!.rewardGiven == true
+                    //     ? null
+                    //     : (board[i]!.questInfoView!.questType == QuestType.walk)
+                    //     ? (stepCountController.stepCount >=
+                    //               board[i]!.questInfoView!.required)
+                    //           ? Border.all(
+                    //               width: borderWidth,
+                    //               color: AppColors.primary,
+                    //             )
+                    //           : null
+                    //     : board[i]!.memberCompleted == true
+                    //     ? Border.all(
+                    //         width: borderWidth,
+                    //         color: AppColors.primary,
+                    //       )
+                    //     : board[i]!.teamCompleted == true
+                    //     ? Border.all(
+                    //         width: borderWidth,
+                    //         color: AppColors.common300,
+                    //       )
+                    //     : null,
+                    // borderRadius: i == 0
+                    //     ? topLeftBorderRadius
+                    //     : i == (countPerAxis - 1)
+                    //     ? topRightBorderRadius
+                    //     : i == (countPerAxis * (countPerAxis - 1))
+                    //     ? bottomLeftBorderRadius
+                    //     : i == ((countPerAxis * countPerAxis) - 1)
+                    //     ? bottomRightBorderRadius
+                    //     : BorderRadius.circular(5),
+                    borderRadius: BorderRadiusGeometry.circular(5),
+                  ),
+                  padding: EdgeInsets.all(10.w),
+                  child: board[i]!.questInfoView?.questType == QuestType.walk
+                      ? SvgPicture.asset(
+                          BEATAssets.svg.footprint,
+                          colorFilter: ColorFilter.mode(
+                            board[i]!.memberCompleted
+                                ? AppColors.designWhite
+                                : AppColors.common300,
+                            BlendMode.srcIn,
+                          ),
+                        )
+                      : board[i]!.rewardGiven == true
+                      ? SvgPicture.asset(
+                          BEATAssets.svg.hori,
+                          fit: BoxFit.contain,
+                          colorFilter: ColorFilter.mode(
+                            AppColors.designWhite,
+                            BlendMode.srcIn,
+                          ),
+                        )
+                      : Center(
+                          child: AutoSizeText(
+                            "${board[i]!.questInfoView?.rewardPoint}P",
+                            // "보상\n받기",
+                            style: AppTextTheme.headline3.common300,
+                            maxLines: 2,
+                          ),
+                        ),
+                ),
+                if (!board[i]!.rewardGiven)
+                  if (board[i]!.memberCompleted)
+                    Material(
+                      color: Colors.transparent,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.black.withValues(alpha: 0.8),
+                          borderRadius: BorderRadiusGeometry.circular(5),
+                        ),
+                        child: AutoSizeText(
+                          board[i]!.teamCompleted == true
+                              ? LocalizationService.instance.homeClaimReward
+                              : LocalizationService.instance.homeInProgress,
+                          style: AppTextTheme.headline3.designWhite,
+                          maxLines: 2,
+                        ),
                       ),
                     ),
+              ],
             ),
           );
         },

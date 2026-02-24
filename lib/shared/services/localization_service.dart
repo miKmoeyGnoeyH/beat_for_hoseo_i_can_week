@@ -251,6 +251,8 @@ class LocalizationService {
 
   String get homeReward => "home_page".tr(gender: "reward");
 
+  String get homeInProgress => "home_page".tr(gender: "in_progress");
+
   String get homeClaimReward => "home_page".tr(gender: "claim_reward");
 
   String get homeArchivementRate => "home_page".tr(gender: "archivement_rate");

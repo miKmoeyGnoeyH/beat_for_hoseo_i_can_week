@@ -91,6 +91,19 @@ final class CampusLocationManager: NSObject, CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let loc = locations.last else { return }
+        
+        // ✅ accuracy/age filter (중요)
+        let age = -loc.timestamp.timeIntervalSinceNow
+        guard age < 5 else {
+            print("LOC ignored (too old): age=\(age)")
+            return
+        }
+        
+        guard loc.horizontalAccuracy > 0, loc.horizontalAccuracy < 50 else {
+            print("LOC ignored (low accuracy): acc=\(loc.horizontalAccuracy)")
+            return
+        }
+        
         let inside = isInsideCampus(lat: loc.coordinate.latitude, lng: loc.coordinate.longitude)
         
         print("LOC lat=\(loc.coordinate.latitude), lng=\(loc.coordinate.longitude)")
@@ -105,6 +118,13 @@ final class CampusLocationManager: NSObject, CLLocationManagerDelegate {
             pendingLocationCompletion = nil
             locationTimeoutTimer?.invalidate()
             locationTimeoutTimer = nil
+            
+            // ✅ one-shot이 바꿔둔 값 원복
+            if let acc = savedDesiredAccuracy { self.manager.desiredAccuracy = acc }
+            if let df = savedDistanceFilter { self.manager.distanceFilter = df }
+            savedDesiredAccuracy = nil
+            savedDistanceFilter = nil
+            
             cb(inside, nil)
             return
         }
@@ -162,6 +182,13 @@ final class CampusLocationManager: NSObject, CLLocationManagerDelegate {
             }
             
             self.pendingLocationCompletion = completion
+            
+            // ✅ one-shot 정확도 temporarily up
+            self.savedDesiredAccuracy = self.manager.desiredAccuracy
+            self.savedDistanceFilter = self.manager.distanceFilter
+            
+            self.manager.desiredAccuracy = kCLLocationAccuracyBest
+            self.manager.distanceFilter = kCLDistanceFilterNone
             
             self.locationTimeoutTimer?.invalidate()
             self.locationTimeoutTimer = Timer.scheduledTimer(withTimeInterval: timeout, repeats: false) { [weak self] _ in
@@ -232,25 +259,25 @@ final class CampusLocationManager: NSObject, CLLocationManagerDelegate {
     private func isInsidePolygon(lat: Double, lng: Double, polygon: [(Double, Double)]) -> Bool {
         let x = lng
         let y = lat
-
+        
         var inside = false
         var j = polygon.count - 1
-
+        
         for i in 0..<polygon.count {
             // polygon은 (lat, lng)로 저장되어 있으니
             let yi = polygon[i].0   // lat
             let xi = polygon[i].1   // lng
             let yj = polygon[j].0
             let xj = polygon[j].1
-
+            
             // y가 edge를 가로지르는지 + 교차점 x가 현재 x보다 큰지
             let intersect = ((yi > y) != (yj > y)) &&
-                (x < (xj - xi) * (y - yi) / (yj - yi) + xi)
-
+            (x < (xj - xi) * (y - yi) / (yj - yi) + xi)
+            
             if intersect { inside.toggle() }
             j = i
         }
-
+        
         return inside
     }
     

@@ -125,6 +125,7 @@
     "bingo_complete_nth_step": "빙고 완성 {}단계",
     "line_number": "{}줄",
     "reward": "보상",
+    "in_progress": "진행중",
     "claim_reward": "보상 받기",
     "archivement_rate": "목표 달성률",
     "number": "{}개",

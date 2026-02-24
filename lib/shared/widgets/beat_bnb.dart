@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:beat/shared/controller/index.dart';
 import 'package:beat/shared/services/index.dart';
 import 'package:beat/shared/theme/index.dart';
@@ -93,7 +95,7 @@ class BEATBNB extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      // bottom: false,
+      bottom: Platform.isIOS ? false : true,
       child: Container(
         decoration: BoxDecoration(
           color: AppColors.commonWhite,
@@ -104,7 +106,7 @@ class BEATBNB extends StatelessWidget {
         child: Padding(
           padding: EdgeInsets.only(
             top: 12.w,
-            bottom: 16.w,
+            bottom: 20.w,
             left: 16.w,
             right: 16.w,
           ),

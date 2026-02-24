@@ -52,7 +52,6 @@ class _MainPageViewState extends State<MainPageView>
       backgroundColor: AppColors.designWhite,
       body: SafeArea(
         top: false,
-        bottom: false,
         child: NestedScrollView(
           physics: NeverScrollableScrollPhysics(),
           headerSliverBuilder: (context, innerBoxIsScrolled) {
