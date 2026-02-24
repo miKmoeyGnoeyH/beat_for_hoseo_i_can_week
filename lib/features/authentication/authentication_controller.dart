@@ -84,10 +84,12 @@ class AuthenticationController extends GetxController
 
   Future<void> signOut() async {
     await PrefsService.instance.clearUser();
-    await QuestListController.to.clearQuestList();
-    await QuestDetailController.to.clearQuestDetail();
-    await PointController.to.clearPointBalance();
-    await ProfileController.to.clearData();
+
+    if (Get.isRegistered<QuestListController>()) await QuestListController.to.clearQuestList();
+    if (Get.isRegistered<QuestDetailController>()) await QuestDetailController.to.clearQuestDetail();
+    if (Get.isRegistered<PointController>()) await PointController.to.clearPointBalance();
+    if (Get.isRegistered<ProfileController>()) await ProfileController.to.clearData();
+
     change(null, status: RxStatus.empty());
   }
 

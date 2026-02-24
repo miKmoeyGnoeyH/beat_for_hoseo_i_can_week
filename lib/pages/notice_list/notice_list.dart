@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:beat/entities/notice/index.dart';
 import 'package:beat/features/authentication/index.dart';
 import 'package:beat/features/notice/index.dart';
@@ -75,6 +77,7 @@ class _NoticeListState extends State<NoticeList> {
       backgroundColor: AppColors.designWhite,
       body: SafeArea(
         top: false,
+        bottom: Platform.isIOS ? false : true,
         child: NestedScrollView(
           physics: NeverScrollableScrollPhysics(),
           headerSliverBuilder: (context, innerBoxIsScrolled) {
