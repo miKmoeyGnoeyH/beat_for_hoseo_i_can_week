@@ -335,19 +335,24 @@ class BingoBoard extends StatelessWidget {
                 ),
                 if (!board[i]!.rewardGiven)
                   if (board[i]!.memberCompleted)
-                    Material(
-                      color: Colors.transparent,
+                    Positioned.fill(
                       child: Container(
                         decoration: BoxDecoration(
-                          color: Colors.black.withValues(alpha: 0.8),
+                          color: Colors.black.withValues(alpha: 0.7),
                           borderRadius: BorderRadiusGeometry.circular(5),
                         ),
-                        child: AutoSizeText(
-                          board[i]!.teamCompleted == true
-                              ? LocalizationService.instance.homeClaimReward
-                              : LocalizationService.instance.homeInProgress,
-                          style: AppTextTheme.headline3.designWhite,
-                          maxLines: 2,
+                        child: Padding(
+                          padding: EdgeInsets.all(10.w),
+                          child: Center(
+                            child: AutoSizeText(
+                              textAlign: TextAlign.center,
+                              board[i]!.teamCompleted == true
+                                  ? LocalizationService.instance.homeClaimReward
+                                  : LocalizationService.instance.homeInProgress,
+                              style: AppTextTheme.subtitle3.designWhite,
+                              maxLines: 2,
+                            ),
+                          ),
                         ),
                       ),
                     ),

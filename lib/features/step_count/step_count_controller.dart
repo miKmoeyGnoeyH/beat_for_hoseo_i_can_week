@@ -165,26 +165,7 @@ class StepCountController extends GetxController {
   Future<void> startService() async {
     if (Platform.isAndroid) {
       await _androidMethodChannel.invokeMethod("startService");
-      await _refreshOnce();
-
-      _registerCampusHandler();
-
-      try {
-        final isInsideCampus = await _campusChannel.invokeMethod(
-          "getLastInsideCached",
-        );
-        if (isInsideCampus != null) _isInCampus = isInsideCampus;
-      } on PlatformException catch (e) {
-        log(
-          "step_count_controller: startService: Failed to get initial campus location: ${e.message}",
-        );
-        _isInCampus = false;
-      } finally {
-        log("step_count_controller: startService: isInCampus: $_isInCampus");
-        PrefsService.instance.setIsInCampus(isInCampus);
-      }
-
-      _listenEvents();
+      await _ensureAndroidServiceBridgeConnected();
     } else if (Platform.isIOS) {
       if (_isiOSServiceRunning) return;
       _isiOSServiceRunning = true;
@@ -398,22 +379,7 @@ class StepCountController extends GetxController {
   }
 
   Future<void> onStateChangedBG2FGAndroid() async {
-    await _refreshOnce();
-
-    try {
-      final isInsideCampus = await _campusChannel.invokeMethod(
-        "getLastInsideCached",
-      );
-      if (isInsideCampus != null) _isInCampus = isInsideCampus;
-    } on PlatformException catch (e) {
-      log(
-        "step_count_controller: startService: Failed to get initial campus location: ${e.message}",
-      );
-      _isInCampus = false;
-    } finally {
-      log("step_count_controller: startService: isInCampus: $_isInCampus");
-      PrefsService.instance.setIsInCampus(isInCampus);
-    }
+    await _ensureAndroidServiceBridgeConnected();
   }
 
   /// iOS에서, 앱이 백그라운드에서 포어그라운드로 전환되었을 때 실행되는 함수
@@ -592,7 +558,11 @@ class StepCountController extends GetxController {
         "StepCountController: checkIsServiceRunningAndStartIfNot: isRunning: $isRunning",
       );
 
-      if (!isRunning) await startService();
+      if (!isRunning) {
+        await startService();
+      } else {
+        await _ensureAndroidServiceBridgeConnected();
+      }
       return;
     } else if (Platform.isIOS) {
       if (!_isiOSServiceRunning) {
@@ -603,5 +573,28 @@ class StepCountController extends GetxController {
     }
 
     onStateChangedBG2FG();
+  }
+
+  Future<void> _ensureAndroidServiceBridgeConnected() async {
+    if (!Platform.isAndroid) return;
+
+    await _refreshOnce();
+    _registerCampusHandler();
+    _listenEvents();
+
+    try {
+      final isInsideCampus = await _campusChannel.invokeMethod(
+        "getLastInsideCached",
+      );
+      if (isInsideCampus != null) _isInCampus = isInsideCampus;
+    } on PlatformException catch (e) {
+      log(
+        "step_count_controller: startService: Failed to get initial campus location: ${e.message}",
+      );
+      _isInCampus = false;
+    } finally {
+      log("step_count_controller: startService: isInCampus: $_isInCampus");
+      PrefsService.instance.setIsInCampus(isInCampus);
+    }
   }
 }
