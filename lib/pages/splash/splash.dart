@@ -45,7 +45,7 @@ class _SplashState extends State<Splash> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => bootstrap());
+    WidgetsBinding.instance.addPostFrameCallback((_) async => await bootstrap());
   }
 
   Future<void> bootstrap() async {
@@ -59,18 +59,37 @@ class _SplashState extends State<Splash> {
 
     if (savedUser == null) {
       Get.offAllNamed(BEATRoute.signIn);
-    } else {
-      final String authorization = savedUser['authorization'] ?? '';
+      return;
+    }
 
-      try {
-        await PointController.to.fetchPointBalance(authorization);
-      } catch (e) {
-        PrefsService.instance.clearUser();
-        Get.offAllNamed(BEATRoute.signIn);
-      }
+    final AuthenticationController authenticationController =
+        AuthenticationController.to;
+    authenticationController.signInFromJson(savedUser);
 
-      AuthenticationController.to.signInFromJson(savedUser);
+    try {
+      /// 토큰 만료 여부를 확인하기 위해 아무 요청을 하나 보냄
+      await PointController.to.fetchPointBalance(
+        authenticationController.state!.authorization,
+      );
       Get.offAllNamed(BEATRoute.mainPageView);
+      return;
+    } on BEATTokenExpired {
+      try {
+        await authenticationController.reissueToken();
+        await PointController.to.fetchPointBalance(
+          authenticationController.state!.authorization,
+        );
+        Get.offAllNamed(BEATRoute.mainPageView);
+        return;
+      } catch (_) {
+        await authenticationController.signOut();
+        Get.offAllNamed(BEATRoute.signIn);
+        return;
+      }
+    } catch (_) {
+      await authenticationController.signOut();
+      Get.offAllNamed(BEATRoute.signIn);
+      return;
     }
   }
 }

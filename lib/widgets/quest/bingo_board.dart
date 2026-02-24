@@ -333,29 +333,68 @@ class BingoBoard extends StatelessWidget {
                           ),
                         ),
                 ),
-                if (!board[i]!.rewardGiven)
-                  if (board[i]!.memberCompleted)
-                    Positioned.fill(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.black.withValues(alpha: 0.7),
-                          borderRadius: BorderRadiusGeometry.circular(5),
+                if (board[i]!.questInfoView?.questType == QuestType.walk)
+                  if (!board[i]!.rewardGiven)
+                    Obx(() {
+                      if (stepCountController.stepCount <= 0) {
+                        return const SizedBox.shrink();
+                      }
+
+                      return Positioned.fill(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.black.withValues(alpha: 0.7),
+                            borderRadius: BorderRadiusGeometry.circular(5),
+                          ),
+                          child: Padding(
+                            padding: EdgeInsets.all(10.w),
+                            child: Center(
+                              child: AutoSizeText(
+                                textAlign: TextAlign.center,
+                                (stepCountController.stepCount >=
+                                        board[i]!.questInfoView!.required)
+                                    ? LocalizationService
+                                          .instance
+                                          .homeClaimReward
+                                    : LocalizationService
+                                          .instance
+                                          .homeInProgress,
+                                style: AppTextTheme.subtitle3.designWhite,
+                                maxLines: 2,
+                              ),
+                            ),
+                          ),
                         ),
-                        child: Padding(
-                          padding: EdgeInsets.all(10.w),
-                          child: Center(
-                            child: AutoSizeText(
-                              textAlign: TextAlign.center,
-                              board[i]!.teamCompleted == true
-                                  ? LocalizationService.instance.homeClaimReward
-                                  : LocalizationService.instance.homeInProgress,
-                              style: AppTextTheme.subtitle3.designWhite,
-                              maxLines: 2,
+                      );
+                    }),
+                if (board[i]!.questInfoView?.questType == QuestType.qr)
+                  if (!board[i]!.rewardGiven)
+                    if (board[i]!.memberCompleted)
+                      Positioned.fill(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.black.withValues(alpha: 0.7),
+                            borderRadius: BorderRadiusGeometry.circular(5),
+                          ),
+                          child: Padding(
+                            padding: EdgeInsets.all(10.w),
+                            child: Center(
+                              child: AutoSizeText(
+                                textAlign: TextAlign.center,
+                                board[i]!.teamCompleted == true
+                                    ? LocalizationService
+                                          .instance
+                                          .homeClaimReward
+                                    : LocalizationService
+                                          .instance
+                                          .homeInProgress,
+                                style: AppTextTheme.subtitle3.designWhite,
+                                maxLines: 2,
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
               ],
             ),
           );

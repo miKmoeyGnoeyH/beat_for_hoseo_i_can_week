@@ -26,8 +26,8 @@ class AuthenticationController extends GetxController
     // change(null, status: RxStatus.success());
 
     try {
-      final UserModel authenticationModel =
-          await authenticationRepository.signIn(id: id, password: password);
+      final UserModel authenticationModel = await authenticationRepository
+          .signIn(id: id, password: password);
 
       /// signIn()은 성공 시에만 UserModel을 반환하고, 그 외는 모두 Exception을 throw하기 때문에
       /// UserModel을 반환받았다는 것은 API 호출이 성공했음을 의미.
@@ -37,7 +37,10 @@ class AuthenticationController extends GetxController
       if (fcmToken == null) {
         throw Exception();
       } else {
-        if (!await authenticationRepository.registerFCMToken(authorization, fcmToken)) {
+        if (!await authenticationRepository.registerFCMToken(
+          authorization,
+          fcmToken,
+        )) {
           throw Exception();
         }
       }
@@ -58,12 +61,16 @@ class AuthenticationController extends GetxController
 
   Future<void> reissueToken() async {
     try {
-      final String newAuthorization =
-          await authenticationRepository.reissueToken(state!.refreshToken);
+      final String newAuthorization = await authenticationRepository
+          .reissueToken(state!.refreshToken);
 
-      final UserModel newUser = UserModel.reissueToken(state!, newAuthorization);
+      final UserModel newUser = UserModel.reissueToken(
+        state!,
+        newAuthorization,
+      );
 
       change(newUser, status: RxStatus.success());
+      await PrefsService.instance.setUser(newUser.toJson());
     } catch (e) {
       log("AuthenticationController : reissueToken() : ${e.toString()}");
       change(state, status: RxStatus.error(e.toString()));

@@ -173,32 +173,6 @@ class StepCountController extends GetxController {
       await HealthKitSteps.requestAuth();
       await HealthKitSteps.startBGDelivery();
 
-      /// 내부 저장소에 저장된 healthKitSteps와 날짜를 읽어옴
-      // final (ymd, healthKitSteps) = await PrefsService.instance.getHealthKitSteps();
-
-      /// 날짜가 없거나, healthKitSteps가 없는 경우
-      /// 데이터가 손상되었거나 최초 실행임
-      /// 따라서 값을 새로 저장해줌
-      // if (ymd == null || healthKitSteps == null) {
-      //   _healthKitSteps = await _getHelthKitStepsAndUseCachedAsFallback();
-      //   PrefsService.instance.setHealthKitSteps(DateTime.now(), _healthKitSteps);
-      /// 둘 다 있는 경우
-      /// 앱을 종료했다 다시 실행했거나, 로그아웃했다 다시 로그인
-      /// 앱이 종료되어있는 동안 추가된 걸음 수를 반영해줘야 함
-      /// 로직 수정 필요:
-      /// 유효 범위 이탈 전 앱 종료 -> 유효 범위 바깥에서 걸음 수 누적 -> 유효 범위 재진입 -> 앱 재실행
-      /// 이 경우 유효 범위 바깥에서 누적된 걸음 수가 제외되지 않음.
-      /// 위에서 세운 최종 앱 흐름에 따라 변경할 것
-      /// 앱이 종료되어있는 동안 누적된 걸음 수는 무시하는 것이 맞다.
-      /// healthKitSteps 갱신만 할 것
-      // } else {
-      //   _healthKitSteps = await _getHelthKitStepsAndUseCachedAsFallback();
-      //   PrefsService.instance.setHealthKitSteps(DateTime.now(), _healthKitSteps);
-      //   // if ((newHealthKitSteps - healthKitSteps) > stepCount) {
-      //   //   _stepCount = newHealthKitSteps - healthKitSteps;
-      //   // }
-      // }
-
       /// 위치 채널 핸들러 등록
       _registerCampusHandler();
 
@@ -525,6 +499,7 @@ class StepCountController extends GetxController {
     final int increment = event.steps - _iOSStepsAfterBoot!;
     _iOSStepsAfterBoot = event.steps;
     _stepCount = increment < 0 ? stepCount : stepCount + increment;
+    PrefsService.instance.setSteps(stepCount, DateTime.now());
   }
 
   Future<void> stopService() async {
