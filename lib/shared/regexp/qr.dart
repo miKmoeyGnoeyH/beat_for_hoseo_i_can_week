@@ -3,5 +3,5 @@ final missionCheckQR = RegExp(
 );
 
 final creditQR = RegExp(
-  r'^https://beat\.hoseo\.ac\.kr/beat-api/v3/member/credit/qr/\d+$',
+  r'^https://beat\.hoseo\.ac\.kr/beat-api/v3/member/credit/qr/(\d+)$',
 );

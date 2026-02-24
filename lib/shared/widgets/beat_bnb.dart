@@ -93,7 +93,7 @@ class BEATBNB extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      bottom: false,
+      // bottom: false,
       child: Container(
         decoration: BoxDecoration(
           color: AppColors.commonWhite,

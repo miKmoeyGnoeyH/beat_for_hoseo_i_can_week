@@ -31,5 +31,9 @@ class QuestDetailController extends GetxController with StateMixin {
     }
   }
 
+  Future<void> clearQuestDetail() async {
+    change(null, status: RxStatus.empty());
+  }
+
   final QuestDetailRepository questDetailRepository = QuestDetailRepository();
 }

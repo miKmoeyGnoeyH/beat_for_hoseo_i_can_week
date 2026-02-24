@@ -72,11 +72,14 @@ class _TeamManagementState extends State<TeamManagement> {
     return Scaffold(
       backgroundColor: AppColors.designWhite,
       body: SafeArea(
+        top: false,
+        bottom: false,
         child: NestedScrollView(
           headerSliverBuilder: (context, innerBoxIsScrolled) {
             return [
               BEATSliverBackAppBar(
                 title: LocalizationService.instance.teamTeamManagement,
+                pinned: true,
               ),
             ];
           },

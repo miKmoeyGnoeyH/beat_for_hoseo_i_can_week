@@ -143,124 +143,127 @@ class _LeaderboardState extends State<Leaderboard> {
             return [
               BEATSliverBackAppBar(
                 title: LocalizationService.instance.leaderboardLeaderboard,
+                pinned: true,
               ),
             ];
           },
           body: RefreshIndicator(
-            color: AppColors.primary,
-            backgroundColor: AppColors.commonWhite,
-            onRefresh: () {
-              return onRefresh();
-            },
-            child: CustomScrollView(
-              physics: AlwaysScrollableScrollPhysics(),
-              controller: bodyController,
-              slivers: [
-                SliverToBoxAdapter(child: SizedBox(height: 16.w)),
-                SliverToBoxAdapter(
-                  child: SizedBox(
-                    height: 56.w,
-                    child: ListView.separated(
-                      primary: false,
-                      padding: EdgeInsets.symmetric(horizontal: 16.w),
-                      shrinkWrap: true,
-                      scrollDirection: Axis.horizontal,
-                      itemBuilder: (context, index) {
-                        return SizedBox(
-                          // width: 130.w,
-                          child: BEATTextButton(
-                            text: rankingTitles[index],
-                            textColor: selectedRankingIndex == index
-                                ? AppColors.designWhite
-                                : AppColors.designBlack,
-                            buttonColor: selectedRankingIndex == index
-                                ? AppColors.primary
-                                : AppColors.commonWhite,
-                            onTap: () {
-                              setState(() {
-                                selectedRankingIndex = index;
-                                selectedRankingTypeIndex = 0;
-                              });
-                            },
-                          ),
-                        );
-                      },
-                      separatorBuilder: (_, _) => SizedBox(width: 10.w),
-                      itemCount: rankingTitles.length,
-                    ),
-                  ),
-                ),
-                SliverToBoxAdapter(
-                  child: rankingTypeTitles[selectedRankingIndex].isEmpty
-                      ? SizedBox.shrink()
-                      : Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(height: 10.w),
-                            SizedBox(
-                              height: 56.w,
-                              child: ListView.separated(
-                                padding: EdgeInsets.symmetric(horizontal: 16.w),
-                                shrinkWrap: true,
-                                scrollDirection: Axis.horizontal,
-                                itemBuilder: (context, index) {
-                                  return SizedBox(
-                                    // width: 130.w,
-                                    child: BEATTextButton(
-                                      text:
-                                          rankingTypeTitles[selectedRankingIndex][index],
-                                      textColor:
-                                          selectedRankingTypeIndex == index
-                                          ? AppColors.designWhite
-                                          : AppColors.designBlack,
-                                      buttonColor:
-                                          selectedRankingTypeIndex == index
-                                          ? AppColors.primary
-                                          : AppColors.commonWhite,
-                                      onTap: () {
-                                        setState(() {
-                                          selectedRankingTypeIndex = index;
-                                        });
-                                      },
-                                    ),
-                                  );
-                                },
-                                separatorBuilder: (_, _) =>
-                                    SizedBox(width: 10.w),
-                                itemCount:
-                                    rankingTypeTitles[selectedRankingIndex]
-                                        .length,
-                              ),
+              color: AppColors.primary,
+              backgroundColor: AppColors.commonWhite,
+              onRefresh: () {
+                return onRefresh();
+              },
+              child: CustomScrollView(
+                physics: AlwaysScrollableScrollPhysics(),
+                // controller: bodyController,
+                slivers: [
+                  SliverToBoxAdapter(child: SizedBox(height: 16.w)),
+                  SliverToBoxAdapter(
+                    child: SizedBox(
+                      height: 56.w,
+                      child: ListView.separated(
+                        primary: false,
+                        padding: EdgeInsets.symmetric(horizontal: 16.w),
+                        shrinkWrap: true,
+                        scrollDirection: Axis.horizontal,
+                        itemBuilder: (context, index) {
+                          return SizedBox(
+                            // width: 130.w,
+                            child: BEATTextButton(
+                              text: rankingTitles[index],
+                              textColor: selectedRankingIndex == index
+                                  ? AppColors.designWhite
+                                  : AppColors.designBlack,
+                              buttonColor: selectedRankingIndex == index
+                                  ? AppColors.primary
+                                  : AppColors.commonWhite,
+                              onTap: () {
+                                setState(() {
+                                  selectedRankingIndex = index;
+                                  selectedRankingTypeIndex = 0;
+                                });
+                              },
                             ),
-                          ],
-                        ),
-                ),
-                SliverToBoxAdapter(child: SizedBox(height: 16.w)),
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16.w),
-                    child: BEATShadowContainer(
-                      shadowBlurRadius: 15.w,
-                      shadowSpreadRadius: -10.w,
-                      contentPadding: EdgeInsetsGeometry.all(16.w),
-                      child: Text(
-                        rankingDescriptions[selectedRankingIndex],
-                        style: AppTextTheme.body1,
+                          );
+                        },
+                        separatorBuilder: (_, _) => SizedBox(width: 10.w),
+                        itemCount: rankingTitles.length,
                       ),
                     ),
                   ),
-                ),
-                SliverToBoxAdapter(child: SizedBox(height: 16.w)),
-                SliverToBoxAdapter(
-                  child:
-                      rankingWidgets[selectedRankingIndex][selectedRankingTypeIndex],
-                ),
-                SliverToBoxAdapter(child: SizedBox(height: 32.w)),
-              ],
+                  SliverToBoxAdapter(
+                    child: rankingTypeTitles[selectedRankingIndex].isEmpty
+                        ? SizedBox.shrink()
+                        : Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(height: 10.w),
+                              SizedBox(
+                                height: 56.w,
+                                child: ListView.separated(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 16.w,
+                                  ),
+                                  shrinkWrap: true,
+                                  scrollDirection: Axis.horizontal,
+                                  itemBuilder: (context, index) {
+                                    return SizedBox(
+                                      // width: 130.w,
+                                      child: BEATTextButton(
+                                        text:
+                                            rankingTypeTitles[selectedRankingIndex][index],
+                                        textColor:
+                                            selectedRankingTypeIndex == index
+                                            ? AppColors.designWhite
+                                            : AppColors.designBlack,
+                                        buttonColor:
+                                            selectedRankingTypeIndex == index
+                                            ? AppColors.primary
+                                            : AppColors.commonWhite,
+                                        onTap: () {
+                                          setState(() {
+                                            selectedRankingTypeIndex = index;
+                                          });
+                                        },
+                                      ),
+                                    );
+                                  },
+                                  separatorBuilder: (_, _) =>
+                                      SizedBox(width: 10.w),
+                                  itemCount:
+                                      rankingTypeTitles[selectedRankingIndex]
+                                          .length,
+                                ),
+                              ),
+                            ],
+                          ),
+                  ),
+                  SliverToBoxAdapter(child: SizedBox(height: 16.w)),
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16.w),
+                      child: BEATShadowContainer(
+                        shadowBlurRadius: 15.w,
+                        shadowSpreadRadius: -10.w,
+                        contentPadding: EdgeInsetsGeometry.all(16.w),
+                        child: Text(
+                          rankingDescriptions[selectedRankingIndex],
+                          style: AppTextTheme.body1,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SliverToBoxAdapter(child: SizedBox(height: 16.w)),
+                  SliverToBoxAdapter(
+                    child:
+                        rankingWidgets[selectedRankingIndex][selectedRankingTypeIndex],
+                  ),
+                  SliverToBoxAdapter(child: SizedBox(height: 32.w)),
+                ],
+              ),
             ),
           ),
         ),
-      ),
     );
   }
 }

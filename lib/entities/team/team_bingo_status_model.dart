@@ -11,7 +11,7 @@ enum QuestType {
 
   static QuestType fromString(String? value) {
     return QuestType.values.firstWhere(
-          (e) => e.value == value,
+      (e) => e.value == value,
       orElse: () => unknown,
     );
   }
@@ -35,7 +35,7 @@ class TeamBingoStatusModel {
         .toList();
 
     final totalCount = items.length;
-    final completedCount = items.where((e) => e.completed).length;
+    final completedCount = items.where((e) => e.rewardGiven).length;
 
     final axis = totalCount == 0 ? 0 : sqrt(totalCount).toInt();
 
@@ -69,7 +69,10 @@ class TeamBingoStatusModel {
   TeamBingoStatusModel.empty()
     : name = 'Dummy',
       studentId = '00000000',
-      bingoQuestItemSummaryDtoList = List.generate(25, (_) => BingoQuestItemSummaryDto.empty()),
+      bingoQuestItemSummaryDtoList = List.generate(
+        25,
+        (_) => BingoQuestItemSummaryDto.empty(),
+      ),
       localData = LocalData.empty();
 
   Map<String, dynamic> toJson() => {
@@ -111,7 +114,9 @@ class BingoQuestItemSummaryDto {
     required this.bingoQuestItemId,
     required this.columnIndex,
     required this.rowIndex,
-    required this.completed,
+    required this.teamCompleted,
+    required this.memberCompleted,
+    required this.rewardGiven,
     required this.questInfoView,
   });
 
@@ -120,7 +125,9 @@ class BingoQuestItemSummaryDto {
       bingoQuestItemId: json['bingoQuestItemId'] as int? ?? 0,
       columnIndex: json['columnIndex'] as int? ?? 0,
       rowIndex: json['rowIndex'] as int? ?? 0,
-      completed: json['completed'] as bool? ?? false,
+      teamCompleted: json['teamCompleted'] as bool? ?? false,
+      memberCompleted: json['memberCompleted'] as bool? ?? false,
+      rewardGiven: json['rewardGiven'] as bool? ?? false,
       questInfoView: QuestInfoView.fromJson(json['questInfoView']),
     );
   }
@@ -129,21 +136,27 @@ class BingoQuestItemSummaryDto {
     : bingoQuestItemId = 0,
       columnIndex = 0,
       rowIndex = 0,
-      completed = false,
+      teamCompleted = false,
+      memberCompleted = false,
+      rewardGiven = false,
       questInfoView = QuestInfoView.empty();
 
   Map<String, dynamic> toJson() => {
     'bingoQuestItemId': bingoQuestItemId,
     'columnIndex': columnIndex,
     'rowIndex': rowIndex,
-    'completed': completed,
+    'teamCompleted': teamCompleted,
+    'memberCompleted': memberCompleted,
+    'rewardGiven': rewardGiven,
     'questInfoView': questInfoView,
   };
 
   final int bingoQuestItemId;
   final int columnIndex;
   final int rowIndex;
-  final bool completed;
+  final bool teamCompleted;
+  final bool memberCompleted;
+  final bool rewardGiven;
   final QuestInfoView questInfoView;
 }
 

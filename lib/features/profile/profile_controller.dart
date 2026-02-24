@@ -36,6 +36,11 @@ class ProfileController extends GetxController with StateMixin<ProfileModel> {
     await fetchData(authorization);
   }
 
+  Future<void> clearData() async {
+    change(null, status: RxStatus.empty());
+    _didInitialFetch = false;
+  }
+
   final ProfileRepository profileRepository =
   ProfileRepository();
   bool _didInitialFetch = false;

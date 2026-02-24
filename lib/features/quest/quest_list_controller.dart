@@ -35,6 +35,11 @@ class QuestListController extends GetxController with StateMixin {
     await fetchQuestList(authorization);
   }
 
+  Future<void> clearQuestList() async {
+    change(null, status: RxStatus.empty());
+    _didInitialFetch = false;
+  }
+
   final QuestListRepository questListRepository = QuestListRepository();
   bool _didInitialFetch = false;
 }

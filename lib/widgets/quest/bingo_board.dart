@@ -291,7 +291,7 @@ class BingoBoard extends StatelessWidget {
                     ? topRightBorderRadius
                     : i == (countPerAxis * (countPerAxis - 1))
                     ? bottomLeftBorderRadius
-                    : i == (countPerAxis - 1)
+                    : i == ((countPerAxis * countPerAxis) - 1)
                     ? bottomRightBorderRadius
                     : BorderRadius.circular(5),
               ),
@@ -318,8 +318,9 @@ class BingoBoard extends StatelessWidget {
                   : Center(
                       child: AutoSizeText(
                         "${board[i]!.questInfoView?.rewardPoint}P",
+                        // "보상\n받기",
                         style: AppTextTheme.headline3.common300,
-                        maxLines: 1,
+                        maxLines: 2,
                       ),
                     ),
             ),

@@ -25,5 +25,10 @@ class PointHistoryController extends GetxController with StateMixin {
     }
   }
 
+  Future<void> clearPointHistory() async {
+    change(null, status: RxStatus.empty());
+  }
+
+
   final PointHistoryRepository pointHistoryRepository = PointHistoryRepository();
 }

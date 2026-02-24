@@ -2,6 +2,9 @@ import 'dart:developer';
 
 import 'package:beat/entities/authentication/user_model.dart';
 import 'package:beat/features/authentication/authentication_repository.dart';
+import 'package:beat/features/point/index.dart';
+import 'package:beat/features/profile/index.dart';
+import 'package:beat/features/quest/index.dart';
 import 'package:beat/shared/index.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:get/get.dart';
@@ -72,8 +75,12 @@ class AuthenticationController extends GetxController
     change(UserModel.fromJson(json), status: RxStatus.success());
   }
 
-  void signOut() {
-    PrefsService.instance.clearUser();
+  Future<void> signOut() async {
+    await PrefsService.instance.clearUser();
+    await QuestListController.to.clearQuestList();
+    await QuestDetailController.to.clearQuestDetail();
+    await PointController.to.clearPointBalance();
+    await ProfileController.to.clearData();
     change(null, status: RxStatus.empty());
   }
 

@@ -32,6 +32,11 @@ class PointController extends GetxController with StateMixin<int> {
     await fetchPointBalance(authorization);
   }
 
+  Future<void> clearPointBalance() async {
+    change(null, status: RxStatus.empty());
+    _didInitialFetch = false;
+  }
+
   final PointRepository pointRepository = PointRepository();
   bool _didInitialFetch = false;
 }
