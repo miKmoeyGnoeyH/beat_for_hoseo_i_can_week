@@ -141,7 +141,11 @@
     "bingo_check_success_title": "빙고 완료",
     "bingo_check_success_content": "빙고가 완료되었습니다.",
     "not_in_campus": "이벤트 진행 지역이 아닙니다.",
-    "no_data": "데이터가 없습니다."
+    "no_data": "데이터가 없습니다.",
+    "background_location_required_title": "백그라운드 위치 권한이 필요합니다.",
+    "background_location_required_content": "행사 진행 지역 진입/이탈 여부, 행사 진행 지역 내에서 걸음 수 측정을 위해 앱이 닫혀 있거나 사용 중이 아닐 때에도 위치 정보를 수집합니다. 위치 권한을 \"항상 허용\"으로 설정해주세요. 위치 정보는 다른 목적으로 사용되지 않으며 외부에 공유되지 않습니다.",
+    "activity_required_title": "활동 권한이 필요합니다.",
+    "activity_required_content": "행사 진행 지역 진입/이탈 여부, 행사 진행 지역 내에서 걸음 수 측정을 위해 활동 권한이 필요합니다. 활동 정보는 다른 목적으로 사용되지 않으며 외부에 공유되지 않습니다."
   },
   "leaderboard_page": {
     "leaderboard": "랭킹",

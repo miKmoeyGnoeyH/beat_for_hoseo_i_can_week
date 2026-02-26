@@ -75,9 +75,28 @@ class _MainPageViewState extends State<MainPageView>
   }
 
   Future<void> _requestPermissions() async {
-    await PermissionService.instance.requestLocationWhenInUsePermission();
-    await PermissionService.instance.requestLocationAlwaysPermission();
-    await PermissionService.instance.requestActivityPermission();
+    DialogService.to.addDialogEvent(
+      ConfirmDialogEvent(
+        title: LocalizationService.instance.homeBackgroundLocationRequiredTitle,
+        message:
+            LocalizationService.instance.homeBackgroundLocationRequiredContent,
+        onConfirm: () async {
+          await PermissionService.instance.requestLocationWhenInUsePermission();
+          await PermissionService.instance.requestLocationAlwaysPermission();
+        },
+      ),
+    );
+
+    DialogService.to.addDialogEvent(
+      ConfirmDialogEvent(
+        title: LocalizationService.instance.homeBackgroundLocationRequiredTitle,
+        message:
+            LocalizationService.instance.homeBackgroundLocationRequiredContent,
+        onConfirm: () async {
+          await PermissionService.instance.requestActivityPermission();
+        },
+      ),
+    );
   }
 
   Future<void> _checkAndStartServiceIfPossible() async {

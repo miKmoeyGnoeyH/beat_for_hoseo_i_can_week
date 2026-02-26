@@ -141,7 +141,11 @@
     "bingo_check_success_title": "Bingo Completed",
     "bingo_check_success_content": "Bingo completed successfully.",
     "not_in_campus": "You are outside the event area.",
-    "no_data": "No data available."
+    "no_data": "No data available.",
+    "background_location_required_title": "Background Location Permission Required",
+    "background_location_required_content": "This app collects location information even when the app is closed or not in use to detect entry into and exit from the event area and to measure valid steps within the event area. Please set the location permission to \"Allow all the time\" for proper functionality. Location data is used only for this purpose and is not shared with third parties.",
+    "activity_required_title": "Physical Activity Permission Required",
+    "activity_required_content": "This app requires physical activity permission to measure steps within the event area. Activity data is not used for any other purpose and is not shared with third parties."
   },
   "leaderboard_page": {
     "leaderboard": "Leaderboard",

@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:beat/shared/services/localization_service.dart';
 import 'package:beat/shared/theme/index.dart';
 import 'package:beat/shared/widgets/index.dart';

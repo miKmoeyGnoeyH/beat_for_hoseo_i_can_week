@@ -52,7 +52,7 @@ class DialogService extends GetxController {
   final RxList<DialogEvent> _dialogEvents = <DialogEvent>[].obs;
 
   DialogService() {
-    ever<List<DialogEvent>>(_dialogEvents, (event) {
+    ever<List<DialogEvent>>(_dialogEvents, (event) async {
       while (event.isNotEmpty) {
         if (Get.isDialogOpen == true) {
           return;
@@ -63,7 +63,7 @@ class DialogService extends GetxController {
         Get.focusScope?.unfocus();
 
         if (dialogEvent.runtimeType == ConfirmDialogEvent) {
-          Get.dialog(
+          await Get.dialog(
             barrierDismissible: false,
             BEATConfirmDialog(
               title: dialogEvent.title,
@@ -74,7 +74,7 @@ class DialogService extends GetxController {
             ),
           );
         } else {
-          Get.dialog(
+          await Get.dialog(
             barrierDismissible: false,
             BEATAlertDialog(
               title: dialogEvent.title,

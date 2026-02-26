@@ -290,6 +290,18 @@ class LocalizationService {
   String get homeNoData =>
       "home_page".tr(gender: "no_data");
 
+  String get homeBackgroundLocationRequiredTitle =>
+      "home_page".tr(gender: "background_location_required_title");
+
+  String get homeBackgroundLocationRequiredContent =>
+      "home_page".tr(gender: "background_location_required_content");
+
+  String get homeActivityRequiredTitle =>
+      "home_page".tr(gender: "activity_required_title");
+
+  String get homeActivityRequiredContent =>
+      "home_page".tr(gender: "activity_required_content");
+
 
   /// Settings
   String get settingsSettings =>

@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:beat/shared/services/localization_service.dart';
 import 'package:beat/shared/theme/index.dart';
 import 'package:beat/shared/widgets/index.dart';
@@ -27,7 +28,11 @@ class BEATConfirmDialog extends StatelessWidget {
             Column(
               children: [
                 if (title != null && title!.isNotEmpty)
-                  Text(title!, style: AppTextTheme.subtitle1),
+                  Text(
+                    title!,
+                    style: AppTextTheme.subtitle1,
+                    maxLines: 1,
+                  ),
                 SizedBox(height: 12.w),
                 if (message != null && message!.isNotEmpty)
                   Text(
@@ -42,7 +47,9 @@ class BEATConfirmDialog extends StatelessWidget {
               children: [
                 Flexible(
                   child: BEATTextButton(
-                    text: cancelText ?? LocalizationService.instance.generalCancel,
+                    text:
+                        cancelText ??
+                        LocalizationService.instance.generalCancel,
                     textColor: AppColors.common400,
                     buttonColor: AppColors.common200,
                     onTap: () {
@@ -53,7 +60,9 @@ class BEATConfirmDialog extends StatelessWidget {
                 SizedBox(width: 10.w),
                 Flexible(
                   child: BEATTextButton(
-                    text: confirmText ?? LocalizationService.instance.generalConfirm,
+                    text:
+                        confirmText ??
+                        LocalizationService.instance.generalConfirm,
                     buttonColor: AppColors.primary,
                     onTap: () {
                       onTap?.call();

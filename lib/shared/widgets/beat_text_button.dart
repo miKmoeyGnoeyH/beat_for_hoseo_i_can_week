@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:beat/shared/theme/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -33,9 +34,10 @@ class BEATTextButton extends StatelessWidget {
           child: Padding(
             padding: contentPadding ?? EdgeInsets.all(16.w),
             child: Center(
-              child: Text(
+              child: AutoSizeText(
                 text,
                 style: AppTextTheme.subtitle1.apply(color: enabled ? textColor : AppColors.common300),
+                maxLines: 1,
               ),
             ),
           ),
