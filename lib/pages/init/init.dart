@@ -70,7 +70,7 @@ class _InitState extends State<Init> with WidgetsBindingObserver {
         return;
       }
     } catch (e) {
-      log("app.dart: _checkUpdate: error: $e}");
+      log("init.dart: _checkUpdate: error: $e}");
     }
   }
 

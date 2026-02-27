@@ -8,7 +8,7 @@ import 'package:get/get.dart';
 class MainPageViewBinding extends Bindings {
   @override
   void dependencies() {
-    Get.put(PageViewController());
+    Get.lazyPut(() => PageViewController(), fenix: true);
     Get.put(PointController());
     Get.put(QuestListController());
     Get.lazyPut(() => QuestDetailController());

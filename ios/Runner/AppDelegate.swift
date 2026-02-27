@@ -1,6 +1,8 @@
 import UIKit
 import Flutter
 import HealthKit
+import UserNotifications
+import FirebaseMessaging
 
 @main
 @objc class AppDelegate: FlutterAppDelegate {
@@ -17,6 +19,9 @@ import HealthKit
         let ok = super.application(application, didFinishLaunchingWithOptions: launchOptions)
         
         GeneratedPluginRegistrant.register(with: self)
+        
+        UNUserNotificationCenter.current().delegate = self
+        application.registerForRemoteNotifications()
         
         // ✅ UIScene 환경에서도 안전하게 messenger 확보
         guard let registrar = self.registrar(forPlugin: "AppDelegateChannels") else {
@@ -116,5 +121,21 @@ import HealthKit
         }
         
         CampusLocationManager.shared.bindFlutterChannel(messenger: messenger)
+    }
+    
+    override func application(
+        _ application: UIApplication,
+        didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
+    ) {
+        Messaging.messaging().apnsToken = deviceToken
+        super.application(application, didRegisterForRemoteNotificationsWithDeviceToken: deviceToken)
+    }
+    
+    override func application(
+        _ application: UIApplication,
+        didFailToRegisterForRemoteNotificationsWithError error: Error
+    ) {
+        NSLog("APNs registration failed: \(error.localizedDescription)")
+        super.application(application, didFailToRegisterForRemoteNotificationsWithError: error)
     }
 }

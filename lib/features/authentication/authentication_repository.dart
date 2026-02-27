@@ -101,7 +101,7 @@ class AuthenticationRepository {
 
   Future<bool> registerFCMToken(String authorization, String fcmToken) async {
     try {
-      final response = await _apiService.get(
+      final response = await _apiService.post(
         endpoint: "${DotEnvService.instance.registerFCMToken}?token=$fcmToken",
         header: {
           "Content-type": "application/json",

@@ -46,4 +46,13 @@ class PageViewController extends GetxController {
       scrollController.jumpTo(0);
     });
   }
+
+  @override
+  void onClose() {
+    pageController.dispose();
+    for (final controller in scrollControllers) {
+      controller.dispose();
+    }
+    super.onClose();
+  }
 }

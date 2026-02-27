@@ -121,7 +121,7 @@ class _CPSIDSectionState extends State<CPSIDSection> {
       final response = await Get.showOverlay(
         asyncFunction: () async {
           await Future.delayed(Duration(milliseconds: 100));
-          return await APIService().get(
+          return await APIService().post(
             endpoint:
             "${DotEnvService.instance.checkAuthcode}?authCode=$authcode&emailType=RESET_PASSWORD",
           );

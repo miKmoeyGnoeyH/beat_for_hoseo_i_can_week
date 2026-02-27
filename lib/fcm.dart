@@ -5,8 +5,8 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 
 
 Future<String?> _waitForApnsToken({
-  Duration timeout = const Duration(seconds: 10),
-  Duration interval = const Duration(milliseconds: 300),
+  Duration timeout = const Duration(seconds: 30),
+  Duration interval = const Duration(milliseconds: 500),
 }) async {
   final sw = Stopwatch()..start();
 
@@ -23,8 +23,8 @@ Future<String?> _waitForApnsToken({
 }
 
 Future<String?> _waitForFCMToken({
-  Duration timeout = const Duration(seconds: 10),
-  Duration interval = const Duration(milliseconds: 300),
+  Duration timeout = const Duration(seconds: 30),
+  Duration interval = const Duration(milliseconds: 500),
 }) async {
   final sw = Stopwatch()..start();
 
@@ -41,15 +41,14 @@ Future<String?> _waitForFCMToken({
 }
 
 Future<void> fcmInit() async {
-  if (Platform.isIOS) {
-    await FirebaseMessaging.instance.setAutoInitEnabled(true);
-    await FirebaseMessaging.instance.getNotificationSettings();
-  }
-
   final messaging = FirebaseMessaging.instance;
   await messaging.requestPermission(alert: true, badge: true, sound: true);
 
+  await messaging.setAutoInitEnabled(true);
+  await messaging.getNotificationSettings();
+
   if (Platform.isIOS) {
+    await messaging.getToken();
     final apns = await _waitForApnsToken();
     log("APNs token: $apns");
   }
