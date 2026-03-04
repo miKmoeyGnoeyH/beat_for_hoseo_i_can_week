@@ -1,10 +1,10 @@
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:app_version_update/app_version_update.dart';
 import 'package:beat/features/step_count/index.dart';
 import 'package:beat/shared/services/index.dart';
 import 'package:flutter/material.dart';
+import 'package:new_version_plus/new_version_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// 앱의 초기 설정을 수행하는 페이지입니다.
@@ -49,19 +49,24 @@ class _InitState extends State<Init> with WidgetsBindingObserver {
     final String playStoreId = DotEnvService.instance.googleplayID;
 
     try {
-      final data = await AppVersionUpdate.checkForUpdates(
-        appleId: appleId,
-        playStoreId: playStoreId,
-        country: 'kr',
+      final data = NewVersionPlus(
+          iOSId: appleId,
+          iOSAppStoreCountry: 'kr',
+          androidId: playStoreId,
+          androidPlayStoreCountry: 'kr'
       );
 
-      if (data.canUpdate == true) {
+      final version = await data.getVersionStatus();
+
+      if (version == null) return;
+
+      if (version.canUpdate == true) {
         DialogService.to.addDialogEvent(
           AlertDialogEvent(
             title: LocalizationService.instance.generalUpdateAvailable,
             message: LocalizationService.instance.generalUpdateAvailableContent,
             onConfirm: () => _openStore(
-              iosHttpsUrl: data.storeUrl!,
+              iosHttpsUrl: version.appStoreLink,
               androidPkgId: playStoreId,
             ),
           ),
@@ -70,7 +75,7 @@ class _InitState extends State<Init> with WidgetsBindingObserver {
         return;
       }
     } catch (e) {
-      log("init.dart: _checkUpdate: error: $e}");
+      log("splash.dart: _checkUpdate: error: $e}");
     }
   }
 

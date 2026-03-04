@@ -93,10 +93,12 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
 
     try {
       await questListController.fetchQuestListOnce(authorization);
+      // await questListController.fetchQuestListTest(authorization);
     } on BEATTokenExpired {
       await authenticationController.reissueToken();
       authorization = authenticationController.state!.authorization;
       await questListController.fetchQuestListOnce(authorization);
+      // await questListController.fetchQuestListTest(authorization);
     }
 
     setState(() {
@@ -252,10 +254,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                       ),
                       child: BingoBoard(
                         board: state.first.localData.board,
-                        countPerAxis: state
-                            .first
-                            .localData
-                            .countPerAxis,
+                        countPerAxis: state.first.localData.countPerAxis,
                         rowSpacing: 5.w,
                         columnSpacing: 5.w,
                       ),
@@ -380,6 +379,22 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                 padding: EdgeInsets.symmetric(horizontal: 16.w),
                 child: questListController.obx(
                   (state) {
+                    if (state
+                            .first
+                            .questSummaryAppView
+                            .lineSummaryList
+                            .isEmpty ||
+                        state.first.questSummaryAppView.lineSummaryList ==
+                            null) {
+                      return SizedBox.shrink();
+                    }
+
+                    if (state.first.questSummaryAppView.lineSummaryList.every(
+                      (e) => e.completed == true,
+                    )) {
+                      return SizedBox.shrink();
+                    }
+
                     return BingoStep(
                       questId: state.first.questCommonSummaryDto.questId,
                       completedLines: state.first.localData.completedLines,
@@ -408,6 +423,13 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                           index: 0,
                           completedCount: 0,
                         )
+                      : questListController
+                            .state
+                            .first
+                            .questSummaryAppView
+                            .lineSummaryList
+                            .every((e) => e.completed == true)
+                      ? SizedBox.shrink()
                       : BingoStep(
                           questId: questListController
                               .state!
@@ -442,7 +464,22 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
               ),
             ),
           ),
-          SliverToBoxAdapter(child: SizedBox(height: 16.w)),
+          SliverToBoxAdapter(
+            child: questListController.obx((state) {
+              if (state.first.questSummaryAppView.lineSummaryList.isEmpty ||
+                  state.first.questSummaryAppView.lineSummaryList == null) {
+                return SizedBox.shrink();
+              }
+
+              if (state.first.questSummaryAppView.lineSummaryList.every(
+                (e) => e.completed == true,
+              )) {
+                return SizedBox.shrink();
+              }
+
+              return SizedBox(height: 16.w);
+            }),
+          ),
           SliverToBoxAdapter(
             child: Skeletonizer(
               enabled: loading,

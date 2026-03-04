@@ -1,6 +1,8 @@
 PODS:
   - app_settings (6.1.2):
     - Flutter
+  - device_info_plus (0.0.1):
+    - Flutter
   - Firebase/CoreOnly (12.8.0):
     - FirebaseCore (~> 12.8.0)
   - Firebase/Messaging (12.8.0):
@@ -78,7 +80,7 @@ PODS:
   - nanopb/encode (3.30910.0)
   - package_info_plus (0.4.5):
     - Flutter
-  - pedometer (0.0.1):
+  - pedometer (4.2.0):
     - Flutter
   - permission_handler_apple (9.3.0):
     - Flutter
@@ -94,6 +96,7 @@ PODS:
 
 DEPENDENCIES:
   - app_settings (from `.symlinks/plugins/app_settings/ios`)
+  - device_info_plus (from `.symlinks/plugins/device_info_plus/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - firebase_messaging (from `.symlinks/plugins/firebase_messaging/ios`)
   - Flutter (from `Flutter`)
@@ -123,6 +126,8 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   app_settings:
     :path: ".symlinks/plugins/app_settings/ios"
+  device_info_plus:
+    :path: ".symlinks/plugins/device_info_plus/ios"
   firebase_core:
     :path: ".symlinks/plugins/firebase_core/ios"
   firebase_messaging:
@@ -152,6 +157,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   app_settings: 9217ccbe946aa9a3751b5459dcf50dabc87517b2
+  device_info_plus: 97af1d7e84681a90d0693e63169a5d50e0839a0d
   Firebase: 9a58fdbc9d8655ed7b79a19cf9690bb007d3d46d
   firebase_core: 8d5e24676350f15dd111aa59a88a1ae26605f9ba
   firebase_messaging: 834cfc0887393d3108cdb19da8e57655c54fd0e4
@@ -168,7 +174,7 @@ SPEC CHECKSUMS:
   mobile_scanner: 77265f3dc8d580810e91849d4a0811a90467ed5e
   nanopb: fad817b59e0457d11a5dfbde799381cd727c1275
   package_info_plus: c0502532a26c7662a62a356cebe2692ec5fe4ec4
-  pedometer: 381969883680ade42559782cc41a3bbd453d8234
+  pedometer: 4a0105dcee8e58f1f03f04372238fd34f075a0ec
   permission_handler_apple: 9878588469a2b0d0fc1e048d9f43605f92e6cec2
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
   shared_preferences_foundation: 5086985c1d43c5ba4d5e69a4e8083a389e2909e6

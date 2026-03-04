@@ -29,10 +29,10 @@ class _MainPageViewState extends State<MainPageView>
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final bool isFirstLaunch =
-          PrefsService.instance.getIsFirstLaunch() ?? true;
+          PrefsService.instance.getIsFirstLaunch();
 
       if (isFirstLaunch) {
-        await _requestPermissions();
+        // await _requestPermissions();
         await PrefsService.instance.setIsFirstLaunch(false);
       }
       await _checkAndStartServiceIfPossible();
@@ -79,7 +79,7 @@ class _MainPageViewState extends State<MainPageView>
       ConfirmDialogEvent(
         title: LocalizationService.instance.homeBackgroundLocationRequiredTitle,
         message:
-            LocalizationService.instance.homeBackgroundLocationRequiredContent,
+        LocalizationService.instance.homeBackgroundLocationRequiredContent,
         onConfirm: () async {
           await PermissionService.instance.requestLocationWhenInUsePermission();
           await PermissionService.instance.requestLocationAlwaysPermission();
@@ -91,7 +91,7 @@ class _MainPageViewState extends State<MainPageView>
       ConfirmDialogEvent(
         title: LocalizationService.instance.homeBackgroundLocationRequiredTitle,
         message:
-            LocalizationService.instance.homeBackgroundLocationRequiredContent,
+        LocalizationService.instance.homeBackgroundLocationRequiredContent,
         onConfirm: () async {
           await PermissionService.instance.requestActivityPermission();
         },
@@ -100,24 +100,41 @@ class _MainPageViewState extends State<MainPageView>
   }
 
   Future<void> _checkAndStartServiceIfPossible() async {
+    final bool isLocationWhenInUsePermissionDenied = await PermissionService
+        .instance.isLocationWhenInUsePermissionDenied();
+
     final bool isLocationWhenInUsePermissionGranted = await PermissionService
         .instance
         .isLocationWhenInUsePermissionGranted();
 
     if (!isLocationWhenInUsePermissionGranted) {
-      DialogService.to.addDialogEvent(
-        ConfirmDialogEvent(
-          title: LocalizationService
-              .instance
-              .generalRequiresLocationPermissionTitle,
-          message: LocalizationService
-              .instance
-              .generalRequiresLocationPermissionContent,
-          confirmText: LocalizationService.instance.generalGoToSettings,
-          onConfirm: () =>
-              AppSettings.openAppSettings(type: AppSettingsType.settings),
-        ),
-      );
+      if(isLocationWhenInUsePermissionDenied) {
+        DialogService.to.addDialogEvent(
+          ConfirmDialogEvent(
+            title: LocalizationService.instance.homeBackgroundLocationRequiredTitle,
+            message:
+            LocalizationService.instance.homeBackgroundLocationRequiredContent,
+            onConfirm: () async {
+              await PermissionService.instance.requestLocationWhenInUsePermission();
+              await PermissionService.instance.requestLocationAlwaysPermission();
+            },
+          ),
+        );
+      } else {
+        DialogService.to.addDialogEvent(
+          ConfirmDialogEvent(
+            title: LocalizationService
+                .instance
+                .generalRequiresLocationPermissionTitle,
+            message: LocalizationService
+                .instance
+                .generalRequiresLocationPermissionContent,
+            confirmText: LocalizationService.instance.generalGoToSettings,
+            onConfirm: () =>
+                AppSettings.openAppSettings(type: AppSettingsType.settings),
+          ),
+        );
+      }
       return;
     }
 

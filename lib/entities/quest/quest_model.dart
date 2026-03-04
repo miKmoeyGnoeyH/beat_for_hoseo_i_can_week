@@ -129,7 +129,7 @@ class QuestModel {
       if (board[i * axis + i].rewardGiven != true) {
         break;
       }
-      if (i == axis - 1) {
+      if (i == 0) {
         completedLines.add(
           CompletedLineInfo(
             axisIndex: axis - 1,
@@ -161,7 +161,7 @@ class QuestModel {
     'questCommonSummaryDto': jsonDecode(questCommonSummaryDto.toJsonString()),
     'questSummaryAppView': {
       'lineSummaryList': questSummaryAppView.lineSummaryList
-          .map((e) => e.toJson())
+          ?.map((e) => e.toJson())
           .toList(),
       'itemSummaryList': questSummaryAppView.itemSummaryList
           .map((e) => jsonDecode(e.toJsonString()))
@@ -174,7 +174,7 @@ class QuestModel {
     'questCommonSummaryDto': jsonDecode(questCommonSummaryDto.toJsonString()),
     'questSummaryAppView': {
       'lineSummaryList': questSummaryAppView.lineSummaryList
-          .map((e) => e.toJson())
+          ?.map((e) => e.toJson())
           .toList(),
       'itemSummaryList': questSummaryAppView.itemSummaryList
           .map((e) => jsonDecode(e.toJsonString()))
@@ -220,6 +220,11 @@ class LocalData {
     'completedLineCount': completedLineCount,
   };
 
+  @override
+  String toString() {
+    return 'LocalData(countPerAxis: $countPerAxis, board: ${board.map((e) => e.toJsonString()).toList()}, completedItemCount: $completedItemCount, completedLines: ${completedLines.map((e) => e.toString()).toList()}, completedLineCount: $completedLineCount)';
+  }
+
   /// 한 변의 개수(예: 5)
   final int countPerAxis;
 
@@ -252,6 +257,11 @@ class CompletedLineInfo {
     'lineIndex': axisIndex,
     'lineType': lineType.value,
   };
+
+  @override
+  String toString() {
+    return 'CompletedLineInfo(axisIndex: $axisIndex, lineType: ${lineType.value})';
+  }
 
   final int axisIndex;
   final BingoLineType lineType;
@@ -297,6 +307,11 @@ class QuestCommonSummaryDto {
       startDate = DateTime.now(),
       endDate = DateTime.now().add(const Duration(days: 7));
 
+  @override
+  String toString() {
+    return 'QuestCommonSummaryDto(questId: $questId, name: $name, descriptionShort: $descriptionShort, totalPoint: $totalPoint, questType: ${questType.value}, startDate: ${startDate.toIso8601String()}, endDate: ${endDate.toIso8601String()})';
+  }
+
   final int questId;
   final String name;
   final String descriptionShort;
@@ -321,7 +336,7 @@ class QuestSummaryAppView {
           .map((e) => ItemSummaryModel.fromJson(e))
           .toList();
 
-  final List<LineSummaryModel> lineSummaryList;
+  final List<LineSummaryModel>? lineSummaryList;
   final List<ItemSummaryModel> itemSummaryList;
 }
 

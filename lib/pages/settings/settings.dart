@@ -88,6 +88,7 @@ class Settings extends StatelessWidget {
                           SizedBox(height: rowSpacing),
                           GestureDetector(
                             onTap: onOssLicencesTap,
+                            behavior: HitTestBehavior.opaque,
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               crossAxisAlignment: CrossAxisAlignment.baseline,
@@ -113,6 +114,7 @@ class Settings extends StatelessWidget {
                           SizedBox(height: rowSpacing),
                           GestureDetector(
                             onTap: onPrivacyPolicyTap,
+                            behavior: HitTestBehavior.opaque,
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               crossAxisAlignment: CrossAxisAlignment.baseline,

@@ -21,7 +21,7 @@ class AccountManagement extends StatelessWidget {
   void onSignOutTap() async {
     await StepCountController.to.stopService();
     AuthenticationController.to.signOut();
-    Get.offAndToNamed(BEATRoute.signIn);
+    Get.offAllNamed(BEATRoute.signIn);
   }
 
   void onWithdrawalTap() {

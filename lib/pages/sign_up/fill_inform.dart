@@ -140,10 +140,13 @@ class _FillInformState extends State<FillInform> {
         case 400:
           throw BEATException(
             title: LocalizationService.instance.errorSignUpFailedTitle,
-            message: LocalizationService.instance.errorSignUpFailedContent,
+            message: response.body,
           );
         default:
-          throw Exception();
+          throw BEATException(
+            title: LocalizationService.instance.errorSignUpFailedTitle,
+            message: response.body,
+          );
       }
     } on TimeoutException {
       if (Get.isDialogOpen == true) {

@@ -47,6 +47,12 @@ class PermissionService {
   }
 
   /// location
+  /// 위치 권한 거부되었는지 확인
+  Future<bool> isLocationWhenInUsePermissionDenied() async {
+    final locationWhenInUseStatus = await Permission.locationWhenInUse.status;
+    return locationWhenInUseStatus.isDenied;
+  }
+
   /// 위치 권한 요청 (앱 사용 중에만)
   Future<bool> requestLocationWhenInUsePermission() async {
     final locationWhenInUseStatus = await Permission.locationWhenInUse

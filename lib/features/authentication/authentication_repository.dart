@@ -19,6 +19,9 @@ class AuthenticationRepository {
         body: jsonEncode({"accountId": id, "accountPw": password}),
       );
 
+      log("AuthenticationRepository: signIn: endpoint: ${DotEnvService.instance.signIn}");
+      log("AuthenticationRepository: signIn: response.body: ${response.body}");
+
       switch (response.statusCode) {
         case 200:
           final String decoded = utf8.decode(response.bodyBytes);
@@ -109,14 +112,15 @@ class AuthenticationRepository {
         },
       );
 
-      log("${response.statusCode} ${response.body}");
+      log("AuthenticationRepository: registerFCMToken: endpoint: ${DotEnvService.instance.registerFCMToken}?token=$fcmToken");
+      log("AuthenticationRepository: registerFCMToken: response.body: ${response.body}");
 
       switch (response.statusCode) {
         case 200:
           return true;
         case 400:
           throw BEATException(title: LocalizationService.instance.errorUnknown);
-        /// registerFCMToken은 로그인 성공 직후(authorization 발급 직후) 유일하게 호출되므로
+        /// registerFCMToken은 로그인 성공 직후(authorization 발급 직후)에만 유일하게 호출되므로
         /// 401 에러는 고려할 필요가 없음.
         // case 401:
         //   throw BEATTokenExpired();

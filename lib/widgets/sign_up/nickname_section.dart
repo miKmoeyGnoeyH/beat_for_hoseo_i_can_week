@@ -96,10 +96,14 @@ class _NicknameSectionState extends State<NicknameSection> {
           throw BEATException(
             title:
                 LocalizationService.instance.errorValidateNicknameFailedTitle,
-            message: LocalizationService.instance.errorNicknameDuplicated,
+            message: response.body,
           );
         default:
-          throw Exception();
+          throw BEATException(
+            title:
+            LocalizationService.instance.errorValidateNicknameFailedTitle,
+            message: response.body,
+          );
       }
     } on TimeoutException {
       if (Get.isDialogOpen == true) {

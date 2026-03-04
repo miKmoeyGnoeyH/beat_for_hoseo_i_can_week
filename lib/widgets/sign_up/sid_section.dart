@@ -88,7 +88,10 @@ class _SIDSectionState extends State<SIDSection> {
           );
           break;
         default:
-          throw Exception();
+          throw BEATException(
+            title: LocalizationService.instance.errorEmailSendingFailedTitle,
+            message: response.body,
+          );
       }
     } on TimeoutException {
       if (Get.isDialogOpen == true) {
@@ -122,8 +125,7 @@ class _SIDSectionState extends State<SIDSection> {
         asyncFunction: () async {
           await Future.delayed(Duration(milliseconds: 100));
           return await APIService().get(
-            endpoint:
-                "${DotEnvService.instance.verifyEmail}?studentId=$value",
+            endpoint: "${DotEnvService.instance.verifyEmail}?studentId=$value",
           );
         },
         loadingWidget: BEATCircularProgressIndicator(),
@@ -148,7 +150,10 @@ class _SIDSectionState extends State<SIDSection> {
           );
           break;
         default:
-          throw Exception();
+          throw BEATException(
+            title: LocalizationService.instance.errorVerifyEmailFailedTitle,
+            message: response.body,
+          );
       }
     } on TimeoutException {
       if (Get.isDialogOpen == true) {

@@ -4,6 +4,7 @@ import 'dart:developer';
 
 import 'package:beat/entities/quest/index.dart';
 import 'package:beat/shared/index.dart';
+import 'package:flutter/services.dart';
 
 class QuestListRepository {
   QuestListRepository();
@@ -15,7 +16,7 @@ class QuestListRepository {
         header: {"authorization": authorization},
       );
 
-      // log("QuestListRepository: fetchQuestList: ${response.statusCode} ${response.body}");
+      log("QuestListRepository: fetchQuestList: ${response.statusCode} ${response.body}");
 
       switch (response.statusCode) {
         case 200:
@@ -42,6 +43,31 @@ class QuestListRepository {
       );
     } catch (e) {
       log("QuestListRepository : fetchQuestList() : ${e.toString()}");
+      rethrow;
+    }
+  }
+
+  Future<List<QuestModel>> fetchQuestListTest(String authorization) async {
+    try {
+      final response = await rootBundle.loadString("dummy/quest_list.json");
+
+      log("QuestListRepository: fetchQuestList: test 200 $response");
+
+      final List<QuestModel> questList = [];
+      final List<dynamic> responseBody = jsonDecode(response);
+
+      for (var quest in responseBody) {
+        questList.add(QuestModel.fromJson(quest));
+      }
+
+      return questList;
+    } on TimeoutException {
+      throw BEATException(
+        title: LocalizationService.instance.errorTimeout,
+        message: LocalizationService.instance.errorConnectivity,
+      );
+    } catch (e) {
+      log("QuestListRepository : fetchQuestListTest() : ${e.toString()}");
       rethrow;
     }
   }

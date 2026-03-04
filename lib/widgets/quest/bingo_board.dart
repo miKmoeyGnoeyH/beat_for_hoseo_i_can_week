@@ -329,7 +329,7 @@ class BingoBoard extends StatelessWidget {
                             "${board[i]!.questInfoView?.rewardPoint}P",
                             // "보상\n받기",
                             style: AppTextTheme.headline3.common300,
-                            maxLines: 2,
+                            maxLines: 1,
                           ),
                         ),
                 ),
@@ -360,7 +360,7 @@ class BingoBoard extends StatelessWidget {
                                           .instance
                                           .homeInProgress,
                                 style: AppTextTheme.subtitle3.designWhite,
-                                maxLines: 2,
+                                maxLines: 1,
                               ),
                             ),
                           ),
@@ -389,7 +389,7 @@ class BingoBoard extends StatelessWidget {
                                           .instance
                                           .homeInProgress,
                                 style: AppTextTheme.subtitle3.designWhite,
-                                maxLines: 2,
+                                maxLines: 1,
                               ),
                             ),
                           ),
